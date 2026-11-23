@@ -1,0 +1,17 @@
+model Reminder {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  title       String
+  description String?
+  type        String   @default("general") // e.g., service, insurance, custom
+  date        DateTime // The date the reminder is for
+  time        String? // Optional time string, e.g., "10:00 AM"
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("reminders")
+}

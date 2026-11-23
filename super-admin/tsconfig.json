@@ -1,0 +1,53 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": false,
+    "skipLibCheck": true,
+    /*
+     * `strict` is intentionally off. lib/adminApp.ts is a close port of the
+     * original vanilla-JS <script> block: it manages the DOM directly with
+     * template-string rendering instead of idiomatic typed React code. Full
+     * strict mode would require modelling every DOM element's exact type
+     * across ~2000 lines. If you plan to keep evolving this file in
+     * TypeScript, consider tightening this incrementally (start with
+     * "strictNullChecks") and typing lib/adminApp.ts's data shapes (DB,
+     * ROUTES, state) as you touch them.
+     */
+    "strict": false,
+    "noImplicitAny": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

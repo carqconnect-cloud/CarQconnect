@@ -1,0 +1,71 @@
+// -----------------------------------------------------------------------------
+// SOS / Incident Response Domain
+// SOW v1.0 Section 4, 8.6, 15; PRD v1.0 Section 20, 24, Journey F
+// -----------------------------------------------------------------------------
+
+enum SosEventStatus {
+  PENDING
+  ACKNOWLEDGED
+  ESCALATED
+  RESOLVED
+}
+
+model SosEvent {
+  id             String         @id @default(cuid())
+  userId         String
+  organizationId String?
+  vehicleReg     String?
+  lat            Float
+  lng            Float
+  address        String?
+  status         SosEventStatus @default(PENDING)
+  notes          String?
+  resolvedAt     DateTime?
+  resolvedById   String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization     Organization?      @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  resolvedBy       User?              @relation("SosResolvedBy", fields: [resolvedById], references: [id], onDelete: SetNull)
+  contactsNotified SosEventContact[]
+  timeline         SosTimelineItem[]
+
+  @@index([status])
+  @@index([userId])
+  @@index([organizationId])
+  @@index([createdAt])
+  @@map("sos_events")
+}
+
+model SosEventContact {
+  id             String    @id @default(cuid())
+  eventId        String
+  contactId      String?
+  name           String
+  phone          String
+  isNotified     Boolean   @default(false)
+  notifiedAt     DateTime?
+  isAcknowledged Boolean   @default(false)
+  acknowledgedAt DateTime?
+  createdAt      DateTime  @default(now())
+
+  event SosEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@map("sos_event_contacts")
+}
+
+model SosTimelineItem {
+  id        String   @id @default(cuid())
+  eventId   String
+  label     String
+  actorId   String?
+  createdAt DateTime @default(now())
+
+  event SosEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  actor User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([eventId])
+  @@map("sos_timeline_items")
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "cpn_diwali90",
+    "code": "DIWALI90",
+    "title": "Diwali offer 90% Off for top 10 customers",
+    "description": "90% off on your purchase (Min Order: ₹100)",
+    "discountType": "PERCENT",
+    "discountValue": 90,
+    "minOrder": 100,
+    "maxDiscount": 1000,
+    "usageLimit": 10,
+    "usedCount": 0,
+    "schedule": "01 Nov – 10 Nov 2026",
+    "status": "active",
+    "createdAt": 1730000000000
+  }
+]

@@ -1,0 +1,128 @@
+// -----------------------------------------------------------------------------
+// Tenancy. Every tenant-scoped model MUST carry `organizationId`.
+// When you add one, also register it in TENANT_MODELS in src/config/database.ts.
+// -----------------------------------------------------------------------------
+
+enum Role {
+  OWNER
+  ADMIN
+  TEAM_HEAD
+  EXECUTIVE
+  VIEWER
+}
+
+enum MembershipStatus {
+  ACTIVE
+  INVITED
+  SUSPENDED
+}
+
+enum TeamStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  logoUrl   String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships      Membership[]
+  leads            Lead[]
+  customers        Customer[]
+  activities       Activity[]
+  auditLogs        AuditLog[]
+
+  supportTickets   SupportTicket[]
+  callRecords      CallRecord[]
+  aiConfigurations AIConfiguration[]
+  teams            Team[]
+  campaigns        Campaign[]
+  sosEvents        SosEvent[]
+  crmUsers         CrmUser[]
+
+  @@map("organizations")
+}
+
+model CrmUser {
+  id             String           @id @default(cuid())
+  organizationId String
+  teamId         String?
+  firstName      String
+  lastName       String
+  email          String           @unique
+  phone          String?
+  passwordHash   String
+  role           Role             @default(EXECUTIVE)
+  status         MembershipStatus @default(ACTIVE)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  organization  Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  refreshTokens RefreshToken[]
+
+  @@index([organizationId, status])
+  @@map("crm_users")
+}
+
+model Team {
+  id             String     @id @default(cuid())
+  name           String
+  status         TeamStatus @default(ACTIVE)
+  organizationId String
+  headId         String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  head         User?        @relation("TeamHead", fields: [headId], references: [id], onDelete: SetNull)
+  memberships  Membership[]
+  @@index([organizationId, status])
+  @@map("teams")
+}
+
+model Membership {
+  id             String           @id @default(cuid())
+  userId         String
+  organizationId String
+  role           Role             @default(EXECUTIVE)
+  status         MembershipStatus @default(ACTIVE)
+  isDefault      Boolean          @default(false)
+  invitedById    String?
+  teamId         String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  team         Team?        @relation(fields: [teamId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, organizationId])
+  @@index([organizationId, status])
+  @@index([teamId])
+  @@map("memberships")
+}
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  organizationId String?
+  actorId        String?
+  action         String // e.g. "lead.deleted"
+  entity         String // e.g. "Lead"
+  entityId       String?
+  metadata       Json?
+  ipAddress      String?
+  createdAt      DateTime @default(now())
+
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  actor        User?         @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, createdAt])
+  @@index([entity, entityId])
+  @@map("audit_logs")
+}
+

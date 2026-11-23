@@ -1,0 +1,5 @@
+// -----------------------------------------------------------------------------
+// Memberships & Subscriptions Domain
+// Consumer plans and user subscriptions are modeled in subscription.prisma
+// (SubscriptionPlan and UserSubscription models).
+// -----------------------------------------------------------------------------

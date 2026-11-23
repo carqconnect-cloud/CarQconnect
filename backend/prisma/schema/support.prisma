@@ -1,0 +1,50 @@
+// -----------------------------------------------------------------------------
+// Support & Escalation Desk Domain
+// SOW v1.0 Section 8 (Support/Chat — 4); PRD v1.0 Section 11, 19
+// -----------------------------------------------------------------------------
+
+model SupportTicket {
+  id             String    @id @default(cuid())
+  organizationId String?
+  customerId     String?
+  userId         String?
+  vehicleId      String?
+  subject        String
+  description    String?   @db.Text
+  category       String    @default("General")
+  priority       String    @default("MEDIUM")
+  status         String    @default("OPEN")
+  assignedToId   String?
+  aiEscalated    Boolean   @default(false)
+  aiSummary      String?   @db.Text
+  resolvedAt     DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization   Organization?   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer       Customer?       @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  user           User?           @relation("UserSupportTickets", fields: [userId], references: [id], onDelete: SetNull)
+  vehicle        Vehicle?        @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  assignedTo     User?           @relation("AssignedSupportTickets", fields: [assignedToId], references: [id], onDelete: SetNull)
+  messages       TicketMessage[]
+
+  @@index([status])
+  @@index([userId])
+  @@index([organizationId, status])
+  @@index([createdAt])
+  @@map("support_tickets")
+}
+
+model TicketMessage {
+  id         String   @id @default(cuid())
+  ticketId   String
+  senderType String   // 'CUSTOMER', 'ADMIN', 'AI_BOT'
+  senderId   String?
+  message    String   @db.Text
+  createdAt  DateTime @default(now())
+
+  ticket     SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId, createdAt])
+  @@map("ticket_messages")
+}

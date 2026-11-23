@@ -1,0 +1,60 @@
+// -----------------------------------------------------------------------------
+// CMS & Notification Campaigns Domain (Phase 3C)
+// Scope: Promotional banners, system-wide notification campaigns, content management
+// -----------------------------------------------------------------------------
+
+model Banner {
+  id        String   @id @default(cuid())
+  title     String   @db.VarChar(255)
+  schedule  String   @default("Not scheduled") @db.VarChar(100) // e.g. "01 Sep – 30 Sep 2026", "Ongoing", "Not scheduled"
+  status    String   @default("draft") @db.VarChar(20) // "draft" | "scheduled" | "live" | "paused" | "archived"
+  targetUrl String?  @db.Text
+  imageUrl  String?  @db.Text
+  priority  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@map("banners")
+}
+
+model NotificationCampaign {
+  id          String    @id @default(cuid())
+  name        String    @db.VarChar(255)
+  channel     String    @db.VarChar(50) // "SMS" | "Push" | "Email" | "SMS + Push" | "Email + Push" | "In-app"
+  audience    String    @db.VarChar(100) // "All active users" | "Expiring in 15 days" | "Balance < ₹100" | "Users without emergency contact"
+  message     String?   @db.Text
+  status      String    @default("Draft") @db.VarChar(30) // "Draft" | "Scheduled" | "Sent" | "Cancelled"
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  targetCount Int       @default(0)
+  isSimulated Boolean   @default(true) // Truthful execution tracking
+  metadata    Json?     // Execution summary, simulated channel dispatch details
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status])
+  @@index([channel])
+  @@map("notification_campaigns")
+}
+
+model Coupon {
+  id            String   @id @default(cuid())
+  code          String   @unique @db.VarChar(50)
+  title         String   @db.VarChar(255)
+  description   String?  @db.Text
+  discountType  String   @default("PERCENT") @db.VarChar(20) // "PERCENT" | "FLAT"
+  discountValue Float    @default(0)
+  minOrder      Float    @default(0)
+  maxDiscount   Float?   @default(500)
+  usageLimit    Int      @default(500)
+  usedCount     Int      @default(0)
+  schedule      String   @default("Ongoing") @db.VarChar(100)
+  status        String   @default("active") @db.VarChar(20) // "active" | "paused" | "expired"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status])
+  @@index([code])
+  @@map("coupons")
+}

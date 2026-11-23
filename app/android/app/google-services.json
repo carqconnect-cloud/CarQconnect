@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "413549874609",
+    "project_id": "fioner-e921d",
+    "storage_bucket": "fioner-e921d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413549874609:android:824c6af7443aa720400190",
+        "android_client_info": {
+          "package_name": "com.fioner.carqconnect.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413549874609-hg39fqqh4jhk6do6hck2j5edg76vbs2u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fioner.carqconnect.app",
+            "certificate_hash": "9e281eea2fce245dc1a25262b94f51a2f725844a"
+          }
+        },
+        {
+          "client_id": "413549874609-55r88a0qrek9on8onsvcntkls9e9624b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAi5-z5QEvn0U6vqC8mD-SkkW8W5tbrGzY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413549874609-55r88a0qrek9on8onsvcntkls9e9624b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

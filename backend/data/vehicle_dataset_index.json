@@ -1,0 +1,4069 @@
+[
+  {
+    "make": "BMW",
+    "model": "i4",
+    "fullName": "BMW i4",
+    "fuel": "EV",
+    "source": "csv"
+  },
+  {
+    "make": "Chevrolet",
+    "model": "Equinox",
+    "fullName": "Chevrolet Equinox",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Kia",
+    "model": "Sportage",
+    "fullName": "Kia Sportage",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Ioniq 5",
+    "fullName": "Hyundai Ioniq 5",
+    "fuel": "EV",
+    "source": "csv"
+  },
+  {
+    "make": "Honda",
+    "model": "Accord",
+    "fullName": "Honda Accord",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Toyota",
+    "model": "Corolla",
+    "fullName": "Toyota Corolla",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Ford",
+    "model": "Escape",
+    "fullName": "Ford Escape",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Lexus",
+    "model": "ES",
+    "fullName": "Lexus ES",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "BMW",
+    "model": "iX",
+    "fullName": "BMW iX",
+    "fuel": "EV",
+    "source": "csv"
+  },
+  {
+    "make": "Ford",
+    "model": "Ranger",
+    "fullName": "Ford Ranger",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Ford",
+    "model": "Bronco",
+    "fullName": "Ford Bronco",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Ford",
+    "model": "Mustang",
+    "fullName": "Ford Mustang",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Toyota",
+    "model": "Camry",
+    "fullName": "Toyota Camry",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Volkswagen",
+    "model": "Polo",
+    "fullName": "Volkswagen Polo",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Toyota",
+    "model": "RAV4",
+    "fullName": "Toyota RAV4",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Audi",
+    "model": "Q3",
+    "fullName": "Audi Q3",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Mercedes-Benz",
+    "model": "G-Class",
+    "fullName": "Mercedes-Benz G-Class",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Sonata",
+    "fullName": "Hyundai Sonata",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Honda",
+    "model": "HR-V",
+    "fullName": "Honda HR-V",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Toyota",
+    "model": "Yaris",
+    "fullName": "Toyota Yaris",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Audi",
+    "model": "A8",
+    "fullName": "Audi A8",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Ford",
+    "model": "Explorer",
+    "fullName": "Ford Explorer",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Nissan",
+    "model": "Micra",
+    "fullName": "Nissan Micra",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Chevrolet",
+    "model": "Silverado",
+    "fullName": "Chevrolet Silverado",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Nissan",
+    "model": "Pathfinder",
+    "fullName": "Nissan Pathfinder",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Volkswagen",
+    "model": "Amarok",
+    "fullName": "Volkswagen Amarok",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Mazda",
+    "model": "Mazda6",
+    "fullName": "Mazda Mazda6",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Nissan",
+    "model": "Leaf",
+    "fullName": "Nissan Leaf",
+    "fuel": "EV",
+    "source": "csv"
+  },
+  {
+    "make": "Chevrolet",
+    "model": "Tahoe",
+    "fullName": "Chevrolet Tahoe",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Mazda",
+    "model": "CX-5",
+    "fullName": "Mazda CX-5",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Chevrolet",
+    "model": "Suburban",
+    "fullName": "Chevrolet Suburban",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Nexo",
+    "fullName": "Hyundai Nexo",
+    "fuel": "EV",
+    "source": "csv"
+  },
+  {
+    "make": "Chevrolet",
+    "model": "Camaro",
+    "fullName": "Chevrolet Camaro",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Honda",
+    "model": "CR-V",
+    "fullName": "Honda CR-V",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Toyota",
+    "model": "Highlander",
+    "fullName": "Toyota Highlander",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Chevrolet",
+    "model": "Bolt",
+    "fullName": "Chevrolet Bolt",
+    "fuel": "EV",
+    "source": "csv"
+  },
+  {
+    "make": "Audi",
+    "model": "TT",
+    "fullName": "Audi TT",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Ford",
+    "model": "Edge",
+    "fullName": "Ford Edge",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Nissan",
+    "model": "Navara",
+    "fullName": "Nissan Navara",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Volkswagen",
+    "model": "Golf",
+    "fullName": "Volkswagen Golf",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Mazda",
+    "model": "MX-5",
+    "fullName": "Mazda MX-5",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Honda",
+    "model": "Pilot",
+    "fullName": "Honda Pilot",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Mercedes-Benz",
+    "model": "E-Class",
+    "fullName": "Mercedes-Benz E-Class",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Audi",
+    "model": "Q7",
+    "fullName": "Audi Q7",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Volkswagen",
+    "model": "Touareg",
+    "fullName": "Volkswagen Touareg",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Chevrolet",
+    "model": "Malibu",
+    "fullName": "Chevrolet Malibu",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Audi",
+    "model": "A3",
+    "fullName": "Audi A3",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Lexus",
+    "model": "IS",
+    "fullName": "Lexus IS",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Mercedes-Benz",
+    "model": "GLE",
+    "fullName": "Mercedes-Benz GLE",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Toyota",
+    "model": "Land Cruiser",
+    "fullName": "Toyota Land Cruiser",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "BMW",
+    "model": "M3",
+    "fullName": "BMW M3",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Nissan",
+    "model": "Sentra",
+    "fullName": "Nissan Sentra",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Honda",
+    "model": "Ridgeline",
+    "fullName": "Honda Ridgeline",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Volkswagen",
+    "model": "Passat",
+    "fullName": "Volkswagen Passat",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Nissan",
+    "model": "Rogue",
+    "fullName": "Nissan Rogue",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Ford",
+    "model": "Focus",
+    "fullName": "Ford Focus",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Palisade",
+    "fullName": "Hyundai Palisade",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Toyota",
+    "model": "Prius",
+    "fullName": "Toyota Prius",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Santa Fe",
+    "fullName": "Hyundai Santa Fe",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Honda",
+    "model": "Civic Type R",
+    "fullName": "Honda Civic Type R",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Mazda",
+    "model": "Mazda3",
+    "fullName": "Mazda Mazda3",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Kia",
+    "model": "Telluride",
+    "fullName": "Kia Telluride",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Volkswagen",
+    "model": "Jetta",
+    "fullName": "Volkswagen Jetta",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Lexus",
+    "model": "LX",
+    "fullName": "Lexus LX",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Kia",
+    "model": "EV6",
+    "fullName": "Kia EV6",
+    "fuel": "EV",
+    "source": "csv"
+  },
+  {
+    "make": "BMW",
+    "model": "7 Series",
+    "fullName": "BMW 7 Series",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Mercedes-Benz",
+    "model": "S-Class",
+    "fullName": "Mercedes-Benz S-Class",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Kia",
+    "model": "Stinger",
+    "fullName": "Kia Stinger",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Audi",
+    "model": "A6",
+    "fullName": "Audi A6",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Mazda",
+    "model": "Mazda2",
+    "fullName": "Mazda Mazda2",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Ford",
+    "model": "F-150",
+    "fullName": "Ford F-150",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Volkswagen",
+    "model": "Arteon",
+    "fullName": "Volkswagen Arteon",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Chevrolet",
+    "model": "Corvette",
+    "fullName": "Chevrolet Corvette",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Hyundai",
+    "model": "i30",
+    "fullName": "Hyundai i30",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Kona",
+    "fullName": "Hyundai Kona",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "BMW",
+    "model": "3 Series",
+    "fullName": "BMW 3 Series",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Lexus",
+    "model": "RC",
+    "fullName": "Lexus RC",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Chevrolet",
+    "model": "Traverse",
+    "fullName": "Chevrolet Traverse",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Toyota",
+    "model": "Hilux",
+    "fullName": "Toyota Hilux",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Nissan",
+    "model": "X-Trail",
+    "fullName": "Nissan X-Trail",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Toyota",
+    "model": "Supra",
+    "fullName": "Toyota Supra",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Mercedes-Benz",
+    "model": "GLC",
+    "fullName": "Mercedes-Benz GLC",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Volkswagen",
+    "model": "Tiguan",
+    "fullName": "Volkswagen Tiguan",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Ford",
+    "model": "Fusion",
+    "fullName": "Ford Fusion",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Ioniq",
+    "fullName": "Hyundai Ioniq",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Honda",
+    "model": "Fit",
+    "fullName": "Honda Fit",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Kia",
+    "model": "Niro",
+    "fullName": "Kia Niro",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Kia",
+    "model": "Sorento",
+    "fullName": "Kia Sorento",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Mazda",
+    "model": "CX-9",
+    "fullName": "Mazda CX-9",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "BMW",
+    "model": "X5",
+    "fullName": "BMW X5",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Lexus",
+    "model": "UX",
+    "fullName": "Lexus UX",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Audi",
+    "model": "Q5",
+    "fullName": "Audi Q5",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "BMW",
+    "model": "Z4",
+    "fullName": "BMW Z4",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Mercedes-Benz",
+    "model": "EQS",
+    "fullName": "Mercedes-Benz EQS",
+    "fuel": "EV",
+    "source": "csv"
+  },
+  {
+    "make": "Lexus",
+    "model": "RX",
+    "fullName": "Lexus RX",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Ford",
+    "model": "Transit",
+    "fullName": "Ford Transit",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Mercedes-Benz",
+    "model": "CLA",
+    "fullName": "Mercedes-Benz CLA",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Elantra",
+    "fullName": "Hyundai Elantra",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "BMW",
+    "model": "X3",
+    "fullName": "BMW X3",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Volkswagen",
+    "model": "ID.4",
+    "fullName": "Volkswagen ID.4",
+    "fuel": "EV",
+    "source": "csv"
+  },
+  {
+    "make": "Volkswagen",
+    "model": "ID.3",
+    "fullName": "Volkswagen ID.3",
+    "fuel": "EV",
+    "source": "csv"
+  },
+  {
+    "make": "Kia",
+    "model": "Seltos",
+    "fullName": "Kia Seltos",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Lexus",
+    "model": "NX",
+    "fullName": "Lexus NX",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Mercedes-Benz",
+    "model": "GLS",
+    "fullName": "Mercedes-Benz GLS",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Honda",
+    "model": "Civic",
+    "fullName": "Honda Civic",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Nissan",
+    "model": "GT-R",
+    "fullName": "Nissan GT-R",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Chevrolet",
+    "model": "Colorado",
+    "fullName": "Chevrolet Colorado",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Lexus",
+    "model": "GX",
+    "fullName": "Lexus GX",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Mercedes-Benz",
+    "model": "C-Class",
+    "fullName": "Mercedes-Benz C-Class",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Mercedes-Benz",
+    "model": "A-Class",
+    "fullName": "Mercedes-Benz A-Class",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Audi",
+    "model": "R8",
+    "fullName": "Audi R8",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Kia",
+    "model": "Rio",
+    "fullName": "Kia Rio",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Kia",
+    "model": "Carnival",
+    "fullName": "Kia Carnival",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Lexus",
+    "model": "LS",
+    "fullName": "Lexus LS",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Audi",
+    "model": "e-tron",
+    "fullName": "Audi e-tron",
+    "fuel": "EV",
+    "source": "csv"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Tucson",
+    "fullName": "Hyundai Tucson",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Nissan",
+    "model": "Altima",
+    "fullName": "Nissan Altima",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Mazda",
+    "model": "CX-90",
+    "fullName": "Mazda CX-90",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "BMW",
+    "model": "M4",
+    "fullName": "BMW M4",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Toyota",
+    "model": "Sienna",
+    "fullName": "Toyota Sienna",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Nissan",
+    "model": "370Z",
+    "fullName": "Nissan 370Z",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Honda",
+    "model": "Odyssey",
+    "fullName": "Honda Odyssey",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Mazda",
+    "model": "CX-30",
+    "fullName": "Mazda CX-30",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Kia",
+    "model": "Optima",
+    "fullName": "Kia Optima",
+    "fuel": "Diesel",
+    "source": "csv"
+  },
+  {
+    "make": "Audi",
+    "model": "A4",
+    "fullName": "Audi A4",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Lexus",
+    "model": "LC",
+    "fullName": "Lexus LC",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "BMW",
+    "model": "5 Series",
+    "fullName": "BMW 5 Series",
+    "fuel": "Petrol",
+    "source": "csv"
+  },
+  {
+    "make": "Mazda",
+    "model": "MX-30",
+    "fullName": "Mazda MX-30",
+    "fuel": "EV",
+    "source": "csv"
+  },
+  {
+    "make": "Mazda",
+    "model": "CX-50",
+    "fullName": "Mazda CX-50",
+    "fuel": "Hybrid",
+    "source": "csv"
+  },
+  {
+    "make": "Hero",
+    "model": "Splendor Plus",
+    "fullName": "Hero Splendor Plus",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Splendor Plus Xtec",
+    "fullName": "Hero Splendor Plus Xtec",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Super Splendor",
+    "fullName": "Hero Super Splendor",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "HF Deluxe",
+    "fullName": "Hero HF Deluxe",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "HF 100",
+    "fullName": "Hero HF 100",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Passion Pro",
+    "fullName": "Hero Passion Pro",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Glamour",
+    "fullName": "Hero Glamour",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Xtreme 125R",
+    "fullName": "Hero Xtreme 125R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Xtreme 160R",
+    "fullName": "Hero Xtreme 160R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Xtreme 200S",
+    "fullName": "Hero Xtreme 200S",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Xpulse 200",
+    "fullName": "Hero Xpulse 200",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Karizma XMR",
+    "fullName": "Hero Karizma XMR",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Hero Honda Splendor",
+    "fullName": "Hero Hero Honda Splendor",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Hero Honda CD Deluxe",
+    "fullName": "Hero Hero Honda CD Deluxe",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Hero Honda CBZ",
+    "fullName": "Hero Hero Honda CBZ",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Hero Honda Passion",
+    "fullName": "Hero Hero Honda Passion",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Hero Honda Hunk",
+    "fullName": "Hero Hero Honda Hunk",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Hero Honda Ambition",
+    "fullName": "Hero Hero Honda Ambition",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Shine 125",
+    "fullName": "Honda Shine 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Shine 100",
+    "fullName": "Honda Shine 100",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "SP 125",
+    "fullName": "Honda SP 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "SP 160",
+    "fullName": "Honda SP 160",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Unicorn",
+    "fullName": "Honda Unicorn",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Livo",
+    "fullName": "Honda Livo",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "CD 110 Dream",
+    "fullName": "Honda CD 110 Dream",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Hornet 2.0",
+    "fullName": "Honda Hornet 2.0",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "CB300F",
+    "fullName": "Honda CB300F",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "CB200X",
+    "fullName": "Honda CB200X",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "CB350",
+    "fullName": "Honda CB350",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "CB350RS",
+    "fullName": "Honda CB350RS",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "CB300R",
+    "fullName": "Honda CB300R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "NX200",
+    "fullName": "Honda NX200",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Dazzler",
+    "fullName": "Honda Dazzler",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Stunner",
+    "fullName": "Honda Stunner",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Twister",
+    "fullName": "Honda Twister",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Pulsar 125",
+    "fullName": "Bajaj Pulsar 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Pulsar 150",
+    "fullName": "Bajaj Pulsar 150",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Pulsar P150",
+    "fullName": "Bajaj Pulsar P150",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Pulsar N150",
+    "fullName": "Bajaj Pulsar N150",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Pulsar N160",
+    "fullName": "Bajaj Pulsar N160",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Pulsar NS125",
+    "fullName": "Bajaj Pulsar NS125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Pulsar NS160",
+    "fullName": "Bajaj Pulsar NS160",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Pulsar NS200",
+    "fullName": "Bajaj Pulsar NS200",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Pulsar RS200",
+    "fullName": "Bajaj Pulsar RS200",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Pulsar N250",
+    "fullName": "Bajaj Pulsar N250",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Pulsar F250",
+    "fullName": "Bajaj Pulsar F250",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Pulsar 220F",
+    "fullName": "Bajaj Pulsar 220F",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Platina 100",
+    "fullName": "Bajaj Platina 100",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Platina 110",
+    "fullName": "Bajaj Platina 110",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "CT 100",
+    "fullName": "Bajaj CT 100",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "CT 110X",
+    "fullName": "Bajaj CT 110X",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Discover",
+    "fullName": "Bajaj Discover",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Avenger Street 160",
+    "fullName": "Bajaj Avenger Street 160",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Avenger Cruise 220",
+    "fullName": "Bajaj Avenger Cruise 220",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Dominar 250",
+    "fullName": "Bajaj Dominar 250",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Dominar 400",
+    "fullName": "Bajaj Dominar 400",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Freedom 125",
+    "fullName": "Bajaj Freedom 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "V15",
+    "fullName": "Bajaj V15",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Boxer",
+    "fullName": "Bajaj Boxer",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Bajaj Xcd",
+    "fullName": "Bajaj Bajaj Xcd",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Apache RTR 160",
+    "fullName": "TVS Apache RTR 160",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Apache RTR 160 4V",
+    "fullName": "TVS Apache RTR 160 4V",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Apache RTR 180",
+    "fullName": "TVS Apache RTR 180",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Apache RTR 200 4V",
+    "fullName": "TVS Apache RTR 200 4V",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Apache RR 310",
+    "fullName": "TVS Apache RR 310",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Apache RTR 310",
+    "fullName": "TVS Apache RTR 310",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Raider 125",
+    "fullName": "TVS Raider 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Ronin",
+    "fullName": "TVS Ronin",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Radeon",
+    "fullName": "TVS Radeon",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Star City Plus",
+    "fullName": "TVS Star City Plus",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Sport",
+    "fullName": "TVS Sport",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Victor",
+    "fullName": "TVS Victor",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Phoenix 125",
+    "fullName": "TVS Phoenix 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Flame",
+    "fullName": "TVS Flame",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Fiero",
+    "fullName": "TVS Fiero",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Stryker",
+    "fullName": "TVS Stryker",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Jive",
+    "fullName": "TVS Jive",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "RTX 300",
+    "fullName": "TVS RTX 300",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Classic 350",
+    "fullName": "Royal Enfield Classic 350",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Bullet 350",
+    "fullName": "Royal Enfield Bullet 350",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Hunter 350",
+    "fullName": "Royal Enfield Hunter 350",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Meteor 350",
+    "fullName": "Royal Enfield Meteor 350",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Thunderbird 350",
+    "fullName": "Royal Enfield Thunderbird 350",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Thunderbird 500",
+    "fullName": "Royal Enfield Thunderbird 500",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Himalayan 411",
+    "fullName": "Royal Enfield Himalayan 411",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Himalayan 450",
+    "fullName": "Royal Enfield Himalayan 450",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Scram 411",
+    "fullName": "Royal Enfield Scram 411",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Interceptor 650",
+    "fullName": "Royal Enfield Interceptor 650",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Continental GT 650",
+    "fullName": "Royal Enfield Continental GT 650",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Super Meteor 650",
+    "fullName": "Royal Enfield Super Meteor 650",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Shotgun 650",
+    "fullName": "Royal Enfield Shotgun 650",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Guerrilla 450",
+    "fullName": "Royal Enfield Guerrilla 450",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Goan Classic 350",
+    "fullName": "Royal Enfield Goan Classic 350",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Bear 650",
+    "fullName": "Royal Enfield Bear 650",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Electra",
+    "fullName": "Royal Enfield Electra",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Royal Enfield",
+    "model": "Standard 350",
+    "fullName": "Royal Enfield Standard 350",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "FZ-S Fi",
+    "fullName": "Yamaha FZ-S Fi",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "FZ-X",
+    "fullName": "Yamaha FZ-X",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "FZ 25",
+    "fullName": "Yamaha FZ 25",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "MT-15",
+    "fullName": "Yamaha MT-15",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "R15 V4",
+    "fullName": "Yamaha R15 V4",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "R15S",
+    "fullName": "Yamaha R15S",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "YZF-R3",
+    "fullName": "Yamaha YZF-R3",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "MT-03",
+    "fullName": "Yamaha MT-03",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "Saluto",
+    "fullName": "Yamaha Saluto",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "Libero",
+    "fullName": "Yamaha Libero",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "RX 100",
+    "fullName": "Yamaha RX 100",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "RX 135",
+    "fullName": "Yamaha RX 135",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "Crux",
+    "fullName": "Yamaha Crux",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "Gladiator",
+    "fullName": "Yamaha Gladiator",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "SZ-RR",
+    "fullName": "Yamaha SZ-RR",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "Fazer",
+    "fullName": "Yamaha Fazer",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "YBR 125",
+    "fullName": "Yamaha YBR 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Gixxer",
+    "fullName": "Suzuki Gixxer",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Gixxer SF",
+    "fullName": "Suzuki Gixxer SF",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Gixxer 250",
+    "fullName": "Suzuki Gixxer 250",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Gixxer SF 250",
+    "fullName": "Suzuki Gixxer SF 250",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "V-Strom SX",
+    "fullName": "Suzuki V-Strom SX",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Hayabusa",
+    "fullName": "Suzuki Hayabusa",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Intruder",
+    "fullName": "Suzuki Intruder",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "GS150R",
+    "fullName": "Suzuki GS150R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Hayate",
+    "fullName": "Suzuki Hayate",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Slingshot",
+    "fullName": "Suzuki Slingshot",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "KTM",
+    "model": "Duke 125",
+    "fullName": "KTM Duke 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "KTM",
+    "model": "Duke 200",
+    "fullName": "KTM Duke 200",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "KTM",
+    "model": "Duke 250",
+    "fullName": "KTM Duke 250",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "KTM",
+    "model": "Duke 390",
+    "fullName": "KTM Duke 390",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "KTM",
+    "model": "RC 125",
+    "fullName": "KTM RC 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "KTM",
+    "model": "RC 200",
+    "fullName": "KTM RC 200",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "KTM",
+    "model": "RC 390",
+    "fullName": "KTM RC 390",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "KTM",
+    "model": "Adventure 250",
+    "fullName": "KTM Adventure 250",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "KTM",
+    "model": "Adventure 390",
+    "fullName": "KTM Adventure 390",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Jawa",
+    "model": "Jawa 42",
+    "fullName": "Jawa Jawa 42",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Jawa",
+    "model": "Jawa 350",
+    "fullName": "Jawa Jawa 350",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Jawa",
+    "model": "Jawa Perak",
+    "fullName": "Jawa Jawa Perak",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Jawa",
+    "model": "Jawa 42 Bobber",
+    "fullName": "Jawa Jawa 42 Bobber",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Jawa",
+    "model": "Jawa 300",
+    "fullName": "Jawa Jawa 300",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yezdi",
+    "model": "Yezdi Roadster",
+    "fullName": "Yezdi Yezdi Roadster",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yezdi",
+    "model": "Yezdi Scrambler",
+    "fullName": "Yezdi Yezdi Scrambler",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yezdi",
+    "model": "Yezdi Adventure",
+    "fullName": "Yezdi Yezdi Adventure",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yezdi",
+    "model": "Yezdi Classic",
+    "fullName": "Yezdi Yezdi Classic",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Mojo",
+    "fullName": "Mahindra Mojo",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Centuro",
+    "fullName": "Mahindra Centuro",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Pantero",
+    "fullName": "Mahindra Pantero",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Stallio",
+    "fullName": "Mahindra Stallio",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Triumph",
+    "model": "Speed 400",
+    "fullName": "Triumph Speed 400",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Triumph",
+    "model": "Scrambler 400X",
+    "fullName": "Triumph Scrambler 400X",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Triumph",
+    "model": "Speed T4",
+    "fullName": "Triumph Speed T4",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Harley-Davidson",
+    "model": "X440",
+    "fullName": "Harley-Davidson X440",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Harley-Davidson",
+    "model": "Street 750",
+    "fullName": "Harley-Davidson Street 750",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Harley-Davidson",
+    "model": "Iron 883",
+    "fullName": "Harley-Davidson Iron 883",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Husqvarna",
+    "model": "Svartpilen 250",
+    "fullName": "Husqvarna Svartpilen 250",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Husqvarna",
+    "model": "Vitpilen 250",
+    "fullName": "Husqvarna Vitpilen 250",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Ninja 300",
+    "fullName": "Kawasaki Ninja 300",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Ninja 400",
+    "fullName": "Kawasaki Ninja 400",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Ninja 650",
+    "fullName": "Kawasaki Ninja 650",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Z650",
+    "fullName": "Kawasaki Z650",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Z900",
+    "fullName": "Kawasaki Z900",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Versys 650",
+    "fullName": "Kawasaki Versys 650",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BMW",
+    "model": "G 310 R",
+    "fullName": "BMW G 310 R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BMW",
+    "model": "G 310 GS",
+    "fullName": "BMW G 310 GS",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ducati",
+    "model": "Scrambler Icon",
+    "fullName": "Ducati Scrambler Icon",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ducati",
+    "model": "Monster",
+    "fullName": "Ducati Monster",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Benelli",
+    "model": "Imperiale 400",
+    "fullName": "Benelli Imperiale 400",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Benelli",
+    "model": "TNT 300",
+    "fullName": "Benelli TNT 300",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Splendor Pro",
+    "fullName": "Hero Splendor Pro",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Super Splendor Xtec",
+    "fullName": "Hero Super Splendor Xtec",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Hero Honda Joy",
+    "fullName": "Hero Hero Honda Joy",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Revolt",
+    "model": "RV400",
+    "fullName": "Revolt RV400",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Revolt",
+    "model": "RV1",
+    "fullName": "Revolt RV1",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Ultraviolette",
+    "model": "F77",
+    "fullName": "Ultraviolette F77",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Oben",
+    "model": "Rorr",
+    "fullName": "Oben Rorr",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Tork",
+    "model": "Kratos",
+    "fullName": "Tork Kratos",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Matter",
+    "model": "Aera",
+    "fullName": "Matter Aera",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Activa 6G",
+    "fullName": "Honda Activa 6G",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Activa 125",
+    "fullName": "Honda Activa 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Activa 110",
+    "fullName": "Honda Activa 110",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Dio",
+    "fullName": "Honda Dio",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Dio 125",
+    "fullName": "Honda Dio 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Grazia",
+    "fullName": "Honda Grazia",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Aviator",
+    "fullName": "Honda Aviator",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Navi",
+    "fullName": "Honda Navi",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Eterno",
+    "fullName": "Honda Eterno",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Activa e",
+    "fullName": "Honda Activa e",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "QC1",
+    "fullName": "Honda QC1",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Jupiter",
+    "fullName": "TVS Jupiter",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Jupiter 125",
+    "fullName": "TVS Jupiter 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Ntorq 125",
+    "fullName": "TVS Ntorq 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Scooty Pep Plus",
+    "fullName": "TVS Scooty Pep Plus",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Scooty Zest",
+    "fullName": "TVS Scooty Zest",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Scooty Streak",
+    "fullName": "TVS Scooty Streak",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Wego",
+    "fullName": "TVS Wego",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Pleasure",
+    "fullName": "TVS Pleasure",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "iQube",
+    "fullName": "TVS iQube",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Orbiter",
+    "fullName": "TVS Orbiter",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Scooty Teenz",
+    "fullName": "TVS Scooty Teenz",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "Zeppelin",
+    "fullName": "TVS Zeppelin",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "TVS",
+    "model": "XL100",
+    "fullName": "TVS XL100",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Access 125",
+    "fullName": "Suzuki Access 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Burgman Street",
+    "fullName": "Suzuki Burgman Street",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Avenis",
+    "fullName": "Suzuki Avenis",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Swish",
+    "fullName": "Suzuki Swish",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Let's",
+    "fullName": "Suzuki Let's",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Zeus",
+    "fullName": "Suzuki Zeus",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "Fascino 125",
+    "fullName": "Yamaha Fascino 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "RayZR 125",
+    "fullName": "Yamaha RayZR 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "Aerox 155",
+    "fullName": "Yamaha Aerox 155",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "Ray",
+    "fullName": "Yamaha Ray",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "Alpha",
+    "fullName": "Yamaha Alpha",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "Cygnus",
+    "fullName": "Yamaha Cygnus",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Pleasure Plus",
+    "fullName": "Hero Pleasure Plus",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Destini 125",
+    "fullName": "Hero Destini 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Maestro Edge 125",
+    "fullName": "Hero Maestro Edge 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Xoom 110",
+    "fullName": "Hero Xoom 110",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Xoom 125",
+    "fullName": "Hero Xoom 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Xoom 160",
+    "fullName": "Hero Xoom 160",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Duet",
+    "fullName": "Hero Duet",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Vespa",
+    "model": "Vespa SXL",
+    "fullName": "Vespa Vespa SXL",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Vespa",
+    "model": "Vespa VXL",
+    "fullName": "Vespa Vespa VXL",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Vespa",
+    "model": "Vespa S",
+    "fullName": "Vespa Vespa S",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Vespa",
+    "model": "Vespa Elettrica",
+    "fullName": "Vespa Vespa Elettrica",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Aprilia",
+    "model": "SR 125",
+    "fullName": "Aprilia SR 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Aprilia",
+    "model": "SR 160",
+    "fullName": "Aprilia SR 160",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Aprilia",
+    "model": "SR 175",
+    "fullName": "Aprilia SR 175",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Aprilia",
+    "model": "Storm 125",
+    "fullName": "Aprilia Storm 125",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Piaggio",
+    "model": "Liberty",
+    "fullName": "Piaggio Liberty",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Gusto",
+    "fullName": "Mahindra Gusto",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Duro",
+    "fullName": "Mahindra Duro",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Rodeo",
+    "fullName": "Mahindra Rodeo",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Flyte",
+    "fullName": "Mahindra Flyte",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kinetic",
+    "model": "Kinetic Honda",
+    "fullName": "Kinetic Kinetic Honda",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kinetic",
+    "model": "Zing",
+    "fullName": "Kinetic Zing",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kinetic",
+    "model": "Nova",
+    "fullName": "Kinetic Nova",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kinetic",
+    "model": "Luna",
+    "fullName": "Kinetic Luna",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kinetic",
+    "model": "Safari",
+    "fullName": "Kinetic Safari",
+    "fuel": "Diesel",
+    "source": "catalog"
+  },
+  {
+    "make": "LML",
+    "model": "Vespa LML",
+    "fullName": "LML Vespa LML",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "LML",
+    "model": "Star",
+    "fullName": "LML Star",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "LML",
+    "model": "NV",
+    "fullName": "LML NV",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Chetak",
+    "fullName": "Bajaj Chetak",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Priya",
+    "fullName": "Bajaj Priya",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Super",
+    "fullName": "Bajaj Super",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Bajaj",
+    "model": "Legend",
+    "fullName": "Bajaj Legend",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Lambretta",
+    "model": "Lambretta",
+    "fullName": "Lambretta Lambretta",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ola Electric",
+    "model": "S1 Pro",
+    "fullName": "Ola Electric S1 Pro",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Ola Electric",
+    "model": "S1 Air",
+    "fullName": "Ola Electric S1 Air",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Ola Electric",
+    "model": "S1 X",
+    "fullName": "Ola Electric S1 X",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Ather",
+    "model": "450X",
+    "fullName": "Ather 450X",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Ather",
+    "model": "450S",
+    "fullName": "Ather 450S",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Ather",
+    "model": "Rizta",
+    "fullName": "Ather Rizta",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Ather",
+    "model": "450 Apex",
+    "fullName": "Ather 450 Apex",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Okinawa",
+    "model": "Praise Pro",
+    "fullName": "Okinawa Praise Pro",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Okinawa",
+    "model": "iPraise+",
+    "fullName": "Okinawa iPraise+",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Okinawa",
+    "model": "R30",
+    "fullName": "Okinawa R30",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Okinawa",
+    "model": "Okhi-90",
+    "fullName": "Okinawa Okhi-90",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Ampere",
+    "model": "Magnus",
+    "fullName": "Ampere Magnus",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Ampere",
+    "model": "Primus",
+    "fullName": "Ampere Primus",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Ampere",
+    "model": "Reo",
+    "fullName": "Ampere Reo",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero Electric",
+    "model": "Optima",
+    "fullName": "Hero Electric Optima",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero Electric",
+    "model": "Photon",
+    "fullName": "Hero Electric Photon",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero Electric",
+    "model": "Flash",
+    "fullName": "Hero Electric Flash",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Hero",
+    "model": "Vida V1",
+    "fullName": "Hero Vida V1",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Simple Energy",
+    "model": "Simple One",
+    "fullName": "Simple Energy Simple One",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Pure EV",
+    "model": "EPluto 7G",
+    "fullName": "Pure EV EPluto 7G",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Bounce",
+    "model": "Infinity E1",
+    "fullName": "Bounce Infinity E1",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "River",
+    "model": "Indie",
+    "fullName": "River Indie",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Creta",
+    "fullName": "Hyundai Creta",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Swift",
+    "fullName": "Maruti Suzuki Swift",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Nexon",
+    "fullName": "Tata Nexon",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Thar",
+    "fullName": "Mahindra Thar",
+    "fuel": "Diesel",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Baleno",
+    "fullName": "Maruti Suzuki Baleno",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Brezza",
+    "fullName": "Maruti Suzuki Brezza",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Scorpio",
+    "fullName": "Mahindra Scorpio",
+    "fuel": "Diesel",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Ninja ZX-10R",
+    "fullName": "Kawasaki Ninja ZX-10R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Ninja ZX-6R",
+    "fullName": "Kawasaki Ninja ZX-6R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Ninja ZX-4R",
+    "fullName": "Kawasaki Ninja ZX-4R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Ninja H2",
+    "fullName": "Kawasaki Ninja H2",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Ninja 1000SX",
+    "fullName": "Kawasaki Ninja 1000SX",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Ninja 500",
+    "fullName": "Kawasaki Ninja 500",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Z900RS",
+    "fullName": "Kawasaki Z900RS",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Z H2",
+    "fullName": "Kawasaki Z H2",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kawasaki",
+    "model": "Versys 1000",
+    "fullName": "Kawasaki Versys 1000",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ducati",
+    "model": "Panigale V2",
+    "fullName": "Ducati Panigale V2",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ducati",
+    "model": "Panigale V4",
+    "fullName": "Ducati Panigale V4",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ducati",
+    "model": "Streetfighter V4",
+    "fullName": "Ducati Streetfighter V4",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ducati",
+    "model": "Monster SP",
+    "fullName": "Ducati Monster SP",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ducati",
+    "model": "Multistrada V4",
+    "fullName": "Ducati Multistrada V4",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ducati",
+    "model": "Diavel V4",
+    "fullName": "Ducati Diavel V4",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BMW Motorrad",
+    "model": "S 1000 RR",
+    "fullName": "BMW Motorrad S 1000 RR",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BMW Motorrad",
+    "model": "M 1000 RR",
+    "fullName": "BMW Motorrad M 1000 RR",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BMW Motorrad",
+    "model": "S 1000 R",
+    "fullName": "BMW Motorrad S 1000 R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BMW Motorrad",
+    "model": "R 1250 GS",
+    "fullName": "BMW Motorrad R 1250 GS",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BMW Motorrad",
+    "model": "R 1300 GS",
+    "fullName": "BMW Motorrad R 1300 GS",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "CBR1000RR-R Fireblade",
+    "fullName": "Honda CBR1000RR-R Fireblade",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "CBR650R",
+    "fullName": "Honda CBR650R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Africa Twin",
+    "fullName": "Honda Africa Twin",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Gold Wing",
+    "fullName": "Honda Gold Wing",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "YZF-R1",
+    "fullName": "Yamaha YZF-R1",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "YZF-R1M",
+    "fullName": "Yamaha YZF-R1M",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "YZF-R6",
+    "fullName": "Yamaha YZF-R6",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "YZF-R7",
+    "fullName": "Yamaha YZF-R7",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Yamaha",
+    "model": "MT-09",
+    "fullName": "Yamaha MT-09",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "GSX-R1000R",
+    "fullName": "Suzuki GSX-R1000R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Suzuki",
+    "model": "Katana",
+    "fullName": "Suzuki Katana",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Triumph",
+    "model": "Daytona 660",
+    "fullName": "Triumph Daytona 660",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Triumph",
+    "model": "Street Triple 765",
+    "fullName": "Triumph Street Triple 765",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Triumph",
+    "model": "Speed Triple 1200",
+    "fullName": "Triumph Speed Triple 1200",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Triumph",
+    "model": "Rocket 3",
+    "fullName": "Triumph Rocket 3",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Triumph",
+    "model": "Tiger 900",
+    "fullName": "Triumph Tiger 900",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Harley-Davidson",
+    "model": "Fat Boy",
+    "fullName": "Harley-Davidson Fat Boy",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Harley-Davidson",
+    "model": "Fat Bob",
+    "fullName": "Harley-Davidson Fat Bob",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Harley-Davidson",
+    "model": "Street Glide",
+    "fullName": "Harley-Davidson Street Glide",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Harley-Davidson",
+    "model": "Road Glide",
+    "fullName": "Harley-Davidson Road Glide",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Harley-Davidson",
+    "model": "Nightster",
+    "fullName": "Harley-Davidson Nightster",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Alto 800",
+    "fullName": "Maruti Suzuki Alto 800",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Alto K10",
+    "fullName": "Maruti Suzuki Alto K10",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "S-Presso",
+    "fullName": "Maruti Suzuki S-Presso",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Celerio",
+    "fullName": "Maruti Suzuki Celerio",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "WagonR",
+    "fullName": "Maruti Suzuki WagonR",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Dzire",
+    "fullName": "Maruti Suzuki Dzire",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Ignis",
+    "fullName": "Maruti Suzuki Ignis",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Ertiga",
+    "fullName": "Maruti Suzuki Ertiga",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "XL6",
+    "fullName": "Maruti Suzuki XL6",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Fronx",
+    "fullName": "Maruti Suzuki Fronx",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Grand Vitara",
+    "fullName": "Maruti Suzuki Grand Vitara",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Jimny",
+    "fullName": "Maruti Suzuki Jimny",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Invicto",
+    "fullName": "Maruti Suzuki Invicto",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Ciaz",
+    "fullName": "Maruti Suzuki Ciaz",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Maruti Suzuki",
+    "model": "Eeco",
+    "fullName": "Maruti Suzuki Eeco",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Santro",
+    "fullName": "Hyundai Santro",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Grand i10 Nios",
+    "fullName": "Hyundai Grand i10 Nios",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hyundai",
+    "model": "i20",
+    "fullName": "Hyundai i20",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Aura",
+    "fullName": "Hyundai Aura",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Verna",
+    "fullName": "Hyundai Verna",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Venue",
+    "fullName": "Hyundai Venue",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Alcazar",
+    "fullName": "Hyundai Alcazar",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Hyundai",
+    "model": "Exter",
+    "fullName": "Hyundai Exter",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Tiago",
+    "fullName": "Tata Tiago",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Tigor",
+    "fullName": "Tata Tigor",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Altroz",
+    "fullName": "Tata Altroz",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Punch",
+    "fullName": "Tata Punch",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Harrier",
+    "fullName": "Tata Harrier",
+    "fuel": "Diesel",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Safari",
+    "fullName": "Tata Safari",
+    "fuel": "Diesel",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Curvv",
+    "fullName": "Tata Curvv",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Thar Roxx",
+    "fullName": "Mahindra Thar Roxx",
+    "fuel": "Diesel",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Scorpio N",
+    "fullName": "Mahindra Scorpio N",
+    "fuel": "Diesel",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Scorpio Classic",
+    "fullName": "Mahindra Scorpio Classic",
+    "fuel": "Diesel",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Bolero",
+    "fullName": "Mahindra Bolero",
+    "fuel": "Diesel",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Bolero Neo",
+    "fullName": "Mahindra Bolero Neo",
+    "fuel": "Diesel",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "XUV300",
+    "fullName": "Mahindra XUV300",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "XUV 3XO",
+    "fullName": "Mahindra XUV 3XO",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "XUV700",
+    "fullName": "Mahindra XUV700",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Toyota",
+    "model": "Glanza",
+    "fullName": "Toyota Glanza",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Toyota",
+    "model": "Urban Cruiser Hyryder",
+    "fullName": "Toyota Urban Cruiser Hyryder",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Toyota",
+    "model": "Innova Crysta",
+    "fullName": "Toyota Innova Crysta",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Toyota",
+    "model": "Innova Hycross",
+    "fullName": "Toyota Innova Hycross",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Toyota",
+    "model": "Fortuner",
+    "fullName": "Toyota Fortuner",
+    "fuel": "Diesel",
+    "source": "catalog"
+  },
+  {
+    "make": "Toyota",
+    "model": "Vellfire",
+    "fullName": "Toyota Vellfire",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Toyota",
+    "model": "Land Cruiser 300",
+    "fullName": "Toyota Land Cruiser 300",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "City",
+    "fullName": "Honda City",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Amaze",
+    "fullName": "Honda Amaze",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Honda",
+    "model": "Elevate",
+    "fullName": "Honda Elevate",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Kia",
+    "model": "Sonet",
+    "fullName": "Kia Sonet",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Kia",
+    "model": "Carens",
+    "fullName": "Kia Carens",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "MG",
+    "model": "Hector",
+    "fullName": "MG Hector",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "MG",
+    "model": "Astor",
+    "fullName": "MG Astor",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "MG",
+    "model": "Gloster",
+    "fullName": "MG Gloster",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "MG",
+    "model": "ZS EV",
+    "fullName": "MG ZS EV",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "MG",
+    "model": "Comet EV",
+    "fullName": "MG Comet EV",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "MG",
+    "model": "Windsor EV",
+    "fullName": "MG Windsor EV",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Skoda",
+    "model": "Kushaq",
+    "fullName": "Skoda Kushaq",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Skoda",
+    "model": "Slavia",
+    "fullName": "Skoda Slavia",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Skoda",
+    "model": "Kodiaq",
+    "fullName": "Skoda Kodiaq",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Skoda",
+    "model": "Superb",
+    "fullName": "Skoda Superb",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Skoda",
+    "model": "Octavia",
+    "fullName": "Skoda Octavia",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Volkswagen",
+    "model": "Virtus",
+    "fullName": "Volkswagen Virtus",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Volkswagen",
+    "model": "Taigun",
+    "fullName": "Volkswagen Taigun",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Renault",
+    "model": "Kwid",
+    "fullName": "Renault Kwid",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Renault",
+    "model": "Triber",
+    "fullName": "Renault Triber",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Renault",
+    "model": "Kiger",
+    "fullName": "Renault Kiger",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Renault",
+    "model": "Duster",
+    "fullName": "Renault Duster",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Nissan",
+    "model": "Magnite",
+    "fullName": "Nissan Magnite",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Nissan",
+    "model": "Kicks",
+    "fullName": "Nissan Kicks",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ford",
+    "model": "EcoSport",
+    "fullName": "Ford EcoSport",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ford",
+    "model": "Figo",
+    "fullName": "Ford Figo",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ford",
+    "model": "Endeavour",
+    "fullName": "Ford Endeavour",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Jeep",
+    "model": "Compass",
+    "fullName": "Jeep Compass",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Jeep",
+    "model": "Meridian",
+    "fullName": "Jeep Meridian",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Jeep",
+    "model": "Wrangler",
+    "fullName": "Jeep Wrangler",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Land Rover",
+    "model": "Defender",
+    "fullName": "Land Rover Defender",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Land Rover",
+    "model": "Discovery",
+    "fullName": "Land Rover Discovery",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Land Rover",
+    "model": "Range Rover",
+    "fullName": "Land Rover Range Rover",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Land Rover",
+    "model": "Range Rover Sport",
+    "fullName": "Land Rover Range Rover Sport",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Land Rover",
+    "model": "Range Rover Velar",
+    "fullName": "Land Rover Range Rover Velar",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Land Rover",
+    "model": "Range Rover Evoque",
+    "fullName": "Land Rover Range Rover Evoque",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Mercedes-Benz",
+    "model": "GLA",
+    "fullName": "Mercedes-Benz GLA",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BMW",
+    "model": "X1",
+    "fullName": "BMW X1",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BMW",
+    "model": "X7",
+    "fullName": "BMW X7",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Audi",
+    "model": "Q8",
+    "fullName": "Audi Q8",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Ace",
+    "fullName": "Tata Ace",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Ace Gold",
+    "fullName": "Tata Ace Gold",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Ace EV",
+    "fullName": "Tata Ace EV",
+    "fuel": "EV",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Intra V30",
+    "fullName": "Tata Intra V30",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Yodha",
+    "fullName": "Tata Yodha",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "407",
+    "fullName": "Tata 407",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "709g",
+    "fullName": "Tata 709g",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "LPT 1109",
+    "fullName": "Tata LPT 1109",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "LPT 1613",
+    "fullName": "Tata LPT 1613",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Prima 4028.S",
+    "fullName": "Tata Prima 4028.S",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Signa 4825",
+    "fullName": "Tata Signa 4825",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ashok Leyland",
+    "model": "Dost",
+    "fullName": "Ashok Leyland Dost",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ashok Leyland",
+    "model": "Bada Dost",
+    "fullName": "Ashok Leyland Bada Dost",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ashok Leyland",
+    "model": "Partner",
+    "fullName": "Ashok Leyland Partner",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ashok Leyland",
+    "model": "Boss 1215",
+    "fullName": "Ashok Leyland Boss 1215",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ashok Leyland",
+    "model": "Ecomet 1215",
+    "fullName": "Ashok Leyland Ecomet 1215",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ashok Leyland",
+    "model": "Captain 4019",
+    "fullName": "Ashok Leyland Captain 4019",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ashok Leyland",
+    "model": "AVTR 4220",
+    "fullName": "Ashok Leyland AVTR 4220",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Eicher",
+    "model": "Pro 1049",
+    "fullName": "Eicher Pro 1049",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Eicher",
+    "model": "Pro 2049",
+    "fullName": "Eicher Pro 2049",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Eicher",
+    "model": "Pro 3015",
+    "fullName": "Eicher Pro 3015",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Eicher",
+    "model": "Pro 6031",
+    "fullName": "Eicher Pro 6031",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Eicher",
+    "model": "Pro 8035",
+    "fullName": "Eicher Pro 8035",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Bolero Pik-Up",
+    "fullName": "Mahindra Bolero Pik-Up",
+    "fuel": "Diesel",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Bolero Maxx Pik-Up",
+    "fullName": "Mahindra Bolero Maxx Pik-Up",
+    "fuel": "Diesel",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Jeeto",
+    "fullName": "Mahindra Jeeto",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Supro",
+    "fullName": "Mahindra Supro",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Furio 7",
+    "fullName": "Mahindra Furio 7",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Blazo X 28",
+    "fullName": "Mahindra Blazo X 28",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BharatBenz",
+    "model": "1015R",
+    "fullName": "BharatBenz 1015R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BharatBenz",
+    "model": "1215R",
+    "fullName": "BharatBenz 1215R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BharatBenz",
+    "model": "1617R",
+    "fullName": "BharatBenz 1617R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BharatBenz",
+    "model": "3523R",
+    "fullName": "BharatBenz 3523R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BharatBenz",
+    "model": "4228R",
+    "fullName": "BharatBenz 4228R",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Signa Tipper",
+    "fullName": "Tata Signa Tipper",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Prima Tipper",
+    "fullName": "Tata Prima Tipper",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "LPK Tipper",
+    "fullName": "Tata LPK Tipper",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Tata",
+    "model": "Ace Tipper",
+    "fullName": "Tata Ace Tipper",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ashok Leyland",
+    "model": "2820 Tipper",
+    "fullName": "Ashok Leyland 2820 Tipper",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ashok Leyland",
+    "model": "3718 Tipper",
+    "fullName": "Ashok Leyland 3718 Tipper",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Ashok Leyland",
+    "model": "AVTR Tipper",
+    "fullName": "Ashok Leyland AVTR Tipper",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Eicher",
+    "model": "Pro 6000 Series Tipper",
+    "fullName": "Eicher Pro 6000 Series Tipper",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "Blazo X Tipper",
+    "fullName": "Mahindra Blazo X Tipper",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BharatBenz",
+    "model": "2823C Tipper",
+    "fullName": "BharatBenz 2823C Tipper",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BharatBenz",
+    "model": "Construction Tipper",
+    "fullName": "BharatBenz Construction Tipper",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Caterpillar",
+    "model": "770",
+    "fullName": "Caterpillar 770",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Caterpillar",
+    "model": "777",
+    "fullName": "Caterpillar 777",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Caterpillar",
+    "model": "797",
+    "fullName": "Caterpillar 797",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Komatsu",
+    "model": "HD325",
+    "fullName": "Komatsu HD325",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Komatsu",
+    "model": "HD785",
+    "fullName": "Komatsu HD785",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BEML",
+    "model": "BH 60M",
+    "fullName": "BEML BH 60M",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "BEML",
+    "model": "BH 100",
+    "fullName": "BEML BH 100",
+    "fuel": "Petrol",
+    "source": "catalog"
+  },
+  {
+    "make": "Mahindra",
+    "model": "BE 6",
+    "fullName": "Mahindra BE 6",
+    "fuel": "EV",
+    "source": "verified"
+  },
+  {
+    "make": "Tata",
+    "model": "SUV",
+    "fullName": "Tata SUV",
+    "fuel": "Diesel",
+    "source": "verified"
+  }
+]

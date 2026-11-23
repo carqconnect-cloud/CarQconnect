@@ -1,0 +1,29 @@
+model SubscriptionPlan {
+  id          String   @id @default(cuid())
+  name        String   // "Free", "Basic", "Premium"
+  price       Float
+  badge       String?
+  description String
+  features    Json     // Array of { title: string, isIncluded: boolean }
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users UserSubscription[]
+
+  @@map("subscription_plans")
+}
+
+model UserSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  planId    String
+  status    String   @default("ACTIVE") // ACTIVE, CANCELLED, EXPIRED
+  startDate DateTime @default(now())
+  endDate   DateTime?
+  
+  plan      SubscriptionPlan @relation(fields: [planId], references: [id])
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+  @@map("user_subscriptions")
+}

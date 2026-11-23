@@ -1,0 +1,749 @@
+[
+  {
+    "table": "StoreOrderItem",
+    "count": 0,
+    "columnsCount": 5,
+    "foreignKeys": [
+      "orderId -> store_orders.id",
+      "productId -> StoreProduct.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "StoreOrderItem (store.prisma)"
+  },
+  {
+    "table": "StoreProduct",
+    "count": 18,
+    "columnsCount": 17,
+    "foreignKeys": [],
+    "referencedBy": [
+      "StoreOrderItem.productId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "StoreProduct (store.prisma)"
+  },
+  {
+    "table": "_prisma_migrations",
+    "count": 3,
+    "columnsCount": 8,
+    "foreignKeys": [],
+    "referencedBy": [],
+    "inPrisma": false,
+    "prismaModel": ""
+  },
+  {
+    "table": "activities",
+    "count": 0,
+    "columnsCount": 12,
+    "foreignKeys": [
+      "customerId -> customers.id",
+      "leadId -> leads.id",
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "Activity (crm.prisma)"
+  },
+  {
+    "table": "addresses",
+    "count": 1,
+    "columnsCount": 11,
+    "foreignKeys": [
+      "userId -> users.id"
+    ],
+    "referencedBy": [
+      "store_orders.addressId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "Address (identity.prisma)"
+  },
+  {
+    "table": "ai_chat_conversations",
+    "count": 4,
+    "columnsCount": 9,
+    "foreignKeys": [],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "AiChatConversation (crm.prisma)"
+  },
+  {
+    "table": "ai_configurations",
+    "count": 0,
+    "columnsCount": 7,
+    "foreignKeys": [
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "AIConfiguration (crm.prisma)"
+  },
+  {
+    "table": "ai_escalation_rules",
+    "count": 0,
+    "columnsCount": 6,
+    "foreignKeys": [],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "AiEscalationRule (ai.prisma)"
+  },
+  {
+    "table": "ai_intents",
+    "count": 0,
+    "columnsCount": 6,
+    "foreignKeys": [],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "AiIntent (ai.prisma)"
+  },
+  {
+    "table": "ai_knowledge_articles",
+    "count": 0,
+    "columnsCount": 7,
+    "foreignKeys": [],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "AiKnowledgeArticle (ai.prisma)"
+  },
+  {
+    "table": "ai_tool_permissions",
+    "count": 0,
+    "columnsCount": 6,
+    "foreignKeys": [],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "AiToolPermission (ai.prisma)"
+  },
+  {
+    "table": "audit_logs",
+    "count": 21,
+    "columnsCount": 9,
+    "foreignKeys": [
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "AuditLog (organization.prisma)"
+  },
+  {
+    "table": "banners",
+    "count": 0,
+    "columnsCount": 9,
+    "foreignKeys": [],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "Banner (cms.prisma)"
+  },
+  {
+    "table": "call_records",
+    "count": 0,
+    "columnsCount": 11,
+    "foreignKeys": [
+      "customerId -> customers.id",
+      "leadId -> leads.id",
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "CallRecord (crm.prisma)"
+  },
+  {
+    "table": "campaigns",
+    "count": 0,
+    "columnsCount": 10,
+    "foreignKeys": [
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "Campaign (crm.prisma)"
+  },
+  {
+    "table": "crm_users",
+    "count": 1,
+    "columnsCount": 12,
+    "foreignKeys": [
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": [
+      "refresh_tokens.crmUserId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "CrmUser (organization.prisma)"
+  },
+  {
+    "table": "customers",
+    "count": 3,
+    "columnsCount": 10,
+    "foreignKeys": [
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": [
+      "leads.customerId",
+      "activities.customerId",
+      "support_tickets.customerId",
+      "call_records.customerId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "Customer (crm.prisma)"
+  },
+  {
+    "table": "documents",
+    "count": 0,
+    "columnsCount": 17,
+    "foreignKeys": [
+      "userId -> users.id",
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "Document (vehicle.prisma)"
+  },
+  {
+    "table": "emergency_contacts",
+    "count": 1,
+    "columnsCount": 12,
+    "foreignKeys": [
+      "userId -> users.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "EmergencyContact (identity.prisma)"
+  },
+  {
+    "table": "geofences",
+    "count": 0,
+    "columnsCount": 9,
+    "foreignKeys": [
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "Geofence (gps.prisma)"
+  },
+  {
+    "table": "gps_device_history",
+    "count": 0,
+    "columnsCount": 13,
+    "foreignKeys": [
+      "deviceId -> gps_devices.id",
+      "userId -> users.id",
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "GPSDeviceHistory (gps.prisma)"
+  },
+  {
+    "table": "gps_devices",
+    "count": 0,
+    "columnsCount": 16,
+    "foreignKeys": [
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": [
+      "gps_device_history.deviceId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "GPSDevice (gps.prisma)"
+  },
+  {
+    "table": "inventory_movements",
+    "count": 0,
+    "columnsCount": 16,
+    "foreignKeys": [
+      "productId -> products.id",
+      "warehouseId -> warehouses.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "InventoryMovement (inventory.prisma)"
+  },
+  {
+    "table": "inventory_serial_items",
+    "count": 0,
+    "columnsCount": 11,
+    "foreignKeys": [
+      "productId -> products.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "InventorySerialItem (inventory.prisma)"
+  },
+  {
+    "table": "leads",
+    "count": 8,
+    "columnsCount": 15,
+    "foreignKeys": [
+      "customerId -> customers.id",
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": [
+      "activities.leadId",
+      "call_records.leadId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "Lead (crm.prisma)"
+  },
+  {
+    "table": "membership_plans",
+    "count": 0,
+    "columnsCount": 11,
+    "foreignKeys": [],
+    "referencedBy": [
+      "subscriptions.planId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "MembershipPlan (membership.prisma)"
+  },
+  {
+    "table": "memberships",
+    "count": 2,
+    "columnsCount": 10,
+    "foreignKeys": [
+      "organizationId -> organizations.id",
+      "teamId -> teams.id",
+      "userId -> users.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "Membership (organization.prisma)"
+  },
+  {
+    "table": "notification_campaigns",
+    "count": 0,
+    "columnsCount": 13,
+    "foreignKeys": [],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "NotificationCampaign (cms.prisma)"
+  },
+  {
+    "table": "notifications",
+    "count": 7,
+    "columnsCount": 8,
+    "foreignKeys": [
+      "user_id -> users.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "Notification (notification.prisma)"
+  },
+  {
+    "table": "order_activities",
+    "count": 0,
+    "columnsCount": 8,
+    "foreignKeys": [
+      "orderId -> orders.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "OrderActivity (order.prisma)"
+  },
+  {
+    "table": "order_items",
+    "count": 0,
+    "columnsCount": 11,
+    "foreignKeys": [
+      "orderId -> orders.id",
+      "productId -> products.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "OrderItem (order.prisma)"
+  },
+  {
+    "table": "order_notes",
+    "count": 0,
+    "columnsCount": 6,
+    "foreignKeys": [
+      "orderId -> orders.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "OrderNote (order.prisma)"
+  },
+  {
+    "table": "order_refunds",
+    "count": 0,
+    "columnsCount": 15,
+    "foreignKeys": [
+      "orderId -> orders.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "OrderRefund (order.prisma)"
+  },
+  {
+    "table": "orders",
+    "count": 0,
+    "columnsCount": 22,
+    "foreignKeys": [
+      "userId -> users.id"
+    ],
+    "referencedBy": [
+      "order_refunds.orderId",
+      "order_items.orderId",
+      "order_notes.orderId",
+      "order_activities.orderId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "Order (order.prisma)"
+  },
+  {
+    "table": "organizations",
+    "count": 7,
+    "columnsCount": 7,
+    "foreignKeys": [],
+    "referencedBy": [
+      "leads.organizationId",
+      "customers.organizationId",
+      "activities.organizationId",
+      "memberships.organizationId",
+      "audit_logs.organizationId",
+      "support_tickets.organizationId",
+      "call_records.organizationId",
+      "ai_configurations.organizationId",
+      "crm_users.organizationId",
+      "campaigns.organizationId",
+      "teams.organizationId",
+      "sos_events.organizationId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "Organization (organization.prisma)"
+  },
+  {
+    "table": "platform_roles",
+    "count": 5,
+    "columnsCount": 7,
+    "foreignKeys": [],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "PlatformRole (platformRole.prisma)"
+  },
+  {
+    "table": "products",
+    "count": 0,
+    "columnsCount": 10,
+    "foreignKeys": [],
+    "referencedBy": [
+      "stock_items.productId",
+      "inventory_movements.productId",
+      "inventory_serial_items.productId",
+      "order_items.productId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "Product (inventory.prisma)"
+  },
+  {
+    "table": "qr_assignment_history",
+    "count": 0,
+    "columnsCount": 13,
+    "foreignKeys": [
+      "qrCodeId -> qr_codes.id",
+      "userId -> users.id",
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "QrAssignmentHistory (qr.prisma)"
+  },
+  {
+    "table": "qr_codes",
+    "count": 5,
+    "columnsCount": 8,
+    "foreignKeys": [
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": [
+      "qr_assignment_history.qrCodeId",
+      "qr_scan_logs.qrCodeId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "QrCode (qr.prisma)"
+  },
+  {
+    "table": "qr_scan_logs",
+    "count": 0,
+    "columnsCount": 9,
+    "foreignKeys": [
+      "qrCodeId -> qr_codes.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "QrScanLog (qr.prisma)"
+  },
+  {
+    "table": "qr_tags",
+    "count": 2,
+    "columnsCount": 11,
+    "foreignKeys": [
+      "userId -> users.id",
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "QrTag (vehicle.prisma)"
+  },
+  {
+    "table": "refresh_tokens",
+    "count": 19,
+    "columnsCount": 11,
+    "foreignKeys": [
+      "crmUserId -> crm_users.id",
+      "userId -> users.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "RefreshToken (identity.prisma)"
+  },
+  {
+    "table": "reminders",
+    "count": 0,
+    "columnsCount": 10,
+    "foreignKeys": [
+      "user_id -> users.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "Reminder (reminder.prisma)"
+  },
+  {
+    "table": "sos_contacts",
+    "count": 0,
+    "columnsCount": 8,
+    "foreignKeys": [
+      "userId -> users.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "SosContact (sos.prisma)"
+  },
+  {
+    "table": "sos_event_contacts",
+    "count": 0,
+    "columnsCount": 10,
+    "foreignKeys": [
+      "eventId -> sos_events.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "SosEventContact (sos.prisma)"
+  },
+  {
+    "table": "sos_events",
+    "count": 0,
+    "columnsCount": 13,
+    "foreignKeys": [
+      "organizationId -> organizations.id",
+      "resolvedById -> users.id",
+      "userId -> users.id"
+    ],
+    "referencedBy": [
+      "sos_event_contacts.eventId",
+      "sos_timeline_items.eventId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "SosEvent (sos.prisma)"
+  },
+  {
+    "table": "sos_timeline_items",
+    "count": 0,
+    "columnsCount": 5,
+    "foreignKeys": [
+      "actorId -> users.id",
+      "eventId -> sos_events.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "SosTimelineItem (sos.prisma)"
+  },
+  {
+    "table": "stock_items",
+    "count": 0,
+    "columnsCount": 10,
+    "foreignKeys": [
+      "productId -> products.id",
+      "warehouseId -> warehouses.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "StockItem (inventory.prisma)"
+  },
+  {
+    "table": "store_orders",
+    "count": 0,
+    "columnsCount": 9,
+    "foreignKeys": [
+      "addressId -> addresses.id",
+      "userId -> users.id"
+    ],
+    "referencedBy": [
+      "StoreOrderItem.orderId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "StoreOrder (store.prisma)"
+  },
+  {
+    "table": "subscription_plans",
+    "count": 3,
+    "columnsCount": 8,
+    "foreignKeys": [],
+    "referencedBy": [
+      "user_subscriptions.planId"
+    ],
+    "inPrisma": false,
+    "prismaModel": ""
+  },
+  {
+    "table": "subscriptions",
+    "count": 0,
+    "columnsCount": 16,
+    "foreignKeys": [
+      "planId -> membership_plans.id",
+      "userId -> users.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "Subscription (membership.prisma)"
+  },
+  {
+    "table": "support_tickets",
+    "count": 3,
+    "columnsCount": 16,
+    "foreignKeys": [
+      "assignedToId -> users.id",
+      "customerId -> customers.id",
+      "organizationId -> organizations.id",
+      "userId -> users.id",
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": [
+      "ticket_messages.ticketId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "SupportTicket (support.prisma)"
+  },
+  {
+    "table": "teams",
+    "count": 0,
+    "columnsCount": 7,
+    "foreignKeys": [
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": [
+      "memberships.teamId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "Team (organization.prisma)"
+  },
+  {
+    "table": "ticket_messages",
+    "count": 0,
+    "columnsCount": 6,
+    "foreignKeys": [
+      "ticketId -> support_tickets.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "TicketMessage (support.prisma)"
+  },
+  {
+    "table": "trips",
+    "count": 0,
+    "columnsCount": 21,
+    "foreignKeys": [
+      "userId -> users.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "Trip (trip.prisma)"
+  },
+  {
+    "table": "user_subscriptions",
+    "count": 0,
+    "columnsCount": 6,
+    "foreignKeys": [
+      "planId -> subscription_plans.id",
+      "userId -> users.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "UserSubscription (subscription.prisma)"
+  },
+  {
+    "table": "users",
+    "count": 4,
+    "columnsCount": 13,
+    "foreignKeys": [],
+    "referencedBy": [
+      "refresh_tokens.userId",
+      "memberships.userId",
+      "qr_tags.userId",
+      "documents.userId",
+      "notifications.user_id",
+      "reminders.user_id",
+      "user_subscriptions.userId",
+      "trips.userId",
+      "store_orders.userId",
+      "addresses.userId",
+      "emergency_contacts.userId",
+      "vehicles.userId",
+      "gps_device_history.userId",
+      "subscriptions.userId",
+      "orders.userId",
+      "qr_assignment_history.userId",
+      "sos_events.userId",
+      "sos_events.resolvedById",
+      "sos_contacts.userId",
+      "sos_timeline_items.actorId",
+      "support_tickets.userId",
+      "support_tickets.assignedToId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "User (identity.prisma)"
+  },
+  {
+    "table": "vehicle_documents",
+    "count": 0,
+    "columnsCount": 8,
+    "foreignKeys": [
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": [],
+    "inPrisma": true,
+    "prismaModel": "VehicleDocument (vehicle.prisma)"
+  },
+  {
+    "table": "vehicles",
+    "count": 2,
+    "columnsCount": 13,
+    "foreignKeys": [
+      "userId -> users.id"
+    ],
+    "referencedBy": [
+      "qr_tags.vehicleId",
+      "documents.vehicleId",
+      "gps_devices.vehicleId",
+      "gps_device_history.vehicleId",
+      "geofences.vehicleId",
+      "qr_codes.vehicleId",
+      "qr_assignment_history.vehicleId",
+      "support_tickets.vehicleId",
+      "vehicle_documents.vehicleId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "Vehicle (vehicle.prisma)"
+  },
+  {
+    "table": "warehouses",
+    "count": 0,
+    "columnsCount": 10,
+    "foreignKeys": [],
+    "referencedBy": [
+      "stock_items.warehouseId",
+      "inventory_movements.warehouseId"
+    ],
+    "inPrisma": true,
+    "prismaModel": "Warehouse (inventory.prisma)"
+  }
+]

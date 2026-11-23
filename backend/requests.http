@@ -1,0 +1,107 @@
+### Fioner API — VS Code REST Client (extension: humao.rest-client)
+### Run "Login" first; @accessToken fills in from the response.
+
+@host = http://localhost:4000/api/v1
+@email = owner@fioner.test
+@password = Password123
+
+### Health
+GET {{host}}/health/ready
+
+### Login
+# @name login
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+@accessToken = {{login.response.body.data.tokens.accessToken}}
+@refreshToken = {{login.response.body.data.tokens.refreshToken}}
+@orgId = {{login.response.body.data.activeOrganizationId}}
+
+### Register a brand new account + organization
+POST {{host}}/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Test",
+  "lastName": "User",
+  "email": "test.user@example.com",
+  "password": "Password123",
+  "organizationName": "Test Co"
+}
+
+### Who am I
+GET {{host}}/auth/me
+Authorization: Bearer {{accessToken}}
+
+### Rotate tokens
+POST {{host}}/auth/refresh
+Content-Type: application/json
+
+{ "refreshToken": "{{refreshToken}}" }
+
+### Current organization
+GET {{host}}/organizations/current
+Authorization: Bearer {{accessToken}}
+X-Organization-Id: {{orgId}}
+
+### Members
+GET {{host}}/users?page=1&limit=20
+Authorization: Bearer {{accessToken}}
+X-Organization-Id: {{orgId}}
+
+### Invite a member (ADMIN+)
+POST {{host}}/users/invite
+Authorization: Bearer {{accessToken}}
+X-Organization-Id: {{orgId}}
+Content-Type: application/json
+
+{
+  "email": "new.member@example.com",
+  "firstName": "New",
+  "lastName": "Member",
+  "role": "MEMBER",
+  "temporaryPassword": "Password123"
+}
+
+### Leads
+GET {{host}}/crm/leads?page=1&limit=20&sortBy=createdAt&sortOrder=desc
+Authorization: Bearer {{accessToken}}
+X-Organization-Id: {{orgId}}
+
+### Leads by status
+GET {{host}}/crm/leads?status=QUALIFIED
+Authorization: Bearer {{accessToken}}
+X-Organization-Id: {{orgId}}
+
+### Lead stats
+GET {{host}}/crm/leads/stats
+Authorization: Bearer {{accessToken}}
+X-Organization-Id: {{orgId}}
+
+### Create a lead
+POST {{host}}/crm/leads
+Authorization: Bearer {{accessToken}}
+X-Organization-Id: {{orgId}}
+Content-Type: application/json
+
+{
+  "name": "Arjun Mehta",
+  "email": "arjun@example.com",
+  "company": "Mehta Industries",
+  "source": "website",
+  "status": "NEW",
+  "value": 60000
+}
+
+### Validation error example (missing name)
+POST {{host}}/crm/leads
+Authorization: Bearer {{accessToken}}
+X-Organization-Id: {{orgId}}
+Content-Type: application/json
+
+{ "email": "not-an-email" }

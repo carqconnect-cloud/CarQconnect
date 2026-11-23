@@ -1,0 +1,53 @@
+// -----------------------------------------------------------------------------
+// AI Administration & Governance Domain (Phase 3A)
+// Scope: Persistent governance configuration for Super Admin AI Console
+// -----------------------------------------------------------------------------
+
+model AiKnowledgeArticle {
+  id        String   @id @default(cuid())
+  question  String   @db.VarChar(255)
+  answer    String?  @db.Text
+  category  String   @db.VarChar(50)   // "Product" | "Billing" | "Safety" | "Account"
+  status    String   @default("draft") @db.VarChar(20) // "draft" | "published"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@map("ai_knowledge_articles")
+}
+
+model AiIntent {
+  id        String   @id @default(cuid())
+  name      String   @unique @db.VarChar(100)
+  tool      String   @db.VarChar(100)
+  threshold Float    @default(0.75)    // Floating-point confidence threshold in [0, 1]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tool])
+  @@map("ai_intents")
+}
+
+model AiToolPermission {
+  id        String   @id @default(cuid())
+  toolKey   String   @unique @db.VarChar(50) // Stable immutable key
+  name      String   @db.VarChar(100)
+  read      Boolean  @default(false)         // Fail-safe closed
+  write     Boolean  @default(false)         // Fail-safe closed
+  updatedAt DateTime @updatedAt
+
+  @@map("ai_tool_permissions")
+}
+
+model AiEscalationRule {
+  id        String   @id @default(cuid())
+  condition String   @db.VarChar(255)
+  action    String   @db.VarChar(255)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active])
+  @@map("ai_escalation_rules")
+}

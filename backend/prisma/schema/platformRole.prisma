@@ -1,0 +1,17 @@
+// -----------------------------------------------------------------------------
+// Platform Role Governance Domain (Phase 3D Hardening)
+// Scope: Authoritative database persistence for the 5 platform staff roles
+// and their 14-module capability matrix.
+// -----------------------------------------------------------------------------
+
+model PlatformRole {
+  id        String   @id // Deterministic ID: 'role_1' (Super Admin)
+  name      String   @db.VarChar(100)
+  desc      String   @db.VarChar(255)
+  perms     Json     // 'all' for Super Admin, or Record<string, string[]>
+  version   Int      @default(1) // Concurrency version control
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("platform_roles")
+}

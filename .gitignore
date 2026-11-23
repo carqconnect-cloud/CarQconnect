@@ -1,0 +1,302 @@
+# =========================================================
+# FIONER MONOREPO - ROOT .gitignore
+# =========================================================
+
+
+# ---------------------------------------------------------
+# ENVIRONMENT / SECRETS
+# ---------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.sample
+
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.sample
+
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Local secrets
+secrets/
+**/secrets/
+
+
+# ---------------------------------------------------------
+# NODE / NPM / YARN / PNPM
+# ---------------------------------------------------------
+node_modules/
+**/node_modules/
+
+.npm/
+**/.npm/
+
+.pnpm-store/
+**/.pnpm-store/
+
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# ---------------------------------------------------------
+# NEXT.JS
+# ---------------------------------------------------------
+.next/
+**/.next/
+
+out/
+**/out/
+
+.vercel/
+**/.vercel/
+
+
+# ---------------------------------------------------------
+# REACT / VITE
+# ---------------------------------------------------------
+dist/
+**/dist/
+
+build/
+**/build/
+
+.vite/
+**/.vite/
+
+
+# ---------------------------------------------------------
+# TYPESCRIPT
+# ---------------------------------------------------------
+*.tsbuildinfo
+
+
+# ---------------------------------------------------------
+# TESTING / COVERAGE
+# ---------------------------------------------------------
+coverage/
+**/coverage/
+
+.nyc_output/
+**/.nyc_output/
+
+test-results/
+**/test-results/
+
+playwright-report/
+**/playwright-report/
+
+
+# ---------------------------------------------------------
+# LOGS
+# ---------------------------------------------------------
+logs/
+**/logs/
+
+*.log
+
+debug.log
+error.log
+combined.log
+
+
+# ---------------------------------------------------------
+# CACHE / TEMP
+# ---------------------------------------------------------
+.cache/
+**/.cache/
+
+temp/
+tmp/
+
+**/temp/
+**/tmp/
+
+*.tmp
+*.temp
+
+.eslintcache
+
+
+# ---------------------------------------------------------
+# PRISMA
+# ---------------------------------------------------------
+# Keep schema.prisma and migrations in Git.
+# Ignore local Prisma database files only.
+
+*.db
+*.db-journal
+
+prisma/dev.db
+**/prisma/dev.db
+**/prisma/dev.db-journal
+
+
+# ---------------------------------------------------------
+# FLUTTER / DART
+# ---------------------------------------------------------
+.dart_tool/
+**/.dart_tool/
+
+.flutter-plugins
+.flutter-plugins-dependencies
+
+.packages
+
+.pub/
+.pub-cache/
+
+build/
+**/build/
+
+coverage/
+
+# Flutter generated files
+**/GeneratedPluginRegistrant.java
+**/GeneratedPluginRegistrant.m
+**/GeneratedPluginRegistrant.swift
+
+# Flutter web/generated
+**/flutter_export_environment.sh
+
+# Android generated / local
+**/android/.gradle/
+**/android/local.properties
+
+# Signing keys
+*.jks
+*.keystore
+key.properties
+**/key.properties
+
+# iOS generated
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/ephemeral/
+**/ios/Flutter/Generated.xcconfig
+
+# macOS Flutter generated
+**/macos/Flutter/ephemeral/
+
+
+# ---------------------------------------------------------
+# PYTHON - IF ANY SERVICE USES PYTHON
+# ---------------------------------------------------------
+__pycache__/
+**/__pycache__/
+
+*.py[cod]
+
+venv/
+**/venv/
+
+.venv/
+**/.venv/
+
+env/
+**/env/
+
+.pytest_cache/
+**/.pytest_cache/
+
+.mypy_cache/
+**/.mypy_cache/
+
+.ruff_cache/
+**/.ruff_cache/
+
+
+# ---------------------------------------------------------
+# VS CODE / IDE
+# ---------------------------------------------------------
+.vscode/
+**/.vscode/
+
+.idea/
+**/.idea/
+
+*.code-workspace
+
+*.iml
+
+
+# ---------------------------------------------------------
+# WINDOWS
+# ---------------------------------------------------------
+Thumbs.db
+Thumbs.db:encryptable
+Desktop.ini
+
+$RECYCLE.BIN/
+
+
+# ---------------------------------------------------------
+# MACOS
+# ---------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+
+
+# ---------------------------------------------------------
+# LINUX
+# ---------------------------------------------------------
+*~
+
+
+# ---------------------------------------------------------
+# OS / EDITOR TEMP FILES
+# ---------------------------------------------------------
+*.swp
+*.swo
+
+*.bak
+*.backup
+
+*.orig
+
+
+# ---------------------------------------------------------
+# UPLOADS / LOCAL FILE STORAGE
+# ---------------------------------------------------------
+uploads/
+**/uploads/
+
+storage/
+**/storage/
+
+local-storage/
+**/local-storage/
+
+
+# ---------------------------------------------------------
+# GENERATED API / DOC OUTPUT
+# ---------------------------------------------------------
+docs/generated/
+**/docs/generated/
+
+
+# ---------------------------------------------------------
+# TURBO / MONOREPO CACHE - if added later
+# ---------------------------------------------------------
+.turbo/
+**/.turbo/
+
+
+# ---------------------------------------------------------
+# OPTIONAL LOCAL DEVELOPMENT
+# ---------------------------------------------------------
+.local/
+**/.local/
+backend/cars_dataset.csv

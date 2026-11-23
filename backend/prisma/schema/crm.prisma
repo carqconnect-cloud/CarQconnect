@@ -1,0 +1,158 @@
+// -----------------------------------------------------------------------------
+// CRM domain. Reference implementation for tenant-scoped models.
+// -----------------------------------------------------------------------------
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  WON
+  LOST
+}
+
+model Lead {
+  id             String     @id @default(cuid())
+  organizationId String
+  name           String
+  email          String?
+  phone          String?
+  company        String?
+  source         String?
+  status         LeadStatus @default(NEW)
+  value          Decimal?   @db.Decimal(12, 2)
+  notes          String?
+  ownerId        String? // Membership.userId responsible for the lead
+  convertedAt    DateTime?
+  customerId     String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer     Customer?    @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  activities   Activity[]
+  callRecords  CallRecord[]
+
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
+  @@map("leads")
+}
+
+model Customer {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  email          String?
+  phone          String?
+  company        String?
+  address        String?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  leads          Lead[]
+  activities     Activity[]
+  supportTickets SupportTicket[]
+  callRecords    CallRecord[]
+
+  @@index([organizationId])
+  @@map("customers")
+}
+
+model Activity {
+  id             String    @id @default(cuid())
+  organizationId String
+  type           String // CALL | EMAIL | MEETING | NOTE
+  subject        String
+  body           String?
+  dueAt          DateTime?
+  completedAt    DateTime?
+  leadId         String?
+  customerId     String?
+  createdById    String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lead         Lead?        @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  customer     Customer?    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, dueAt])
+  @@map("activities")
+}
+
+
+
+
+model CallRecord {
+  id             String   @id @default(cuid())
+  organizationId String
+  customerId     String?
+  leadId         String?
+  type           String // AI, HUMAN
+  duration       Int? // in seconds
+  status         String // COMPLETED, MISSED, FAILED
+  notes          String?
+  recordingUrl   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer     Customer?    @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  lead         Lead?        @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, type])
+  @@map("call_records")
+}
+
+model AIConfiguration {
+  id             String   @id @default(cuid())
+  organizationId String
+  scriptName     String
+  promptText     String   @db.Text
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("ai_configurations")
+}
+
+model Campaign {
+  id             String    @id @default(cuid())
+  organizationId String
+  name           String
+  status         String    @default("DRAFT")
+  audience       String?
+  startDate      DateTime?
+  endDate        DateTime?
+  budget         Decimal?  @db.Decimal(10, 2)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, status])
+  @@map("campaigns")
+}
+
+model AiChatConversation {
+  id          String   @id @default(cuid())
+  sessionId   String
+  userId      String?
+  userEmail   String?
+  userMessage String   @db.Text
+  aiResponse  String   @db.Text
+  summary     String?  @db.Text
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([userEmail])
+  @@index([userId])
+  @@index([sessionId])
+  @@map("ai_chat_conversations")
+}

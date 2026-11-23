@@ -1,0 +1,881 @@
+[
+  {
+    "table": "StoreOrderItem",
+    "count": 0,
+    "columnsCount": 5,
+    "prismaModel": "StoreOrderItem (store.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 0,
+    "codeHitFiles": []
+  },
+  {
+    "table": "StoreProduct",
+    "count": 18,
+    "columnsCount": 17,
+    "prismaModel": "StoreProduct (store.prisma)",
+    "referencedBy": [
+      "StoreOrderItem.productId"
+    ],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/app/store/store.service.ts"
+    ]
+  },
+  {
+    "table": "_prisma_migrations",
+    "count": 3,
+    "columnsCount": 8,
+    "prismaModel": "",
+    "referencedBy": [],
+    "codeHitsCount": 0,
+    "codeHitFiles": []
+  },
+  {
+    "table": "activities",
+    "count": 0,
+    "columnsCount": 12,
+    "prismaModel": "Activity (crm.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/crm/teams/team.repository.ts"
+    ]
+  },
+  {
+    "table": "addresses",
+    "count": 1,
+    "columnsCount": 11,
+    "prismaModel": "Address (identity.prisma)",
+    "referencedBy": [
+      "store_orders.addressId"
+    ],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/app/profile/appProfile.service.ts",
+      "src/modules/app/store/store.service.ts"
+    ]
+  },
+  {
+    "table": "ai_chat_conversations",
+    "count": 4,
+    "columnsCount": 9,
+    "prismaModel": "AiChatConversation (crm.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/common/utils/customerSync.ts",
+      "src/modules/ai/aiChat.service.ts"
+    ]
+  },
+  {
+    "table": "ai_configurations",
+    "count": 0,
+    "columnsCount": 7,
+    "prismaModel": "AIConfiguration (crm.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 0,
+    "codeHitFiles": []
+  },
+  {
+    "table": "ai_escalation_rules",
+    "count": 0,
+    "columnsCount": 6,
+    "prismaModel": "AiEscalationRule (ai.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/admin/ai/adminAi.repository.ts",
+      "src/modules/admin/reports/adminReports.repository.ts"
+    ]
+  },
+  {
+    "table": "ai_intents",
+    "count": 0,
+    "columnsCount": 6,
+    "prismaModel": "AiIntent (ai.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/admin/ai/adminAi.repository.ts",
+      "src/modules/admin/reports/adminReports.repository.ts"
+    ]
+  },
+  {
+    "table": "ai_knowledge_articles",
+    "count": 0,
+    "columnsCount": 7,
+    "prismaModel": "AiKnowledgeArticle (ai.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/admin/ai/adminAi.repository.ts",
+      "src/modules/admin/reports/adminReports.repository.ts"
+    ]
+  },
+  {
+    "table": "ai_tool_permissions",
+    "count": 0,
+    "columnsCount": 6,
+    "prismaModel": "AiToolPermission (ai.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/admin/ai/adminAi.repository.ts",
+      "src/modules/admin/reports/adminReports.repository.ts"
+    ]
+  },
+  {
+    "table": "audit_logs",
+    "count": 21,
+    "columnsCount": 9,
+    "prismaModel": "AuditLog (organization.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 5,
+    "codeHitFiles": [
+      "src/modules/admin/auditLogs/adminAuditLog.repository.ts",
+      "src/modules/admin/dashboard/adminDashboard.repository.ts",
+      "src/modules/admin/users/adminUser.repository.ts",
+      "src/modules/admin/vehicles/adminVehicle.repository.ts",
+      "src/modules/audit/audit.service.ts"
+    ]
+  },
+  {
+    "table": "banners",
+    "count": 0,
+    "columnsCount": 9,
+    "prismaModel": "Banner (cms.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/admin/cms/adminCms.repository.ts"
+    ]
+  },
+  {
+    "table": "call_records",
+    "count": 0,
+    "columnsCount": 11,
+    "prismaModel": "CallRecord (crm.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 3,
+    "codeHitFiles": [
+      "src/modules/admin/crm/adminCrm.repository.ts",
+      "src/modules/admin/reports/adminReports.repository.ts",
+      "src/modules/crm/dashboard/dashboard.controller.ts"
+    ]
+  },
+  {
+    "table": "campaigns",
+    "count": 0,
+    "columnsCount": 10,
+    "prismaModel": "Campaign (crm.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 0,
+    "codeHitFiles": []
+  },
+  {
+    "table": "crm_users",
+    "count": 1,
+    "columnsCount": 12,
+    "prismaModel": "CrmUser (organization.prisma)",
+    "referencedBy": [
+      "refresh_tokens.crmUserId"
+    ],
+    "codeHitsCount": 6,
+    "codeHitFiles": [
+      "src/common/middleware/tenant.middleware.ts",
+      "src/modules/auth/auth.repository.ts",
+      "src/modules/auth/auth.service.ts",
+      "src/modules/crm/teams/team.repository.ts",
+      "src/modules/crm/tickets/ticket.service.ts",
+      "src/modules/users/user.repository.ts"
+    ]
+  },
+  {
+    "table": "customers",
+    "count": 3,
+    "columnsCount": 10,
+    "prismaModel": "Customer (crm.prisma)",
+    "referencedBy": [
+      "leads.customerId",
+      "activities.customerId",
+      "support_tickets.customerId",
+      "call_records.customerId"
+    ],
+    "codeHitsCount": 10,
+    "codeHitFiles": [
+      "src/common/utils/customerSync.ts",
+      "src/modules/admin/crm/adminCrm.service.ts",
+      "src/modules/admin/dashboard/adminDashboard.repository.ts",
+      "src/modules/admin/support/adminSupport.repository.ts",
+      "src/modules/ai/aiChat.service.ts",
+      "src/modules/app/tickets/tickets.service.ts",
+      "src/modules/crm/customers/customer.repository.ts",
+      "src/modules/crm/dashboard/dashboard.controller.ts",
+      "src/modules/crm/tickets/ticket.service.ts"
+    ]
+  },
+  {
+    "table": "documents",
+    "count": 0,
+    "columnsCount": 17,
+    "prismaModel": "Document (vehicle.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/app/documents/documents.service.ts",
+      "src/modules/app/reminders/reminders.service.ts"
+    ]
+  },
+  {
+    "table": "emergency_contacts",
+    "count": 1,
+    "columnsCount": 12,
+    "prismaModel": "EmergencyContact (identity.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/app/profile/appProfile.service.ts",
+      "src/modules/app/sos/sos.service.ts"
+    ]
+  },
+  {
+    "table": "geofences",
+    "count": 0,
+    "columnsCount": 9,
+    "prismaModel": "Geofence (gps.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/admin/gps/adminGps.repository.ts"
+    ]
+  },
+  {
+    "table": "gps_device_history",
+    "count": 0,
+    "columnsCount": 13,
+    "prismaModel": "GPSDeviceHistory (gps.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/admin/gps/adminGps.repository.ts"
+    ]
+  },
+  {
+    "table": "gps_devices",
+    "count": 0,
+    "columnsCount": 16,
+    "prismaModel": "GPSDevice (gps.prisma)",
+    "referencedBy": [
+      "gps_device_history.deviceId"
+    ],
+    "codeHitsCount": 6,
+    "codeHitFiles": [
+      "src/modules/admin/dashboard/adminDashboard.repository.ts",
+      "src/modules/admin/gps/adminGps.repository.ts",
+      "src/modules/admin/gps/adminGps.service.ts",
+      "src/modules/admin/inventory/adminInventory.repository.ts",
+      "src/modules/admin/reports/adminReports.repository.ts"
+    ]
+  },
+  {
+    "table": "inventory_movements",
+    "count": 0,
+    "columnsCount": 16,
+    "prismaModel": "InventoryMovement (inventory.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/admin/inventory/adminInventory.repository.ts"
+    ]
+  },
+  {
+    "table": "inventory_serial_items",
+    "count": 0,
+    "columnsCount": 11,
+    "prismaModel": "InventorySerialItem (inventory.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 0,
+    "codeHitFiles": []
+  },
+  {
+    "table": "leads",
+    "count": 8,
+    "columnsCount": 15,
+    "prismaModel": "Lead (crm.prisma)",
+    "referencedBy": [
+      "activities.leadId",
+      "call_records.leadId"
+    ],
+    "codeHitsCount": 7,
+    "codeHitFiles": [
+      "src/config/database.ts",
+      "src/modules/admin/crm/adminCrm.repository.ts",
+      "src/modules/admin/dashboard/adminDashboard.repository.ts",
+      "src/modules/crm/dashboard/dashboard.controller.ts",
+      "src/modules/crm/leads/lead.repository.ts",
+      "src/modules/crm/teams/team.repository.ts"
+    ]
+  },
+  {
+    "table": "membership_plans",
+    "count": 0,
+    "columnsCount": 11,
+    "prismaModel": "MembershipPlan (membership.prisma)",
+    "referencedBy": [
+      "subscriptions.planId"
+    ],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/admin/memberships/adminMembership.repository.ts",
+      "src/modules/memberships/membership.repository.ts"
+    ]
+  },
+  {
+    "table": "memberships",
+    "count": 2,
+    "columnsCount": 10,
+    "prismaModel": "Membership (organization.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 10,
+    "codeHitFiles": [
+      "src/common/middleware/tenant.middleware.ts",
+      "src/modules/admin/dashboard/adminDashboard.repository.ts",
+      "src/modules/admin/memberships/adminMembership.repository.ts",
+      "src/modules/app/tickets/tickets.service.ts",
+      "src/modules/auth/auth.repository.ts",
+      "src/modules/crm/dashboard/dashboard.controller.ts",
+      "src/modules/crm/teams/team.repository.ts",
+      "src/modules/memberships/membership.repository.ts",
+      "src/modules/sos/sos.repository.ts",
+      "src/modules/users/user.service.ts"
+    ]
+  },
+  {
+    "table": "notification_campaigns",
+    "count": 0,
+    "columnsCount": 13,
+    "prismaModel": "NotificationCampaign (cms.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/admin/cms/adminCms.repository.ts"
+    ]
+  },
+  {
+    "table": "notifications",
+    "count": 7,
+    "columnsCount": 8,
+    "prismaModel": "Notification (notification.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 6,
+    "codeHitFiles": [
+      "src/modules/admin/cms/adminCms.repository.ts",
+      "src/modules/admin/integrations/adminIntegration.service.ts",
+      "src/modules/app/notifications/notifications.service.ts",
+      "src/modules/app/qr/appQr.service.ts",
+      "src/modules/app/sos/sos.service.ts",
+      "src/modules/app/store/store.service.ts"
+    ]
+  },
+  {
+    "table": "order_activities",
+    "count": 0,
+    "columnsCount": 8,
+    "prismaModel": "OrderActivity (order.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 4,
+    "codeHitFiles": [
+      "src/modules/admin/orders/adminOrders.repository.ts",
+      "src/modules/admin/orders/adminOrders.service.ts",
+      "src/modules/orders/orders.service.ts",
+      "src/modules/payment/webhook.controller.ts"
+    ]
+  },
+  {
+    "table": "order_items",
+    "count": 0,
+    "columnsCount": 11,
+    "prismaModel": "OrderItem (order.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/admin/orders/adminOrders.repository.ts"
+    ]
+  },
+  {
+    "table": "order_notes",
+    "count": 0,
+    "columnsCount": 6,
+    "prismaModel": "OrderNote (order.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/admin/orders/adminOrders.repository.ts",
+      "src/modules/admin/orders/adminOrders.service.ts"
+    ]
+  },
+  {
+    "table": "order_refunds",
+    "count": 0,
+    "columnsCount": 15,
+    "prismaModel": "OrderRefund (order.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/admin/orders/adminOrders.service.ts",
+      "src/modules/payment/webhook.controller.ts"
+    ]
+  },
+  {
+    "table": "orders",
+    "count": 0,
+    "columnsCount": 22,
+    "prismaModel": "Order (order.prisma)",
+    "referencedBy": [
+      "order_refunds.orderId",
+      "order_items.orderId",
+      "order_notes.orderId",
+      "order_activities.orderId"
+    ],
+    "codeHitsCount": 8,
+    "codeHitFiles": [
+      "src/modules/admin/dashboard/adminDashboard.repository.ts",
+      "src/modules/admin/orders/adminOrders.repository.ts",
+      "src/modules/admin/orders/adminOrders.service.ts",
+      "src/modules/admin/reports/adminReports.repository.ts",
+      "src/modules/orders/orders.repository.ts",
+      "src/modules/orders/orders.service.ts",
+      "src/modules/payment/webhook.controller.ts"
+    ]
+  },
+  {
+    "table": "organizations",
+    "count": 7,
+    "columnsCount": 7,
+    "prismaModel": "Organization (organization.prisma)",
+    "referencedBy": [
+      "leads.organizationId",
+      "customers.organizationId",
+      "activities.organizationId",
+      "memberships.organizationId",
+      "audit_logs.organizationId",
+      "support_tickets.organizationId",
+      "call_records.organizationId",
+      "ai_configurations.organizationId",
+      "crm_users.organizationId",
+      "campaigns.organizationId",
+      "teams.organizationId",
+      "sos_events.organizationId"
+    ],
+    "codeHitsCount": 9,
+    "codeHitFiles": [
+      "src/common/utils/customerSync.ts",
+      "src/modules/admin/crm/adminCrm.service.ts",
+      "src/modules/admin/dashboard/adminDashboard.repository.ts",
+      "src/modules/admin/organizations/adminOrganization.repository.ts",
+      "src/modules/admin/sos/adminSos.service.ts",
+      "src/modules/app/tickets/tickets.service.ts",
+      "src/modules/auth/auth.repository.ts",
+      "src/modules/auth/auth.service.ts",
+      "src/modules/organization/organization.service.ts"
+    ]
+  },
+  {
+    "table": "platform_roles",
+    "count": 5,
+    "columnsCount": 7,
+    "prismaModel": "PlatformRole (platformRole.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/admin/roles/adminRole.repository.ts"
+    ]
+  },
+  {
+    "table": "products",
+    "count": 0,
+    "columnsCount": 10,
+    "prismaModel": "Product (inventory.prisma)",
+    "referencedBy": [
+      "stock_items.productId",
+      "inventory_movements.productId",
+      "inventory_serial_items.productId",
+      "order_items.productId"
+    ],
+    "codeHitsCount": 3,
+    "codeHitFiles": [
+      "src/modules/admin/dashboard/adminDashboard.repository.ts",
+      "src/modules/admin/inventory/adminInventory.repository.ts"
+    ]
+  },
+  {
+    "table": "qr_assignment_history",
+    "count": 0,
+    "columnsCount": 13,
+    "prismaModel": "QrAssignmentHistory (qr.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/admin/qr/adminQr.repository.ts",
+      "src/modules/vehicles/vehicle.service.ts"
+    ]
+  },
+  {
+    "table": "qr_codes",
+    "count": 5,
+    "columnsCount": 8,
+    "prismaModel": "QrCode (qr.prisma)",
+    "referencedBy": [
+      "qr_assignment_history.qrCodeId",
+      "qr_scan_logs.qrCodeId"
+    ],
+    "codeHitsCount": 8,
+    "codeHitFiles": [
+      "src/modules/admin/dashboard/adminDashboard.repository.ts",
+      "src/modules/admin/qr/adminQr.repository.ts",
+      "src/modules/admin/qr/adminQr.service.ts",
+      "src/modules/admin/reports/adminReports.repository.ts",
+      "src/modules/admin/vehicles/adminVehicle.service.ts",
+      "src/modules/qr/qr.repository.ts",
+      "src/modules/vehicles/vehicle.service.ts"
+    ]
+  },
+  {
+    "table": "qr_scan_logs",
+    "count": 0,
+    "columnsCount": 9,
+    "prismaModel": "QrScanLog (qr.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/admin/qr/adminQr.repository.ts"
+    ]
+  },
+  {
+    "table": "qr_tags",
+    "count": 2,
+    "columnsCount": 11,
+    "prismaModel": "QrTag (vehicle.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/app/qr/appQr.service.ts"
+    ]
+  },
+  {
+    "table": "refresh_tokens",
+    "count": 19,
+    "columnsCount": 11,
+    "prismaModel": "RefreshToken (identity.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/auth/auth.repository.ts"
+    ]
+  },
+  {
+    "table": "reminders",
+    "count": 0,
+    "columnsCount": 10,
+    "prismaModel": "Reminder (reminder.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/app/reminders/reminders.service.ts"
+    ]
+  },
+  {
+    "table": "sos_contacts",
+    "count": 0,
+    "columnsCount": 8,
+    "prismaModel": "SosContact (sos.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/sos/sos.repository.ts"
+    ]
+  },
+  {
+    "table": "sos_event_contacts",
+    "count": 0,
+    "columnsCount": 10,
+    "prismaModel": "SosEventContact (sos.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/admin/sos/adminSos.repository.ts",
+      "src/modules/sos/sos.repository.ts"
+    ]
+  },
+  {
+    "table": "sos_events",
+    "count": 0,
+    "columnsCount": 13,
+    "prismaModel": "SosEvent (sos.prisma)",
+    "referencedBy": [
+      "sos_event_contacts.eventId",
+      "sos_timeline_items.eventId"
+    ],
+    "codeHitsCount": 4,
+    "codeHitFiles": [
+      "src/modules/admin/dashboard/adminDashboard.repository.ts",
+      "src/modules/admin/sos/adminSos.repository.ts",
+      "src/modules/sos/sos.repository.ts",
+      "src/modules/sos/sos.service.ts"
+    ]
+  },
+  {
+    "table": "sos_timeline_items",
+    "count": 0,
+    "columnsCount": 5,
+    "prismaModel": "SosTimelineItem (sos.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/admin/sos/adminSos.repository.ts",
+      "src/modules/sos/sos.repository.ts"
+    ]
+  },
+  {
+    "table": "stock_items",
+    "count": 0,
+    "columnsCount": 10,
+    "prismaModel": "StockItem (inventory.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/admin/inventory/adminInventory.repository.ts"
+    ]
+  },
+  {
+    "table": "store_orders",
+    "count": 0,
+    "columnsCount": 9,
+    "prismaModel": "StoreOrder (store.prisma)",
+    "referencedBy": [
+      "StoreOrderItem.orderId"
+    ],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/common/utils/customerSync.ts",
+      "src/modules/app/store/store.service.ts"
+    ]
+  },
+  {
+    "table": "subscription_plans",
+    "count": 3,
+    "columnsCount": 8,
+    "prismaModel": "",
+    "referencedBy": [
+      "user_subscriptions.planId"
+    ],
+    "codeHitsCount": 0,
+    "codeHitFiles": []
+  },
+  {
+    "table": "subscriptions",
+    "count": 0,
+    "columnsCount": 16,
+    "prismaModel": "Subscription (membership.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 7,
+    "codeHitFiles": [
+      "src/modules/admin/cms/adminCms.repository.ts",
+      "src/modules/admin/dashboard/adminDashboard.repository.ts",
+      "src/modules/admin/memberships/adminMembership.repository.ts",
+      "src/modules/admin/reports/adminReports.repository.ts",
+      "src/modules/app/subscriptions/subscriptions.service.ts",
+      "src/modules/memberships/membership.repository.ts",
+      "src/modules/memberships/membership.service.ts"
+    ]
+  },
+  {
+    "table": "support_tickets",
+    "count": 3,
+    "columnsCount": 16,
+    "prismaModel": "SupportTicket (support.prisma)",
+    "referencedBy": [
+      "ticket_messages.ticketId"
+    ],
+    "codeHitsCount": 7,
+    "codeHitFiles": [
+      "src/common/utils/customerSync.ts",
+      "src/modules/admin/reports/adminReports.repository.ts",
+      "src/modules/admin/support/adminSupport.repository.ts",
+      "src/modules/app/tickets/tickets.service.ts",
+      "src/modules/crm/customers/customer.repository.ts",
+      "src/modules/crm/dashboard/dashboard.controller.ts",
+      "src/modules/crm/tickets/ticket.service.ts"
+    ]
+  },
+  {
+    "table": "teams",
+    "count": 0,
+    "columnsCount": 7,
+    "prismaModel": "Team (organization.prisma)",
+    "referencedBy": [
+      "memberships.teamId"
+    ],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/modules/crm/dashboard/dashboard.controller.ts",
+      "src/modules/crm/teams/team.repository.ts"
+    ]
+  },
+  {
+    "table": "ticket_messages",
+    "count": 0,
+    "columnsCount": 6,
+    "prismaModel": "TicketMessage (support.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/admin/support/adminSupport.repository.ts"
+    ]
+  },
+  {
+    "table": "trips",
+    "count": 0,
+    "columnsCount": 21,
+    "prismaModel": "Trip (trip.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/common/utils/customerSync.ts",
+      "src/modules/app/trips/trips.service.ts"
+    ]
+  },
+  {
+    "table": "user_subscriptions",
+    "count": 0,
+    "columnsCount": 6,
+    "prismaModel": "UserSubscription (subscription.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 2,
+    "codeHitFiles": [
+      "src/common/utils/customerSync.ts",
+      "src/modules/app/subscriptions/subscriptions.service.ts"
+    ]
+  },
+  {
+    "table": "users",
+    "count": 4,
+    "columnsCount": 13,
+    "prismaModel": "User (identity.prisma)",
+    "referencedBy": [
+      "refresh_tokens.userId",
+      "memberships.userId",
+      "qr_tags.userId",
+      "documents.userId",
+      "notifications.user_id",
+      "reminders.user_id",
+      "user_subscriptions.userId",
+      "trips.userId",
+      "store_orders.userId",
+      "addresses.userId",
+      "emergency_contacts.userId",
+      "vehicles.userId",
+      "gps_device_history.userId",
+      "subscriptions.userId",
+      "orders.userId",
+      "qr_assignment_history.userId",
+      "sos_events.userId",
+      "sos_events.resolvedById",
+      "sos_contacts.userId",
+      "sos_timeline_items.actorId",
+      "support_tickets.userId",
+      "support_tickets.assignedToId"
+    ],
+    "codeHitsCount": 31,
+    "codeHitFiles": [
+      "src/common/middleware/auth.middleware.ts",
+      "src/common/utils/customerSync.ts",
+      "src/modules/admin/cms/adminCms.repository.ts",
+      "src/modules/admin/dashboard/adminDashboard.repository.ts",
+      "src/modules/admin/dashboard/adminDashboard.service.ts",
+      "src/modules/admin/gps/adminGps.service.ts",
+      "src/modules/admin/memberships/adminMembership.repository.ts",
+      "src/modules/admin/orders/adminOrders.service.ts",
+      "src/modules/admin/qr/adminQr.service.ts",
+      "src/modules/admin/reports/adminReports.repository.ts",
+      "src/modules/admin/reports/adminReports.schema.ts",
+      "src/modules/admin/reports/adminReports.service.ts",
+      "src/modules/admin/sos/adminSos.service.ts",
+      "src/modules/admin/support/adminSupport.repository.ts",
+      "src/modules/admin/users/adminUser.repository.ts",
+      "src/modules/admin/vehicles/adminVehicle.service.ts",
+      "src/modules/ai/ai.routes.ts",
+      "src/modules/app/profile/appProfile.service.ts",
+      "src/modules/app/qr/appQr.service.ts",
+      "src/modules/app/sos/sos.service.ts",
+      "src/modules/app/subscriptions/subscriptions.service.ts",
+      "src/modules/app/tickets/tickets.service.ts",
+      "src/modules/audit/audit.service.ts",
+      "src/modules/auth/auth.controller.ts",
+      "src/modules/auth/auth.repository.ts",
+      "src/modules/auth/auth.service.ts",
+      "src/modules/memberships/membership.service.ts",
+      "src/modules/orders/orders.service.ts",
+      "src/modules/users/user.repository.ts",
+      "src/modules/vehicles/vehicle.service.ts"
+    ]
+  },
+  {
+    "table": "vehicle_documents",
+    "count": 0,
+    "columnsCount": 8,
+    "prismaModel": "VehicleDocument (vehicle.prisma)",
+    "referencedBy": [],
+    "codeHitsCount": 1,
+    "codeHitFiles": [
+      "src/modules/vehicles/vehicle.repository.ts"
+    ]
+  },
+  {
+    "table": "vehicles",
+    "count": 2,
+    "columnsCount": 13,
+    "prismaModel": "Vehicle (vehicle.prisma)",
+    "referencedBy": [
+      "qr_tags.vehicleId",
+      "documents.vehicleId",
+      "gps_devices.vehicleId",
+      "gps_device_history.vehicleId",
+      "geofences.vehicleId",
+      "qr_codes.vehicleId",
+      "qr_assignment_history.vehicleId",
+      "support_tickets.vehicleId",
+      "vehicle_documents.vehicleId"
+    ],
+    "codeHitsCount": 12,
+    "codeHitFiles": [
+      "src/modules/admin/dashboard/adminDashboard.repository.ts",
+      "src/modules/admin/gps/adminGps.repository.ts",
+      "src/modules/admin/gps/adminGps.service.ts",
+      "src/modules/admin/qr/adminQr.repository.ts",
+      "src/modules/admin/qr/adminQr.service.ts",
+      "src/modules/admin/support/adminSupport.repository.ts",
+      "src/modules/admin/vehicles/adminVehicle.repository.ts",
+      "src/modules/app/qr/appQr.service.ts",
+      "src/modules/qr/qr.service.ts",
+      "src/modules/vehicles/vehicle.repository.ts"
+    ]
+  },
+  {
+    "table": "warehouses",
+    "count": 0,
+    "columnsCount": 10,
+    "prismaModel": "Warehouse (inventory.prisma)",
+    "referencedBy": [
+      "stock_items.warehouseId",
+      "inventory_movements.warehouseId"
+    ],
+    "codeHitsCount": 4,
+    "codeHitFiles": [
+      "src/modules/admin/inventory/adminInventory.repository.ts",
+      "src/modules/admin/inventory/adminInventory.service.ts",
+      "src/modules/admin/orders/adminOrders.service.ts",
+      "src/modules/orders/orders.service.ts"
+    ]
+  }
+]

@@ -1,0 +1,28 @@
+model Trip {
+  id              String    @id @default(cuid())
+  userId          String
+  title           String?
+  fromName        String
+  fromLat         Float
+  fromLng         Float
+  toName          String
+  toLat           Float
+  toLng           Float
+  distance        String?   // e.g. "156 km"
+  duration        String?   // e.g. "3h 20m"
+  viaRoute        String?   // e.g. "via Indore - Ujjain Road"
+  status          String    @default("PLANNED") // PLANNED, ACTIVE, COMPLETED, CANCELLED
+  preference      String?   // Fastest, Shortest, Scenic
+  avoidTolls      Boolean   @default(false)
+  avoidHighways   Boolean   @default(false)
+  geometry        Json?     // List of [lat, lng] coordinates
+  startedAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("trips")
+}

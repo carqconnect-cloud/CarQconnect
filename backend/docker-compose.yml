@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fioner-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fioner
+      POSTGRES_PASSWORD: fioner
+      POSTGRES_DB: fioner
+    ports:
+      - '5433:5432'
+    volumes:
+      - fioner-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U fioner -d fioner']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: fioner-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - fioner-redisdata:/data
+
+volumes:
+  fioner-pgdata:
+  fioner-redisdata:

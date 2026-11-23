@@ -1,0 +1,9 @@
+-- AlterEnum
+ALTER TYPE "Role" RENAME VALUE 'MANAGER' TO 'TEAM_HEAD';
+ALTER TYPE "Role" RENAME VALUE 'MEMBER' TO 'EXECUTIVE';
+
+-- AlterTable
+ALTER TABLE "memberships" ALTER COLUMN "role" SET DEFAULT 'EXECUTIVE';
+
+-- AlterTable
+ALTER TABLE "customers" ADD COLUMN "metadata" JSONB;

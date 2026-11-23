@@ -1,0 +1,1322 @@
+[
+  {
+    "table": "StoreOrderItem",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "orderId (text NOT NULL)",
+      "productId (text NOT NULL)",
+      "quantity (integer NOT NULL)",
+      "price (integer NOT NULL)"
+    ],
+    "foreignKeys": [
+      "orderId -> store_orders.id",
+      "productId -> StoreProduct.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "StoreProduct",
+    "count": 18,
+    "columns": [
+      "id (text NOT NULL)",
+      "title (text NOT NULL)",
+      "subtitle (text NOT NULL)",
+      "price (integer NOT NULL)",
+      "originalPrice (integer NOT NULL)",
+      "discountPercent (integer NOT NULL)",
+      "rating (double precision NOT NULL)",
+      "ratingCount (text NOT NULL)",
+      "category (text NOT NULL)",
+      "deliveryDate (text NOT NULL)",
+      "image (text NOT NULL)",
+      "galleryImages (ARRAY)",
+      "inStock (boolean NOT NULL)",
+      "onSale (boolean NOT NULL)",
+      "fullDescription (text NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": [
+      "StoreOrderItem.productId"
+    ]
+  },
+  {
+    "table": "_prisma_migrations",
+    "count": 3,
+    "columns": [
+      "id (character varying NOT NULL)",
+      "checksum (character varying NOT NULL)",
+      "finished_at (timestamp with time zone)",
+      "migration_name (character varying NOT NULL)",
+      "logs (text)",
+      "rolled_back_at (timestamp with time zone)",
+      "started_at (timestamp with time zone NOT NULL)",
+      "applied_steps_count (integer NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": []
+  },
+  {
+    "table": "activities",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "organizationId (text NOT NULL)",
+      "type (text NOT NULL)",
+      "subject (text NOT NULL)",
+      "body (text)",
+      "dueAt (timestamp without time zone)",
+      "completedAt (timestamp without time zone)",
+      "leadId (text)",
+      "customerId (text)",
+      "createdById (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "customerId -> customers.id",
+      "leadId -> leads.id",
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "addresses",
+    "count": 1,
+    "columns": [
+      "id (text NOT NULL)",
+      "userId (text NOT NULL)",
+      "type (text NOT NULL)",
+      "address (text NOT NULL)",
+      "landmark (text)",
+      "city (text NOT NULL)",
+      "state (text NOT NULL)",
+      "pincode (text NOT NULL)",
+      "isDefault (boolean NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "userId -> users.id"
+    ],
+    "referencedBy": [
+      "store_orders.addressId"
+    ]
+  },
+  {
+    "table": "ai_chat_conversations",
+    "count": 4,
+    "columns": [
+      "id (text NOT NULL)",
+      "sessionId (text NOT NULL)",
+      "userId (text)",
+      "userEmail (text)",
+      "userMessage (text NOT NULL)",
+      "aiResponse (text NOT NULL)",
+      "summary (text)",
+      "metadata (jsonb)",
+      "createdAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": []
+  },
+  {
+    "table": "ai_configurations",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "organizationId (text NOT NULL)",
+      "scriptName (text NOT NULL)",
+      "promptText (text NOT NULL)",
+      "isActive (boolean NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "ai_escalation_rules",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "condition (character varying NOT NULL)",
+      "action (character varying NOT NULL)",
+      "active (boolean NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": []
+  },
+  {
+    "table": "ai_intents",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "name (character varying NOT NULL)",
+      "tool (character varying NOT NULL)",
+      "threshold (double precision NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": []
+  },
+  {
+    "table": "ai_knowledge_articles",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "question (character varying NOT NULL)",
+      "answer (text)",
+      "category (character varying NOT NULL)",
+      "status (character varying NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": []
+  },
+  {
+    "table": "ai_tool_permissions",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "toolKey (character varying NOT NULL)",
+      "name (character varying NOT NULL)",
+      "read (boolean NOT NULL)",
+      "write (boolean NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": []
+  },
+  {
+    "table": "audit_logs",
+    "count": 21,
+    "columns": [
+      "id (text NOT NULL)",
+      "organizationId (text)",
+      "actorId (text)",
+      "action (text NOT NULL)",
+      "entity (text NOT NULL)",
+      "entityId (text)",
+      "metadata (jsonb)",
+      "ipAddress (text)",
+      "createdAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "banners",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "title (character varying NOT NULL)",
+      "schedule (character varying NOT NULL)",
+      "status (character varying NOT NULL)",
+      "targetUrl (text)",
+      "imageUrl (text)",
+      "priority (integer NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": []
+  },
+  {
+    "table": "call_records",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "organizationId (text NOT NULL)",
+      "customerId (text)",
+      "leadId (text)",
+      "type (text NOT NULL)",
+      "duration (integer)",
+      "status (text NOT NULL)",
+      "notes (text)",
+      "recordingUrl (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "customerId -> customers.id",
+      "leadId -> leads.id",
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "campaigns",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "organizationId (text NOT NULL)",
+      "name (text NOT NULL)",
+      "status (text NOT NULL)",
+      "audience (text)",
+      "startDate (timestamp without time zone)",
+      "endDate (timestamp without time zone)",
+      "budget (numeric)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "crm_users",
+    "count": 3,
+    "columns": [
+      "id (text NOT NULL)",
+      "organizationId (text NOT NULL)",
+      "teamId (text)",
+      "firstName (text NOT NULL)",
+      "lastName (text NOT NULL)",
+      "email (text NOT NULL)",
+      "phone (text)",
+      "passwordHash (text NOT NULL)",
+      "role (USER-DEFINED NOT NULL)",
+      "status (USER-DEFINED NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": [
+      "refresh_tokens.crmUserId"
+    ]
+  },
+  {
+    "table": "customers",
+    "count": 2,
+    "columns": [
+      "id (text NOT NULL)",
+      "organizationId (text NOT NULL)",
+      "name (text NOT NULL)",
+      "email (text)",
+      "phone (text)",
+      "company (text)",
+      "address (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)",
+      "metadata (jsonb)"
+    ],
+    "foreignKeys": [
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": [
+      "leads.customerId",
+      "activities.customerId",
+      "support_tickets.customerId",
+      "call_records.customerId"
+    ]
+  },
+  {
+    "table": "documents",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "userId (text NOT NULL)",
+      "vehicleId (text)",
+      "title (text NOT NULL)",
+      "subtitle (text)",
+      "docType (text NOT NULL)",
+      "status (text NOT NULL)",
+      "regNumber (text)",
+      "ownerName (text)",
+      "issueDate (timestamp without time zone)",
+      "expiryDate (timestamp without time zone)",
+      "reminderEnabled (boolean NOT NULL)",
+      "bankName (text)",
+      "frontImageUrl (text)",
+      "backImageUrl (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "userId -> users.id",
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "emergency_contacts",
+    "count": 1,
+    "columns": [
+      "id (text NOT NULL)",
+      "userId (text NOT NULL)",
+      "name (text NOT NULL)",
+      "phone (text NOT NULL)",
+      "initials (text NOT NULL)",
+      "isPrimary (boolean NOT NULL)",
+      "email (text)",
+      "relationship (text)",
+      "sendSmsGps (boolean NOT NULL)",
+      "shareTelemetry (boolean NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "userId -> users.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "geofences",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "vehicleId (text NOT NULL)",
+      "name (text NOT NULL)",
+      "latitude (double precision NOT NULL)",
+      "longitude (double precision NOT NULL)",
+      "radiusMeters (double precision NOT NULL)",
+      "isActive (boolean NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "gps_device_history",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "deviceId (text)",
+      "deviceImei (text NOT NULL)",
+      "vehicleId (text)",
+      "vehicleReg (text)",
+      "userId (text)",
+      "userEmail (text)",
+      "assignedBy (text)",
+      "assignedAt (timestamp without time zone NOT NULL)",
+      "unassignedAt (timestamp without time zone)",
+      "reason (text)",
+      "notes (text)",
+      "createdAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "deviceId -> gps_devices.id",
+      "userId -> users.id",
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "gps_devices",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "imei (text NOT NULL)",
+      "serialNumber (text)",
+      "model (text)",
+      "vendor (text)",
+      "status (USER-DEFINED NOT NULL)",
+      "vehicleId (text)",
+      "batteryLevel (integer)",
+      "signalStrength (text)",
+      "lastSeenAt (timestamp without time zone)",
+      "lastLatitude (double precision)",
+      "lastLongitude (double precision)",
+      "speed (double precision)",
+      "heading (double precision)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": [
+      "gps_device_history.deviceId"
+    ]
+  },
+  {
+    "table": "inventory_movements",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "productId (text NOT NULL)",
+      "warehouseId (text NOT NULL)",
+      "type (USER-DEFINED NOT NULL)",
+      "quantity (integer NOT NULL)",
+      "previousAvailable (integer NOT NULL)",
+      "newAvailable (integer NOT NULL)",
+      "previousReserved (integer)",
+      "newReserved (integer)",
+      "reason (text)",
+      "notes (text)",
+      "referenceType (text)",
+      "referenceId (text)",
+      "actorId (text)",
+      "actorEmail (text)",
+      "createdAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "productId -> products.id",
+      "warehouseId -> warehouses.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "inventory_serial_items",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "productId (text NOT NULL)",
+      "warehouseId (text)",
+      "serialNumber (text NOT NULL)",
+      "imei (text)",
+      "status (text NOT NULL)",
+      "batch (text)",
+      "vehicleReg (text)",
+      "userId (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "productId -> products.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "leads",
+    "count": 8,
+    "columns": [
+      "id (text NOT NULL)",
+      "organizationId (text NOT NULL)",
+      "name (text NOT NULL)",
+      "email (text)",
+      "phone (text)",
+      "company (text)",
+      "source (text)",
+      "status (USER-DEFINED NOT NULL)",
+      "value (numeric)",
+      "notes (text)",
+      "ownerId (text)",
+      "convertedAt (timestamp without time zone)",
+      "customerId (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "customerId -> customers.id",
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": [
+      "activities.leadId",
+      "call_records.leadId"
+    ]
+  },
+  {
+    "table": "membership_plans",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "slug (text NOT NULL)",
+      "name (text NOT NULL)",
+      "priceInPaise (integer NOT NULL)",
+      "validityDays (integer NOT NULL)",
+      "color (text NOT NULL)",
+      "benefits (ARRAY)",
+      "entitlements (jsonb NOT NULL)",
+      "isActive (boolean NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": [
+      "subscriptions.planId"
+    ]
+  },
+  {
+    "table": "memberships",
+    "count": 1,
+    "columns": [
+      "id (text NOT NULL)",
+      "userId (text NOT NULL)",
+      "organizationId (text NOT NULL)",
+      "status (USER-DEFINED NOT NULL)",
+      "isDefault (boolean NOT NULL)",
+      "invitedById (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)",
+      "teamId (text)",
+      "role (USER-DEFINED NOT NULL)"
+    ],
+    "foreignKeys": [
+      "organizationId -> organizations.id",
+      "teamId -> teams.id",
+      "userId -> users.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "notification_campaigns",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "name (character varying NOT NULL)",
+      "channel (character varying NOT NULL)",
+      "audience (character varying NOT NULL)",
+      "message (text)",
+      "status (character varying NOT NULL)",
+      "scheduledAt (timestamp without time zone)",
+      "sentAt (timestamp without time zone)",
+      "targetCount (integer NOT NULL)",
+      "isSimulated (boolean NOT NULL)",
+      "metadata (jsonb)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": []
+  },
+  {
+    "table": "notifications",
+    "count": 1,
+    "columns": [
+      "id (text NOT NULL)",
+      "user_id (text NOT NULL)",
+      "title (text NOT NULL)",
+      "description (text NOT NULL)",
+      "type (text NOT NULL)",
+      "isUnread (boolean NOT NULL)",
+      "created_at (timestamp without time zone NOT NULL)",
+      "updated_at (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "user_id -> users.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "order_activities",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "orderId (text NOT NULL)",
+      "status (USER-DEFINED NOT NULL)",
+      "title (text NOT NULL)",
+      "description (text)",
+      "actorId (text)",
+      "actorEmail (text)",
+      "createdAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "orderId -> orders.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "order_items",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "orderId (text NOT NULL)",
+      "productId (text NOT NULL)",
+      "productName (text NOT NULL)",
+      "sku (text NOT NULL)",
+      "unitPrice (double precision NOT NULL)",
+      "quantity (integer NOT NULL)",
+      "totalPrice (double precision NOT NULL)",
+      "warehouseId (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "orderId -> orders.id",
+      "productId -> products.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "order_notes",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "orderId (text NOT NULL)",
+      "actorId (text NOT NULL)",
+      "actorEmail (text)",
+      "text (text NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "orderId -> orders.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "order_refunds",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "orderId (text NOT NULL)",
+      "amount (double precision NOT NULL)",
+      "currency (text NOT NULL)",
+      "status (USER-DEFINED NOT NULL)",
+      "reason (text)",
+      "paymentId (text)",
+      "gatewayRefundId (text)",
+      "idempotencyKey (text NOT NULL)",
+      "failureReason (text)",
+      "requestedAt (timestamp without time zone NOT NULL)",
+      "processedAt (timestamp without time zone)",
+      "failedAt (timestamp without time zone)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "orderId -> orders.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "orders",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "orderNo (text NOT NULL)",
+      "userId (text NOT NULL)",
+      "customerName (text NOT NULL)",
+      "customerEmail (text NOT NULL)",
+      "customerPhone (text)",
+      "shippingAddress (jsonb)",
+      "status (USER-DEFINED NOT NULL)",
+      "payStatus (USER-DEFINED NOT NULL)",
+      "amount (double precision NOT NULL)",
+      "currency (text NOT NULL)",
+      "paymentId (text)",
+      "refundId (text)",
+      "awb (text)",
+      "placedAt (timestamp without time zone NOT NULL)",
+      "confirmedAt (timestamp without time zone)",
+      "shippedAt (timestamp without time zone)",
+      "deliveredAt (timestamp without time zone)",
+      "cancelledAt (timestamp without time zone)",
+      "returnedAt (timestamp without time zone)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "userId -> users.id"
+    ],
+    "referencedBy": [
+      "order_refunds.orderId",
+      "order_items.orderId",
+      "order_notes.orderId",
+      "order_activities.orderId"
+    ]
+  },
+  {
+    "table": "organizations",
+    "count": 8,
+    "columns": [
+      "id (text NOT NULL)",
+      "name (text NOT NULL)",
+      "slug (text NOT NULL)",
+      "logoUrl (text)",
+      "isActive (boolean NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": [
+      "leads.organizationId",
+      "customers.organizationId",
+      "activities.organizationId",
+      "memberships.organizationId",
+      "audit_logs.organizationId",
+      "support_tickets.organizationId",
+      "call_records.organizationId",
+      "ai_configurations.organizationId",
+      "crm_users.organizationId",
+      "campaigns.organizationId",
+      "teams.organizationId",
+      "sos_events.organizationId"
+    ]
+  },
+  {
+    "table": "platform_roles",
+    "count": 5,
+    "columns": [
+      "id (text NOT NULL)",
+      "name (character varying NOT NULL)",
+      "desc (character varying NOT NULL)",
+      "perms (jsonb NOT NULL)",
+      "version (integer NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": []
+  },
+  {
+    "table": "products",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "name (text NOT NULL)",
+      "sku (text NOT NULL)",
+      "category (USER-DEFINED NOT NULL)",
+      "price (double precision NOT NULL)",
+      "lowStockThreshold (integer NOT NULL)",
+      "isActive (boolean NOT NULL)",
+      "description (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": [
+      "stock_items.productId",
+      "inventory_movements.productId",
+      "inventory_serial_items.productId",
+      "order_items.productId"
+    ]
+  },
+  {
+    "table": "qr_assignment_history",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "qrCodeId (text)",
+      "qrCodeValue (text NOT NULL)",
+      "vehicleId (text)",
+      "vehicleReg (text)",
+      "userId (text)",
+      "userEmail (text)",
+      "assignedBy (text)",
+      "assignedAt (timestamp without time zone NOT NULL)",
+      "unassignedAt (timestamp without time zone)",
+      "reason (text)",
+      "notes (text)",
+      "createdAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "qrCodeId -> qr_codes.id",
+      "userId -> users.id",
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "qr_codes",
+    "count": 5,
+    "columns": [
+      "id (text NOT NULL)",
+      "code (text NOT NULL)",
+      "batch (text NOT NULL)",
+      "status (USER-DEFINED NOT NULL)",
+      "vehicleId (text)",
+      "scansCount (integer NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": [
+      "qr_assignment_history.qrCodeId",
+      "qr_scan_logs.qrCodeId"
+    ]
+  },
+  {
+    "table": "qr_scan_logs",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "qrCodeId (text)",
+      "qrCodeValue (text NOT NULL)",
+      "scannedAt (timestamp without time zone NOT NULL)",
+      "ipAddress (text)",
+      "userAgent (text)",
+      "city (text)",
+      "actionTaken (text)",
+      "metadata (jsonb)"
+    ],
+    "foreignKeys": [
+      "qrCodeId -> qr_codes.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "qr_tags",
+    "count": 1,
+    "columns": [
+      "id (text NOT NULL)",
+      "tagId (text NOT NULL)",
+      "vehicleId (text NOT NULL)",
+      "userId (text NOT NULL)",
+      "callOwner (boolean NOT NULL)",
+      "sendMessage (boolean NOT NULL)",
+      "bloodGroupVisibility (boolean NOT NULL)",
+      "emergencyContact (boolean NOT NULL)",
+      "isActive (boolean NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "userId -> users.id",
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "refresh_tokens",
+    "count": 25,
+    "columns": [
+      "id (text NOT NULL)",
+      "userId (text)",
+      "tokenHash (text NOT NULL)",
+      "organizationId (text)",
+      "userAgent (text)",
+      "ipAddress (text)",
+      "expiresAt (timestamp without time zone NOT NULL)",
+      "revokedAt (timestamp without time zone)",
+      "replacedById (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "crmUserId (text)"
+    ],
+    "foreignKeys": [
+      "crmUserId -> crm_users.id",
+      "userId -> users.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "reminders",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "user_id (text NOT NULL)",
+      "title (text NOT NULL)",
+      "description (text)",
+      "type (text NOT NULL)",
+      "date (timestamp without time zone NOT NULL)",
+      "time (text)",
+      "isActive (boolean NOT NULL)",
+      "created_at (timestamp without time zone NOT NULL)",
+      "updated_at (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "user_id -> users.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "sos_contacts",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "userId (text NOT NULL)",
+      "name (text NOT NULL)",
+      "phone (text NOT NULL)",
+      "relationship (text)",
+      "isPrimary (boolean NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "userId -> users.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "sos_event_contacts",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "eventId (text NOT NULL)",
+      "contactId (text)",
+      "name (text NOT NULL)",
+      "phone (text NOT NULL)",
+      "isNotified (boolean NOT NULL)",
+      "notifiedAt (timestamp without time zone)",
+      "isAcknowledged (boolean NOT NULL)",
+      "acknowledgedAt (timestamp without time zone)",
+      "createdAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "eventId -> sos_events.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "sos_events",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "userId (text NOT NULL)",
+      "organizationId (text)",
+      "vehicleReg (text)",
+      "lat (double precision NOT NULL)",
+      "lng (double precision NOT NULL)",
+      "address (text)",
+      "status (USER-DEFINED NOT NULL)",
+      "notes (text)",
+      "resolvedAt (timestamp without time zone)",
+      "resolvedById (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "organizationId -> organizations.id",
+      "resolvedById -> users.id",
+      "userId -> users.id"
+    ],
+    "referencedBy": [
+      "sos_event_contacts.eventId",
+      "sos_timeline_items.eventId"
+    ]
+  },
+  {
+    "table": "sos_timeline_items",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "eventId (text NOT NULL)",
+      "label (text NOT NULL)",
+      "actorId (text)",
+      "createdAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "actorId -> users.id",
+      "eventId -> sos_events.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "stock_items",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "productId (text NOT NULL)",
+      "warehouseId (text NOT NULL)",
+      "available (integer NOT NULL)",
+      "reserved (integer NOT NULL)",
+      "damaged (integer NOT NULL)",
+      "dispatched (integer NOT NULL)",
+      "returned (integer NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "productId -> products.id",
+      "warehouseId -> warehouses.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "store_orders",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "userId (text NOT NULL)",
+      "totalAmount (integer NOT NULL)",
+      "addressId (text NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)",
+      "paymentId (text)",
+      "paymentOrderId (text)",
+      "status (USER-DEFINED NOT NULL)"
+    ],
+    "foreignKeys": [
+      "addressId -> addresses.id",
+      "userId -> users.id"
+    ],
+    "referencedBy": [
+      "StoreOrderItem.orderId"
+    ]
+  },
+  {
+    "table": "subscription_plans",
+    "count": 3,
+    "columns": [
+      "id (text NOT NULL)",
+      "name (text NOT NULL)",
+      "price (double precision NOT NULL)",
+      "badge (text)",
+      "description (text NOT NULL)",
+      "features (jsonb NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": [
+      "user_subscriptions.planId"
+    ]
+  },
+  {
+    "table": "subscriptions",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "userId (text NOT NULL)",
+      "planId (text NOT NULL)",
+      "status (USER-DEFINED NOT NULL)",
+      "startedAt (timestamp without time zone NOT NULL)",
+      "expiresAt (timestamp without time zone NOT NULL)",
+      "autoRenew (boolean NOT NULL)",
+      "cancelledAt (timestamp without time zone)",
+      "replacedAt (timestamp without time zone)",
+      "suspendedAt (timestamp without time zone)",
+      "reminderSentAt (timestamp without time zone)",
+      "paymentId (text)",
+      "orderId (text)",
+      "amountPaidInPaise (integer)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "planId -> membership_plans.id",
+      "userId -> users.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "support_tickets",
+    "count": 3,
+    "columns": [
+      "id (text NOT NULL)",
+      "organizationId (text)",
+      "customerId (text)",
+      "subject (text NOT NULL)",
+      "description (text)",
+      "status (text NOT NULL)",
+      "priority (text NOT NULL)",
+      "assignedToId (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)",
+      "aiEscalated (boolean NOT NULL)",
+      "aiSummary (text)",
+      "category (text NOT NULL)",
+      "resolvedAt (timestamp without time zone)",
+      "userId (text)",
+      "vehicleId (text)"
+    ],
+    "foreignKeys": [
+      "assignedToId -> users.id",
+      "customerId -> customers.id",
+      "organizationId -> organizations.id",
+      "userId -> users.id",
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": [
+      "ticket_messages.ticketId"
+    ]
+  },
+  {
+    "table": "teams",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "name (text NOT NULL)",
+      "status (USER-DEFINED NOT NULL)",
+      "organizationId (text NOT NULL)",
+      "headId (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "organizationId -> organizations.id"
+    ],
+    "referencedBy": [
+      "memberships.teamId"
+    ]
+  },
+  {
+    "table": "ticket_messages",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "ticketId (text NOT NULL)",
+      "senderType (text NOT NULL)",
+      "senderId (text)",
+      "message (text NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "ticketId -> support_tickets.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "trips",
+    "count": 1,
+    "columns": [
+      "id (text NOT NULL)",
+      "userId (text NOT NULL)",
+      "title (text)",
+      "fromName (text NOT NULL)",
+      "fromLat (double precision NOT NULL)",
+      "fromLng (double precision NOT NULL)",
+      "toName (text NOT NULL)",
+      "toLat (double precision NOT NULL)",
+      "toLng (double precision NOT NULL)",
+      "distance (text)",
+      "duration (text)",
+      "viaRoute (text)",
+      "status (text NOT NULL)",
+      "preference (text)",
+      "avoidTolls (boolean NOT NULL)",
+      "avoidHighways (boolean NOT NULL)",
+      "geometry (jsonb)",
+      "startedAt (timestamp without time zone)",
+      "completedAt (timestamp without time zone)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "userId -> users.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "user_subscriptions",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "userId (text NOT NULL)",
+      "planId (text NOT NULL)",
+      "status (text NOT NULL)",
+      "startDate (timestamp without time zone NOT NULL)",
+      "endDate (timestamp without time zone)"
+    ],
+    "foreignKeys": [
+      "planId -> subscription_plans.id",
+      "userId -> users.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "users",
+    "count": 2,
+    "columns": [
+      "id (text NOT NULL)",
+      "email (text NOT NULL)",
+      "passwordHash (text NOT NULL)",
+      "firstName (text NOT NULL)",
+      "lastName (text NOT NULL)",
+      "phone (text)",
+      "avatarUrl (text)",
+      "isActive (boolean NOT NULL)",
+      "isSuperAdmin (boolean NOT NULL)",
+      "emailVerifiedAt (timestamp without time zone)",
+      "lastLoginAt (timestamp without time zone)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": [
+      "refresh_tokens.userId",
+      "memberships.userId",
+      "qr_tags.userId",
+      "documents.userId",
+      "notifications.user_id",
+      "reminders.user_id",
+      "user_subscriptions.userId",
+      "trips.userId",
+      "store_orders.userId",
+      "addresses.userId",
+      "emergency_contacts.userId",
+      "vehicles.userId",
+      "gps_device_history.userId",
+      "subscriptions.userId",
+      "orders.userId",
+      "qr_assignment_history.userId",
+      "sos_events.userId",
+      "sos_events.resolvedById",
+      "sos_contacts.userId",
+      "sos_timeline_items.actorId",
+      "support_tickets.userId",
+      "support_tickets.assignedToId"
+    ]
+  },
+  {
+    "table": "vehicle_documents",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "vehicleId (text NOT NULL)",
+      "type (USER-DEFINED NOT NULL)",
+      "documentNumber (text)",
+      "expiryDate (timestamp without time zone NOT NULL)",
+      "notes (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [
+      "vehicleId -> vehicles.id"
+    ],
+    "referencedBy": []
+  },
+  {
+    "table": "vehicles",
+    "count": 1,
+    "columns": [
+      "id (text NOT NULL)",
+      "userId (text NOT NULL)",
+      "name (text NOT NULL)",
+      "regNumber (text NOT NULL)",
+      "imagePath (text)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)",
+      "reg (text NOT NULL)",
+      "model (text NOT NULL)",
+      "fuel (USER-DEFINED NOT NULL)",
+      "docExpiry (timestamp without time zone)",
+      "isDefault (boolean NOT NULL)",
+      "mileage (double precision)"
+    ],
+    "foreignKeys": [
+      "userId -> users.id"
+    ],
+    "referencedBy": [
+      "qr_tags.vehicleId",
+      "documents.vehicleId",
+      "gps_devices.vehicleId",
+      "gps_device_history.vehicleId",
+      "geofences.vehicleId",
+      "qr_codes.vehicleId",
+      "qr_assignment_history.vehicleId",
+      "support_tickets.vehicleId",
+      "vehicle_documents.vehicleId"
+    ]
+  },
+  {
+    "table": "warehouses",
+    "count": 0,
+    "columns": [
+      "id (text NOT NULL)",
+      "name (text NOT NULL)",
+      "code (text NOT NULL)",
+      "address (text)",
+      "city (text)",
+      "state (text)",
+      "postalCode (text)",
+      "isActive (boolean NOT NULL)",
+      "createdAt (timestamp without time zone NOT NULL)",
+      "updatedAt (timestamp without time zone NOT NULL)"
+    ],
+    "foreignKeys": [],
+    "referencedBy": [
+      "stock_items.warehouseId",
+      "inventory_movements.warehouseId"
+    ]
+  }
+]

@@ -1,0 +1,57 @@
+model StoreProduct {
+  id              String      @id @default(uuid())
+  title           String
+  subtitle        String
+  price           Int
+  originalPrice   Int
+  discountPercent Int
+  rating          Float
+  ratingCount     String
+  category        String
+  deliveryDate    String
+  image           String
+  galleryImages   String[]
+  inStock         Boolean     @default(true)
+  onSale          Boolean     @default(true)
+  fullDescription String      @default("")
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  orderItems      StoreOrderItem[]
+}
+
+model StoreOrder {
+  id             String      @id @default(uuid())
+  userId         String
+  addressId      String
+  totalAmount    Int
+  status         StoreOrderStatus @default(PENDING)
+  paymentId      String?
+  paymentOrderId String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  
+  user           User        @relation("StoreOrders", fields: [userId], references: [id], onDelete: Cascade)
+  address        Address     @relation("StoreAddressOrders", fields: [addressId], references: [id])
+  items          StoreOrderItem[]
+
+  @@map("store_orders")
+}
+
+model StoreOrderItem {
+  id        String       @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int          @default(1)
+  price     Int
+  
+  order     StoreOrder   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   StoreProduct @relation(fields: [productId], references: [id])
+}
+
+enum StoreOrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}

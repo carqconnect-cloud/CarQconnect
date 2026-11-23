@@ -1,0 +1,15 @@
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  title       String
+  description String
+  type        String   @default("general") // E.g., SOS, Reminder, Alert
+  isUnread    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notifications")
+}
