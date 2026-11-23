@@ -2,7 +2,7 @@
 
 Premium public website + web-store + public QR portal frontend for carQconnect,
 built with Next.js (App Router), TypeScript and Tailwind CSS, based on the 
-carQconnect PRD/SOW.
+carQconnect PRD/SOW. 
 
 ## What's included
 
