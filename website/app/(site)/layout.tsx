@@ -19,13 +19,6 @@ const inter = Inter({
   display: "swap",
 });
 
-const body = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-body",
-  display: "swap",
-});
-
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",
@@ -69,7 +62,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`scroll-smooth ${inter.variable} ${manrope.variable} ${display.variable} ${body.variable}`}>
+    <html lang="en" className={`scroll-smooth ${inter.variable} ${manrope.variable} ${display.variable}`}>
       <body className="font-body antialiased flex flex-col min-h-[100svh] bg-[#0D0E13]">
         <Navbar />
         <main className="flex-1 flex flex-col bg-[#f7f9fc]">{children}</main>
