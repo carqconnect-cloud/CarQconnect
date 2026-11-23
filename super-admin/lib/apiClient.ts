@@ -104,9 +104,9 @@ function resolveBaseUrl(): string {
   let envUrl = process.env.NEXT_PUBLIC_API_URL;
   if (!envUrl) {
     if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-      envUrl = 'https://fioner-h5r7.onrender.com/api/v1';
+      envUrl = 'https://carqconnect-backend.onrender.com/api/v1';
     } else if (process.env.NODE_ENV === 'production') {
-      envUrl = 'https://fioner-h5r7.onrender.com/api/v1';
+      envUrl = 'https://carqconnect-backend.onrender.com/api/v1';
     } else {
       return 'http://localhost:4000/api/v1';
     }

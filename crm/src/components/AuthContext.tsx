@@ -295,7 +295,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } catch (firstErr) {
         // If on localhost and primary failed (or vice-versa), attempt automatic fallback
         const fallbackUrl = primaryApiUrl.includes('localhost') || primaryApiUrl.includes('127.0.0.1')
-          ? 'https://fioner-h5r7.onrender.com'
+          ? 'https://carqconnect-backend.onrender.com'
           : (isLocalhost ? 'http://localhost:4000' : null);
 
         if (fallbackUrl) {

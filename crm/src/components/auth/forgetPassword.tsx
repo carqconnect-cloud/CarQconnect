@@ -69,7 +69,7 @@ export default function ForgetPassword({ onSwitchToLogin }: ForgetPasswordProps)
     } catch (primaryErr) {
       // Fallback between localhost and Render
       const isLocal = primaryUrl.includes('localhost') || primaryUrl.includes('127.0.0.1');
-      const fallbackUrl = isLocal ? 'https://fioner-h5r7.onrender.com' : 'http://localhost:4000';
+      const fallbackUrl = isLocal ? 'https://carqconnect-backend.onrender.com' : 'http://localhost:4000';
       try {
         console.warn(`Primary auth URL (${primaryUrl}) failed. Trying fallback (${fallbackUrl})...`);
         const fallbackRes = await fetch(`${fallbackUrl}${path}`, {

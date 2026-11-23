@@ -11,7 +11,7 @@ class ApiConfig {
   static const String appVersion = '1.0.0+1';
 
   /// Cloud / Render Deployed Backend URL
-  static const String cloudBaseUrl = 'https://fioner-h5r7.onrender.com/api/v1';
+  static const String cloudBaseUrl = 'https://carqconnect-backend.onrender.com/api/v1';
 
   /// Local Network Backend URL
   static const String localBaseUrl = 'http://192.168.29.73:4000/api/v1';
@@ -216,7 +216,7 @@ class ApiConfig {
       }
     }
     // Deployed domain for mobile / native app
-    return 'https://fioner-h5r7.onrender.com';
+    return 'https://carqconnect-backend.onrender.com';
   }
 
   /// Returns the complete URL for QR Code Tag scanning

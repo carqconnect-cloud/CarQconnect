@@ -54,5 +54,5 @@ export function getApiBaseUrl(): string {
   }
 
   // Fallback defaults
-  return 'https://fioner-h5r7.onrender.com';
+  return 'https://carqconnect-backend.onrender.com';
 }

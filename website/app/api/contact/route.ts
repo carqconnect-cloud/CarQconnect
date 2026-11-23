@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       process.env.BACKEND_API_URL,
       process.env.NEXT_PUBLIC_API_URL,
       'http://localhost:4000',
-      'https://fioner-h5r7.onrender.com',
+      'https://carqconnect-backend.onrender.com',
     ].filter(Boolean) as string[];
 
     let forwarded = false;

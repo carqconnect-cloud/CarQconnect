@@ -124,7 +124,7 @@ export async function getRealMembershipPlans(): Promise<MembershipPlan[]> {
     process.env.BACKEND_API_URL,
     process.env.NEXT_PUBLIC_API_URL,
     'http://localhost:4000',
-    'https://fioner-h5r7.onrender.com',
+    'https://carqconnect-backend.onrender.com',
   ].filter(Boolean) as string[];
 
   for (const baseUrl of candidateUrls) {

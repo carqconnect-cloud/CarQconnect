@@ -29,7 +29,7 @@ async function bootstrap(): Promise<void> {
 
     // Keep cloud instances (e.g. Render free tier) active while the server is up
     if (env.NODE_ENV === 'production' || process.env.RENDER) {
-      const publicUrl = process.env.PUBLIC_URL || 'https://fioner-h5r7.onrender.com';
+      const publicUrl = process.env.PUBLIC_URL || 'https://carqconnect-backend.onrender.com';
       const KEEP_ALIVE_INTERVAL = 10 * 60 * 1000; // 10 minutes
       setInterval(() => {
         https
