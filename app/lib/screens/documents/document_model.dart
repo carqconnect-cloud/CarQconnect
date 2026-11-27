@@ -237,12 +237,12 @@ class VehicleSelectorCard extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: AppTheme.isLight ? const Color(0xFFEFF6FF) : const Color(0xFF142238),
+              color: AppTheme.isLight ? const Color(0xFFF1F5F9) : const Color(0xFF162030),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               Icons.directions_car_rounded,
-              color: AppTheme.primaryBlue,
+              color: AppTheme.isLight ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
               size: 24,
             ),
           ),

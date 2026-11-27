@@ -1076,7 +1076,7 @@ class _BotScreenState extends State<BotScreen>
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Circular 'F' avatar
+          // Circular CarQConnect avatar
           BotAvatarIcon(size: 32, isLight: isLight),
           const SizedBox(width: 10),
 
@@ -1248,7 +1248,7 @@ class _BotScreenState extends State<BotScreen>
           Expanded(
             child: Container(
               height: 52,
-              padding: const EdgeInsets.symmetric(horizontal: 14),
+              padding: const EdgeInsets.only(left: 6, right: 14),
               decoration: BoxDecoration(
                 color: isLight ? Colors.white : const Color(0xFF101726),
                 borderRadius: BorderRadius.circular(26),

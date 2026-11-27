@@ -176,11 +176,8 @@ const SignupPage = ({ onSwitchToLogin }: SignupPageProps) => {
         <div className="absolute top-24 left-10 w-64 h-64 bg-white rounded-full blur-3xl opacity-5" />
         <div className="absolute bottom-24 right-10 w-80 h-80 bg-cyan-300 rounded-full blur-3xl opacity-10" />
 
-        <div className="relative z-10 flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 p-2 shadow-lg">
-            <CarQLogo className="w-8 h-8" inverted={true} />
-          </div>
-          <span className="text-white font-bold text-2xl tracking-tight">CarQConnect</span>
+        <div className="relative z-10 flex items-center">
+          <CarQLogo variant="wordmark" inverted={true} className="h-8 w-auto" />
         </div>
 
         <div className="relative z-10 space-y-5">
@@ -215,11 +212,8 @@ const SignupPage = ({ onSwitchToLogin }: SignupPageProps) => {
       <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-14 py-12 bg-white dark:bg-gray-950 overflow-y-auto">
         <div className="max-w-md w-full mx-auto space-y-7 mt-8 lg:mt-0">
           {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-zinc-800 border border-blue-100 dark:border-zinc-700 p-1 flex items-center justify-center">
-              <CarQLogo className="w-7 h-7" />
-            </div>
-            <span className="text-gray-900 dark:text-white font-bold text-lg">CarQConnect</span>
+          <div className="lg:hidden flex items-center">
+            <CarQLogo variant="wordmark" className="h-7 w-auto" />
           </div>
 
           <div>

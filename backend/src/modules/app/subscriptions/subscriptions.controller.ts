@@ -11,8 +11,11 @@ export const subscriptionsController = {
     const userId = (req as any).auth?.userId;
     if (!userId) return res.status(401).json({ success: false, message: 'Unauthorized' });
 
-    const { planId } = req.body;
-    const subscription = await subscriptionsService.activatePlan(userId, planId);
+    const { planId, planName } = req.body;
+    const targetPlan = planId || planName;
+    if (!targetPlan) return res.status(400).json({ success: false, message: 'planId or planName is required' });
+
+    const subscription = await subscriptionsService.activatePlan(userId, targetPlan);
     res.json({ success: true, data: subscription, message: 'Plan activated successfully' });
   },
 
@@ -28,7 +31,7 @@ export const subscriptionsController = {
     const { amount } = req.body;
     if (!amount) return res.status(400).json({ success: false, message: 'Amount is required' });
     
-    const order = await subscriptionsService.createRazorpayOrder(amount);
+    const order = await subscriptionsService.createRazorpayOrder(Number(amount));
     res.json({ success: true, data: order });
   },
 
@@ -36,17 +39,20 @@ export const subscriptionsController = {
     const userId = (req as any).auth?.userId;
     if (!userId) return res.status(401).json({ success: false, message: 'Unauthorized' });
 
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, planId } = req.body;
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !planId) {
-      return res.status(400).json({ success: false, message: 'Payment details and planId are required' });
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, planId, planName } = req.body;
+    const targetPlan = planId || planName;
+    if (!targetPlan) {
+      return res.status(400).json({ success: false, message: 'planId or planName is required' });
     }
 
-    const isValid = await subscriptionsService.verifyPayment(razorpay_order_id, razorpay_payment_id, razorpay_signature);
-    if (!isValid) {
-      return res.status(400).json({ success: false, message: 'Invalid payment signature' });
+    if (razorpay_order_id && razorpay_payment_id && razorpay_signature) {
+      const isValid = await subscriptionsService.verifyPayment(razorpay_order_id, razorpay_payment_id, razorpay_signature);
+      if (!isValid) {
+        return res.status(400).json({ success: false, message: 'Invalid payment signature' });
+      }
     }
 
-    const subscription = await subscriptionsService.activatePlan(userId, planId);
+    const subscription = await subscriptionsService.activatePlan(userId, targetPlan);
     res.json({ success: true, data: subscription, message: 'Subscription upgraded successfully' });
   },
 };

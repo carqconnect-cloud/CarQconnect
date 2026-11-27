@@ -2886,6 +2886,7 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                       width: 1.0,
                     ),
                   ),
+                ),
                 child: SafeArea(
                   top: false,
                   child: SizedBox(

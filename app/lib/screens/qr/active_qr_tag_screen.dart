@@ -1,11 +1,5 @@
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../../widgets/app_toggle_switch.dart';
-import 'dart:ui' as ui;
-import 'dart:typed_data';
-import 'package:flutter/rendering.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../utils/gallery_saver.dart';
 
 import '../store/store_service.dart';
 import '../store/order_confirmation.dart';
@@ -15,7 +9,6 @@ import 'package:flutter/material.dart';
 
 import 'dart:async';
 
-import 'qr_code_widget.dart';
 import 'set_contact_privacy_screen.dart';
 import 'select_vehicle_screen.dart';
 
@@ -43,7 +36,6 @@ class ActiveQrTagScreen extends StatefulWidget {
   final bool sendMessage;
   final bool bloodGroupVisibility;
   final bool emergencyContact;
-  final bool isDigitalEtagUnlocked;
 
   const ActiveQrTagScreen({
     super.key,
@@ -55,7 +47,6 @@ class ActiveQrTagScreen extends StatefulWidget {
     this.sendMessage = true,
     this.bloodGroupVisibility = false,
     this.emergencyContact = true,
-    this.isDigitalEtagUnlocked = true,
   });
 
   @override
@@ -67,10 +58,6 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
   Razorpay? _razorpay;
   String _currentTagId = '';
   bool _isOrdering = false;
-  bool _isDownloading = false;
-  bool _isDigitalEtagUnlocked = false;
-  String _currentPaymentType = '';
-  final GlobalKey _qrCardKey = GlobalKey();
   bool _callOwner = false;
   bool _sendMessage = false;
   bool _bloodGroupVisibility = false;
@@ -85,9 +72,6 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
     _bloodGroupVisibility = widget.bloodGroupVisibility;
     _emergencyContact = widget.emergencyContact;
     _currentTagId = widget.tagId;
-    // Once a vehicle has an active/generated tag, the digital E-tag is unlocked by default
-    _isDigitalEtagUnlocked = widget.isDigitalEtagUnlocked || widget.tagId.isNotEmpty;
-    _checkDigitalTagStatus();
     if (!kIsWeb) {
       try {
         _razorpay = Razorpay();
@@ -115,26 +99,6 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
   }
 
 
-  Future<void> _checkDigitalTagStatus() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final tagKey = _currentTagId.isNotEmpty ? _currentTagId : widget.tagId;
-      
-      final isUnlocked = widget.isDigitalEtagUnlocked ||
-          (tagKey.isNotEmpty && tagKey != 'FN78451236') ||
-          prefs.getBool('digital_etag_unlocked_$tagKey') == true ||
-          (widget.vehicleId.isNotEmpty && prefs.getBool('digital_etag_unlocked_${widget.vehicleId}') == true) ||
-          prefs.getBool('digital_etag_unlocked_any') == true;
-
-      if (isUnlocked && mounted) {
-        setState(() => _isDigitalEtagUnlocked = true);
-        if (tagKey.isNotEmpty) await prefs.setBool('digital_etag_unlocked_$tagKey', true);
-        if (widget.vehicleId.isNotEmpty) await prefs.setBool('digital_etag_unlocked_${widget.vehicleId}', true);
-        await prefs.setBool('digital_etag_unlocked_any', true);
-      }
-    } catch (_) {}
-  }
-
   Future<void> _fetchTagDetails() async {
     if (Globals.accessToken.isEmpty) return;
     try {
@@ -150,10 +114,6 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
           orElse: () => null,
         );
         if (current != null && mounted) {
-          final isTagActive = current['isActive'] == true ||
-              current['status'] == 'ACTIVE' ||
-              (current['code'] != null && current['code'].toString().isNotEmpty);
-
           setState(() {
             _currentTagId = current['tagId'] ?? current['code'] ?? _currentTagId;
             _callOwner = current['callOwner'] ?? _callOwner;
@@ -162,18 +122,7 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                 current['bloodGroupVisibility'] ?? _bloodGroupVisibility;
             _emergencyContact =
                 current['emergencyContact'] ?? _emergencyContact;
-            if (isTagActive) {
-              _isDigitalEtagUnlocked = true;
-            }
           });
-          
-          if (isTagActive) {
-            final prefs = await SharedPreferences.getInstance();
-            final tagKey = _currentTagId.isNotEmpty ? _currentTagId : widget.tagId;
-            if (tagKey.isNotEmpty) await prefs.setBool('digital_etag_unlocked_$tagKey', true);
-            if (widget.vehicleId.isNotEmpty) await prefs.setBool('digital_etag_unlocked_${widget.vehicleId}', true);
-            await prefs.setBool('digital_etag_unlocked_any', true);
-          }
         }
       }
     } catch (e) {
@@ -208,10 +157,7 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
 
   Future<void> _onOrderEtag() async {
     if (_isOrdering) return;
-    setState(() {
-      _isOrdering = true;
-      _currentPaymentType = 'physical';
-    });
+    setState(() => _isOrdering = true);
 
     const int amount = 199;
 
@@ -263,104 +209,6 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
       );
     } finally {
       if (mounted) setState(() => _isOrdering = false);
-    }
-  }
-
-  Future<void> _onDownloadQr() async {
-    if (_isDownloading) return;
-    setState(() => _isDownloading = true);
-
-    try {
-      final tagKey = _currentTagId.isNotEmpty ? _currentTagId : widget.tagId;
-      Uint8List? pngBytes;
-
-      // 1. Try capturing RepaintBoundary for high-res branded card
-      try {
-        final boundary = _qrCardKey.currentContext?.findRenderObject()
-            as RenderRepaintBoundary?;
-        if (boundary != null) {
-          final image = await boundary.toImage(pixelRatio: 3.0);
-          final byteData =
-              await image.toByteData(format: ui.ImageByteFormat.png);
-          pngBytes = byteData?.buffer.asUint8List();
-        }
-      } catch (e) {
-        debugPrint('RepaintBoundary capture error: $e');
-      }
-
-      // 2. Fallback to direct QrPainter generation if RepaintBoundary was unavailable
-      if (pngBytes == null) {
-        final qrData = ApiConfig.getQrScanUrl(tagKey);
-        final painter = QrPainter(
-          data: qrData,
-          version: QrVersions.auto,
-          gapless: true,
-          eyeStyle: const QrEyeStyle(
-            eyeShape: QrEyeShape.square,
-            color: Colors.black,
-          ),
-          dataModuleStyle: const QrDataModuleStyle(
-            dataModuleShape: QrDataModuleShape.square,
-            color: Colors.black,
-          ),
-        );
-        final picData =
-            await painter.toImageData(800, format: ui.ImageByteFormat.png);
-        pngBytes = picData?.buffer.asUint8List();
-      }
-
-      if (pngBytes != null) {
-        final filename = 'CarQConnect_ETag_$tagKey.png';
-        final saved =
-            await GallerySaver.saveImage(pngBytes, filename: filename);
-
-        if (mounted) {
-          if (saved) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: const Color(0xFF10B981),
-                duration: const Duration(seconds: 4),
-                content: Row(
-                  children: [
-                    const Icon(Icons.check_circle_rounded, color: Colors.white),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        kIsWeb
-                            ? 'Digital E-tag downloaded ($filename)'
-                            : 'Digital E-tag saved to Gallery ($filename)',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                backgroundColor: Color(0xFFEF4444),
-                content: Text('Failed to save QR to Gallery. Please try again.'),
-              ),
-            );
-          }
-        }
-      }
-    } catch (e) {
-      debugPrint('Error downloading QR: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: const Color(0xFFEF4444),
-            content: Text('Download error: $e'),
-          ),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isDownloading = false);
     }
   }
 
@@ -918,12 +766,10 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
 
                             const SizedBox(height: 20),
 
-                            // QR Card matching Screenshot 2
-                            RepaintBoundary(
-                              key: _qrCardKey,
-                              child: Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
+                            // Smart Safety Physical Tag Card (Physical sticker for vehicle)
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.fromLTRB(20, 24, 20, 22),
                               decoration: BoxDecoration(
                                 color: isLight ? Colors.white : const Color(0xFF0C131E),
                                 borderRadius: BorderRadius.circular(26),
@@ -935,30 +781,87 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    'SMART SAFETY',
-                                    style: TextStyle(
-                                      color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 1.5,
-                                    ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.shield_outlined,
+                                        size: 15,
+                                        color: isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        'SMART SAFETY TAG',
+                                        style: TextStyle(
+                                          color: isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: 1.5,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(height: 16),
-                                  QrCodeWidget(
-                                    size: 215,
-                                    darkColor: Colors.black,
-                                    lightColor: Colors.white,
-                                    data: ApiConfig.getQrScanUrl(
-                                      _currentTagId.isNotEmpty
-                                          ? _currentTagId
-                                          : widget.tagId,
-                                    ),
-                                    isEncrypted: !_isDigitalEtagUnlocked,
-                                  ),
-                                  const SizedBox(height: 18),
+                                  const SizedBox(height: 20),
 
-                                  // Tag ID inside the card matching Screenshot 2
+                                  // Physical Tag Sticker Visual (No QR code image)
+                                  Container(
+                                    width: double.infinity,
+                                    constraints: const BoxConstraints(maxWidth: 240),
+                                    padding: const EdgeInsets.symmetric(vertical: 26, horizontal: 18),
+                                    decoration: BoxDecoration(
+                                      color: isLight ? const Color(0xFFF8FAFC) : const Color(0xFF0F1726),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                        color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D42),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          width: 60,
+                                          height: 60,
+                                          decoration: BoxDecoration(
+                                            color: (isLight ? AppTheme.primaryBlue : const Color(0xFF00C2FF))
+                                                .withValues(alpha: 0.12),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Center(
+                                            child: Icon(
+                                              Icons.verified_user_rounded,
+                                              color: isLight ? AppTheme.primaryBlue : const Color(0xFF00C2FF),
+                                              size: 32,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 14),
+                                        Text(
+                                          'Vehicle Safety Tag',
+                                          style: TextStyle(
+                                            color: isLight ? const Color(0xFF0F172A) : Colors.white,
+                                            fontSize: 15.5,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 0.2,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          'Paste physical sticker on\nvehicle windshield',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
+                                            fontSize: 12,
+                                            height: 1.35,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+
+                                  // Tag ID inside the card
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -973,8 +876,8 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                                       const SizedBox(width: 4),
                                       Container(
                                         padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 5,
+                                          horizontal: 12,
+                                          vertical: 6,
                                         ),
                                         decoration: BoxDecoration(
                                           color: isLight ? const Color(0xFFF1F5F9) : const Color(0xFF121C2B),
@@ -990,9 +893,9 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                                               : widget.tagId,
                                           style: TextStyle(
                                             color: isLight ? const Color(0xFF0F172A) : const Color(0xFFD6E2F0),
-                                            fontSize: 13,
+                                            fontSize: 13.5,
                                             fontWeight: FontWeight.w600,
-                                            letterSpacing: 0.5,
+                                            letterSpacing: 0.6,
                                           ),
                                         ),
                                       ),
@@ -1001,16 +904,15 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                                 ],
                               ),
                             ),
-                            ),
 
                             const SizedBox(height: 12),
 
-                            // Anti-Screenshot & Duplication Protection Notice
+                            // Physical Tag Status Notice
                             Container(
                               margin: const EdgeInsets.symmetric(horizontal: 4),
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 9,
+                                horizontal: 14,
+                                vertical: 10,
                               ),
                               decoration: BoxDecoration(
                                 color: isLight
@@ -1034,22 +936,22 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                                 children: [
                                   Icon(
                                     Icons.verified_user_rounded,
-                                    size: 16,
+                                    size: 18,
                                     color: isLight
                                         ? AppTheme.primaryBlue
                                         : const Color(0xFF00C2FF),
                                   ),
-                                  const SizedBox(width: 8),
+                                  const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
-                                      'Digital E-tag active! You can download your official QR code to your device.',
+                                      'Physical Smart Safety Tag is active. Paste the sticker on your vehicle windshield for emergency contact.',
                                       style: TextStyle(
                                         color: isLight
                                             ? const Color(0xFF334155)
                                             : const Color(0xFF94A3B8),
-                                        fontSize: 11.5,
+                                        fontSize: 12,
                                         fontWeight: FontWeight.w500,
-                                        height: 1.3,
+                                        height: 1.35,
                                       ),
                                     ),
                                   ),
@@ -1059,67 +961,18 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
 
                             const SizedBox(height: 22),
 
-                            // Button 1: Download
+                            // Primary Action Button: Order Physical Tag
                             SizedBox(
                               width: double.infinity,
                               height: 50,
                               child: ElevatedButton(
-                                onPressed: _isDownloading ? null : _onDownloadQr,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF10B981),
-                                  foregroundColor: Colors.white,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                ),
-                                child: _isDownloading
-                                    ? const AppLoadingSpinner(size: 22)
-                                    : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: const [
-                                          Icon(
-                                            Icons.download_rounded,
-                                            color: Colors.white,
-                                            size: 20,
-                                          ),
-                                          SizedBox(width: 8),
-                                          Text(
-                                            'Download',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 15.5,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                              ),
-                            ),
-
-                            const SizedBox(height: 10),
-
-                            // Button 2: Order E-tag
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: OutlinedButton(
                                 onPressed: _isOrdering ? null : _onOrderEtag,
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor: AppTheme.cardBg,
-                                  foregroundColor: isLight
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isLight
                                       ? AppTheme.primaryBlue
                                       : const Color(0xFF00C2FF),
-                                  side: BorderSide(
-                                    color: isLight
-                                        ? AppTheme.primaryBlue.withValues(
-                                            alpha: 0.6,
-                                          )
-                                        : const Color(0xFF00C2FF)
-                                              .withValues(alpha: 0.6),
-                                    width: 1.5,
-                                  ),
+                                  foregroundColor: isLight ? Colors.white : Colors.black,
+                                  elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25),
                                   ),
@@ -1133,17 +986,17 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                                           Icon(
                                             Icons.shopping_bag_outlined,
                                             color: isLight
-                                                ? AppTheme.primaryBlue
-                                                : const Color(0xFF00C2FF),
+                                                ? Colors.white
+                                                : Colors.black,
                                             size: 20,
                                           ),
                                           const SizedBox(width: 8),
                                           Text(
-                                            'Order E-tag',
+                                            'Order Physical Tag',
                                             style: TextStyle(
                                               color: isLight
-                                                  ? AppTheme.primaryBlue
-                                                  : const Color(0xFF00C2FF),
+                                                  ? Colors.white
+                                                  : Colors.black,
                                               fontSize: 15.5,
                                               fontWeight: FontWeight.bold,
                                             ),

@@ -223,26 +223,11 @@ class _AboutScreenState extends State<AboutScreen> {
                       Center(
                         child: Column(
                           children: [
-                            Container(
-                              width: 68,
-                              height: 68,
-                              decoration: BoxDecoration(
-                                color: isLight ? const Color(0xFFEFF6FF) : const Color(0xFF0A1B33),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: const Color(0xFF0066FF).withValues(alpha: isLight ? 0.3 : 0.4),
-                                  width: 1.5,
-                                ),
-                              ),
-                              child: Center(
-                                child: AppLogo(
-                                  width: 44,
-                                  height: 36,
-                                  isLight: isLight,
-                                ),
-                              ),
+                            const AppLogo(
+                              width: 84,
+                              height: 84,
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 10),
                             Text(
                               'CarQConnect',
                               style: TextStyle(
@@ -282,7 +267,6 @@ class _AboutScreenState extends State<AboutScreen> {
                             color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1B263C),
                             width: 1,
                           ),
-                          boxShadow: AppTheme.settingsCardShadow,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,7 +320,6 @@ class _AboutScreenState extends State<AboutScreen> {
                             color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1B263C),
                             width: 1,
                           ),
-                          boxShadow: AppTheme.settingsCardShadow,
                         ),
                         child: Column(
                           children: [

@@ -103,6 +103,7 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
 
     setState(() => _isProcessing = true);
 
+    String? orderId;
     try {
       final response = await http.post(
         ApiConfig.uri('/subscriptions/create-order'),
@@ -116,64 +117,121 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
           'planId': widget.plan['id'],
           'tenure': widget.tenure,
         }),
-      ).timeout(const Duration(seconds: 4));
+      ).timeout(const Duration(seconds: 8));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final orderData = data['data'];
         if (orderData != null && orderData['id'] != null) {
-          var options = {
-            'key': 'rzp_test_Tm9BKNGeBE7GAx',
-            'amount': (widget.totalPrice * 100).toInt(),
-            'name': 'CarQConnect',
-            'order_id': orderData['id'],
-            'description': '${widget.planName} Plan (${_getTenureDisplay()})',
-            'prefill': {
-              'contact': Globals.phone.isNotEmpty ? Globals.phone : '9513886363',
-              'email': Globals.email.isNotEmpty ? Globals.email : 'customer@carqconnect.com',
-            },
-          };
-          if (!kIsWeb && _razorpay != null) {
-            _razorpay!.open(options);
-            return;
-          }
+          orderId = orderData['id']?.toString();
         }
       }
     } catch (e) {
       debugPrint('Error creating razorpay order: $e');
-    } finally {
-      if (mounted) setState(() => _isProcessing = false);
     }
 
-    // Direct fallback for testing/simulation when Razorpay keys are in test mode or backend returns fallback
-    _navigateToSuccessScreen(
+    // Attempt to open Razorpay standard checkout
+    if (!kIsWeb && _razorpay != null) {
+      try {
+        final cleanPhone = Globals.phone.replaceAll(RegExp(r'[^0-9]'), '');
+        final prefillPhone = cleanPhone.length >= 10
+            ? cleanPhone.substring(cleanPhone.length - 10)
+            : '9513886363';
+        final prefillEmail = Globals.email.contains('@')
+            ? Globals.email
+            : 'customer@carqconnect.com';
+
+        final options = <String, dynamic>{
+          'key': 'rzp_test_Tm9BKNGeBE7GAx',
+          'amount': (widget.totalPrice * 100).round(),
+          'name': 'CarQConnect',
+          'description': '${widget.planName} Plan (${_getTenureDisplay()})',
+          'prefill': {
+            'contact': prefillPhone,
+            'email': prefillEmail,
+          },
+          'external': {
+            'wallets': ['paytm']
+          }
+        };
+
+        // Note: Only pass order_id if it is a real Razorpay order ID (starts with order_ and not order_sim_)
+        if (orderId != null &&
+            orderId.startsWith('order_') &&
+            !orderId.startsWith('order_sim_')) {
+          options['order_id'] = orderId;
+        }
+
+        if (mounted) setState(() => _isProcessing = false);
+        _razorpay!.open(options);
+        return;
+      } catch (e) {
+        debugPrint('Failed to open Razorpay SDK: $e');
+      }
+    }
+
+    if (mounted) setState(() => _isProcessing = false);
+
+    // Direct fallback for testing/simulation when Razorpay native SDK is unavailable
+    await _handleSuccessfulUpgrade(
       paymentId: '#${400000000 + Random().nextInt(999999)}',
     );
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+  Future<void> _handleSuccessfulUpgrade({
+    required String paymentId,
+    String? orderId,
+    String? signature,
+  }) async {
+    // 1. Immediately persist locally
+    await Globals.saveCurrentPlan(widget.planName, widget.plan['id']?.toString() ?? '');
+
+    // 2. Synchronize with backend in background
     try {
-      await http.post(
-        ApiConfig.uri('/subscriptions/verify-payment'),
-        headers: {
-          if (Globals.accessToken.isNotEmpty)
-            'Authorization': 'Bearer ${Globals.accessToken}',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'razorpay_order_id': response.orderId ?? '',
-          'razorpay_payment_id': response.paymentId ?? '',
-          'razorpay_signature': response.signature ?? '',
-          'planId': widget.plan['id'],
-        }),
-      ).timeout(const Duration(seconds: 4));
+      if (signature != null && signature.isNotEmpty) {
+        await http.post(
+          ApiConfig.uri('/subscriptions/verify-payment'),
+          headers: {
+            if (Globals.accessToken.isNotEmpty)
+              'Authorization': 'Bearer ${Globals.accessToken}',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'razorpay_order_id': orderId ?? '',
+            'razorpay_payment_id': paymentId,
+            'razorpay_signature': signature,
+            'planId': widget.plan['id'],
+            'planName': widget.planName,
+          }),
+        ).timeout(const Duration(seconds: 8));
+      } else {
+        await http.post(
+          ApiConfig.uri('/subscriptions/activate'),
+          headers: {
+            if (Globals.accessToken.isNotEmpty)
+              'Authorization': 'Bearer ${Globals.accessToken}',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'planId': widget.plan['id'],
+            'planName': widget.planName,
+            'tenure': widget.tenure,
+          }),
+        ).timeout(const Duration(seconds: 8));
+      }
     } catch (e) {
-      debugPrint('Payment verification error: $e');
+      debugPrint('Backend subscription sync error: $e');
     }
 
     if (!mounted) return;
-    _navigateToSuccessScreen(
+    _navigateToSuccessScreen(paymentId: paymentId);
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    await _handleSuccessfulUpgrade(
       paymentId: response.paymentId ?? '#${400000000 + Random().nextInt(999999)}',
+      orderId: response.orderId,
+      signature: response.signature,
     );
   }
 

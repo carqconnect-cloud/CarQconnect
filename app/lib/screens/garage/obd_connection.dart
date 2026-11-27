@@ -689,8 +689,8 @@ class _ObdConnectionScreenState extends State<ObdConnectionScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     AppLogo(
-                      width: 26,
-                      height: 22,
+                      width: 34,
+                      height: 34,
                       isLight: isLight,
                     ),
                     const SizedBox(width: 9),

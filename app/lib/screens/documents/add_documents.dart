@@ -170,7 +170,7 @@ class _AddDocumentsScreenState extends State<AddDocumentsScreen>
         ),
         title: Row(
           children: [
-            const Icon(Icons.help_outline_rounded, color: Color(0xFF0066FF)),
+            Icon(Icons.help_outline_rounded, color: isLight ? const Color(0xFF334155) : const Color(0xFFCBD5E1)),
             const SizedBox(width: 10),
             Text(
               'Add Documents',
@@ -193,10 +193,10 @@ class _AddDocumentsScreenState extends State<AddDocumentsScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text(
+            child: Text(
               'Understood',
               style: TextStyle(
-                color: Color(0xFF0066FF),
+                color: isLight ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -345,7 +345,6 @@ class _AddDocumentsScreenState extends State<AddDocumentsScreen>
                       itemBuilder: (context, index) {
                         final item = filteredCategories[index];
                         final isPuc = item['customType'] == 'puc';
-                        final isCustom = item['isCustom'] == true;
 
                         return InkWell(
                           onTap: () => _navigateToForm(item['name'] as String),
@@ -375,8 +374,8 @@ class _AddDocumentsScreenState extends State<AddDocumentsScreen>
                                   height: 44,
                                   decoration: BoxDecoration(
                                     color: isLight
-                                        ? const Color(0xFFEFF6FF)
-                                        : const Color(0xFF142238),
+                                        ? const Color(0xFFF1F5F9)
+                                        : const Color(0xFF162030),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Center(
@@ -390,20 +389,18 @@ class _AddDocumentsScreenState extends State<AddDocumentsScreen>
                                                 decoration: BoxDecoration(
                                                   shape: BoxShape.circle,
                                                   border: Border.all(
-                                                    color: const Color(
-                                                      0xFF0066FF,
-                                                    ),
+                                                    color: isLight ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
                                                     width: 1.4,
                                                   ),
                                                 ),
                                               ),
-                                              const Column(
+                                              Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   Text(
                                                     'PUC',
                                                     style: TextStyle(
-                                                      color: Color(0xFF0066FF),
+                                                      color: isLight ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
                                                       fontSize: 7.5,
                                                       fontWeight:
                                                           FontWeight.w900,
@@ -412,7 +409,7 @@ class _AddDocumentsScreenState extends State<AddDocumentsScreen>
                                                   Icon(
                                                     Icons.cloud_outlined,
                                                     size: 10,
-                                                    color: Color(0xFF0066FF),
+                                                    color: isLight ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
                                                   ),
                                                 ],
                                               ),
@@ -420,11 +417,9 @@ class _AddDocumentsScreenState extends State<AddDocumentsScreen>
                                           )
                                         : Icon(
                                             item['icon'] as IconData,
-                                            color: isCustom
-                                                ? (isLight
-                                                      ? const Color(0xFF64748B)
-                                                      : const Color(0xFFCBD5E1))
-                                                : const Color(0xFF0066FF),
+                                            color: isLight
+                                                ? const Color(0xFF334155)
+                                                : const Color(0xFFCBD5E1),
                                             size: 22,
                                           ),
                                   ),
@@ -518,14 +513,16 @@ class _AddDocumentsScreenState extends State<AddDocumentsScreen>
                                 height: 48,
                                 decoration: BoxDecoration(
                                   color: isLight
-                                      ? const Color(0xFFEFF6FF)
-                                      : const Color(0xFF142036),
+                                      ? const Color(0xFFF1F5F9)
+                                      : const Color(0xFF162030),
                                   borderRadius: BorderRadius.circular(24),
                                 ),
-                                child: const Center(
+                                child: Center(
                                   child: Icon(
                                     Icons.cloud_upload_outlined,
-                                    color: Color(0xFF0066FF),
+                                    color: isLight
+                                        ? const Color(0xFF334155)
+                                        : const Color(0xFFCBD5E1),
                                     size: 24,
                                   ),
                                 ),

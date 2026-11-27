@@ -37,7 +37,6 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
   static const String _cacheKey = 'cached_vehicle_documents';
   List<VehicleDocument> _documents = [];
   bool _isLoading = true;
-  String? _error;
   Timer? _autoRefreshTimer;
 
   @override
@@ -85,7 +84,6 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
     if (showSpinner && _documents.isEmpty) {
       setState(() {
         _isLoading = true;
-        _error = null;
       });
     }
 
@@ -106,7 +104,6 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
                   .map((json) => VehicleDocument.fromJson(json))
                   .toList();
               _isLoading = false;
-              _error = null;
             });
           }
           return;
@@ -117,7 +114,6 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _error = null;
         });
       }
     } catch (e) {
@@ -125,7 +121,6 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _error = null;
         });
       }
     }
@@ -215,8 +210,8 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
   }
 
   Widget _buildDocIcon(String docType, bool isLight) {
-    final iconBg = isLight ? const Color(0xFFEFF6FF) : const Color(0xFF142238);
-    const iconColor = Color(0xFF0066FF);
+    final iconBg = isLight ? const Color(0xFFF1F5F9) : const Color(0xFF162030);
+    final iconColor = isLight ? const Color(0xFF334155) : const Color(0xFFCBD5E1);
     switch (docType) {
       case 'rc':
         return Container(
@@ -226,7 +221,7 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
             color: iconBg,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Center(
+          child: Center(
             child: Icon(Icons.credit_card_rounded, color: iconColor, size: 22),
           ),
         );
@@ -238,7 +233,7 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
             color: iconBg,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Center(
+          child: Center(
             child: Icon(Icons.shield_outlined, color: iconColor, size: 22),
           ),
         );
@@ -262,7 +257,7 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
                     border: Border.all(color: iconColor, width: 1.5),
                   ),
                 ),
-                const Column(
+                Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
@@ -289,7 +284,7 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
             color: iconBg,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Center(
+          child: Center(
             child: Icon(Icons.account_box_outlined, color: iconColor, size: 22),
           ),
         );
@@ -301,7 +296,7 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
             color: iconBg,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Center(
+          child: Center(
             child: Text(
               'FASTag',
               style: TextStyle(
@@ -321,7 +316,7 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
             color: iconBg,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Center(
+          child: Center(
             child: Icon(
               Icons.monitor_heart_outlined,
               color: iconColor,
@@ -337,7 +332,7 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
             color: iconBg,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Center(
+          child: Center(
             child: Icon(Icons.description_outlined, color: iconColor, size: 22),
           ),
         );

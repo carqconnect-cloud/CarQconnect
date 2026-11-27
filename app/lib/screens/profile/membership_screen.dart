@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../globals.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/animated_back_arrow.dart';
 
@@ -21,7 +22,22 @@ class _MembershipScreenState extends State<MembershipScreen> {
   @override
   void initState() {
     super.initState();
-    _currentPlan = widget.currentPlan;
+    _currentPlan = Globals.currentPlan.isNotEmpty ? Globals.currentPlan : widget.currentPlan;
+    Globals.currentPlanNotifier.addListener(_onPlanNotifierChanged);
+  }
+
+  void _onPlanNotifierChanged() {
+    if (mounted) {
+      setState(() {
+        _currentPlan = Globals.currentPlan;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    Globals.currentPlanNotifier.removeListener(_onPlanNotifierChanged);
+    super.dispose();
   }
 
   void _showUpgradeModal() {
@@ -36,7 +52,7 @@ class _MembershipScreenState extends State<MembershipScreen> {
           color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2A44),
         ),
       ),
-      builder: (context) {
+      builder: (sheetContext) {
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(22),
@@ -100,11 +116,13 @@ class _MembershipScreenState extends State<MembershipScreen> {
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      await Globals.saveCurrentPlan('Premium');
+                      if (sheetContext.mounted) Navigator.pop(sheetContext, 'Premium');
+                      if (!mounted) return;
                       setState(() {
                         _currentPlan = 'Premium';
                       });
-                      Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           backgroundColor: isLight ? Colors.white : const Color(0xFF101726),

@@ -22,11 +22,9 @@ import '../../globals.dart';
 
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/localization_service.dart';
-import '../../utils/api_config.dart';
 import '../../services/auth_storage_service.dart';
 import '../../services/screen_refresh_service.dart';
 import '../../widgets/animated_back_arrow.dart';
@@ -51,7 +49,7 @@ class _AccountScreenState extends State<AccountScreen>
   String _userPhone = Globals.phone;
   String _userEmail = Globals.email;
   String _selectedLanguage = 'English (India)';
-  String _membershipTier = 'Basic';
+  String _membershipTier = Globals.currentPlan;
 
   int _profileCompletionPercent = 20;
   Timer? _autoRefreshTimer;
@@ -59,6 +57,8 @@ class _AccountScreenState extends State<AccountScreen>
   @override
   void initState() {
     super.initState();
+    _membershipTier = Globals.currentPlan;
+    Globals.currentPlanNotifier.addListener(_onPlanNotifierChanged);
     _refreshAccountData();
     LocalizationService.currentCodeNotifier.addListener(_onLocaleChanged);
     _autoRefreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
@@ -68,9 +68,18 @@ class _AccountScreenState extends State<AccountScreen>
 
   @override
   void dispose() {
+    Globals.currentPlanNotifier.removeListener(_onPlanNotifierChanged);
     LocalizationService.currentCodeNotifier.removeListener(_onLocaleChanged);
     _autoRefreshTimer?.cancel();
     super.dispose();
+  }
+
+  void _onPlanNotifierChanged() {
+    if (mounted) {
+      setState(() {
+        _membershipTier = Globals.currentPlan;
+      });
+    }
   }
 
   void _onLocaleChanged() {
@@ -106,6 +115,7 @@ class _AccountScreenState extends State<AccountScreen>
         if (fullName.isNotEmpty) _userName = fullName;
         if (Globals.phone.isNotEmpty) _userPhone = Globals.phone;
         if (Globals.email.isNotEmpty) _userEmail = Globals.email;
+        _membershipTier = Globals.currentPlan;
       });
     }
     await _calculateProfileCompletion();
@@ -342,139 +352,6 @@ class _AccountScreenState extends State<AccountScreen>
     );
   }
 
-  bool _isDeletingAccount = false;
-
-  void _showDeleteAccountDialog() {
-    final isLight = AppTheme.isLightNotifier.value;
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: isLight ? Colors.white : const Color(0xFF0F1728),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2A44),
-          ),
-        ),
-        title: Text(
-          'Delete Account?'.tr,
-          style: TextStyle(
-            color: isLight ? const Color(0xFF0F172A) : Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(
-          'Deleting your account will permanently remove your profile, vehicle data, linked QR codes, and subscription access. This action cannot be undone.'.tr,
-          style: TextStyle(
-            color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
-            fontSize: 13.5,
-            height: 1.4,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              'Cancel'.tr,
-              style: TextStyle(
-                color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              _handleDeleteAccount();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF3B30),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: Text('Delete Account'.tr),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _handleDeleteAccount() async {
-    setState(() => _isDeletingAccount = true);
-
-    try {
-      final url = ApiConfig.uri('/app-profile/account');
-      final response = await http.delete(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          if (Globals.accessToken.isNotEmpty)
-            'Authorization': 'Bearer ${Globals.accessToken}',
-        },
-        body: jsonEncode({
-          'reason': 'User requested self-service account deletion via mobile app',
-        }),
-      ).timeout(const Duration(seconds: 15));
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        await AuthStorageService.clearSession();
-
-        if (mounted) {
-          setState(() => _isDeletingAccount = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: const Color(0xFF101726),
-              content: Text(
-                'Your account and data have been permanently deleted.'.tr,
-                style: const TextStyle(
-                  color: Color(0xFFFF5252),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (_) => const LogInScreen()),
-            (route) => false,
-          );
-        }
-      } else {
-        if (mounted) {
-          setState(() => _isDeletingAccount = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: const Color(0xFF2A1215),
-              content: Text(
-                'Could not delete account (HTTP ${response.statusCode}). Please contact support.'.tr,
-                style: const TextStyle(color: Color(0xFFFF5252)),
-              ),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isDeletingAccount = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: const Color(0xFF2A1215),
-            content: Text(
-              'Failed to delete account: $e'.tr,
-              style: const TextStyle(color: Color(0xFFFF5252)),
-            ),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    }
-  }
-
   @override
   Future<void> refreshOnRouteReturn() => _refreshAccountData();
 
@@ -538,7 +415,6 @@ class _AccountScreenState extends State<AccountScreen>
                             color: AppTheme.cardBg,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(color: AppTheme.cardBorder),
-                            boxShadow: AppTheme.cardShadow,
                           ),
                           child: Row(
                             children: [
@@ -819,6 +695,7 @@ class _AccountScreenState extends State<AccountScreen>
                             ),
                           );
                           if (updatedPlan != null && mounted) {
+                            await Globals.saveCurrentPlan(updatedPlan);
                             setState(() {
                               _membershipTier = updatedPlan;
                             });
@@ -1012,29 +889,6 @@ class _AccountScreenState extends State<AccountScreen>
                         ),
                       ),
 
-                      const SizedBox(height: 12),
-
-                      // Self-Service Delete Account Button
-                      Center(
-                        child: TextButton.icon(
-                          onPressed: _isDeletingAccount ? null : _showDeleteAccountDialog,
-                          icon: const Icon(
-                            Icons.delete_forever_outlined,
-                            size: 16,
-                            color: Color(0xFFEF4444),
-                          ),
-                          label: Text(
-                            _isDeletingAccount ? 'Deleting...'.tr : 'Delete Account'.tr,
-                            style: const TextStyle(
-                              color: Color(0xFFEF4444),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                      ),
-
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -1064,7 +918,6 @@ class _AccountScreenState extends State<AccountScreen>
             color: AppTheme.cardBg,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: AppTheme.cardBorder),
-            boxShadow: AppTheme.cardShadow,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -1133,7 +986,6 @@ class _AccountScreenState extends State<AccountScreen>
           border: Border.all(
             color: isLight ? AppTheme.cardBorder : const Color(0xFF1C273C),
           ),
-          boxShadow: AppTheme.settingsCardShadow,
         ),
         child: Row(
           children: [

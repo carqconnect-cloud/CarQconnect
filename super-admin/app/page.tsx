@@ -57,7 +57,7 @@ export default function Page() {
     return (
       <div id="splash">
         <div className="splash-mark">
-          <CarQLogo className="w-10 h-10" inverted={true} />
+          <CarQLogo variant="mark" className="w-12 h-12" />
         </div>
         <div className="splash-label">STARTING CARQCONNECT CONTROL…</div>
       </div>
@@ -96,7 +96,7 @@ export default function Page() {
     <>
       <div id="splash" style={{ display: 'none' }}>
         <div className="splash-mark">
-          <CarQLogo className="w-10 h-10" inverted={true} />
+          <CarQLogo variant="mark" className="w-12 h-12" />
         </div>
         <div className="splash-label">STARTING CARQCONNECT CONTROL…</div>
       </div>
@@ -104,11 +104,8 @@ export default function Page() {
       <div id="app">
         <aside className="sidebar" id="sidebar">
           <div className="brand">
-            <div className="brand-mark">
-              <CarQLogo className="w-7 h-7" />
-            </div>
-            <div className="brand-text">
-              <b>CarQConnect</b>
+            <div className="brand-text flex-1 min-w-0">
+              <CarQLogo variant="wordmark" className="h-[22px] w-auto mb-1" />
               <span>SUPER ADMIN</span>
             </div>
             <button

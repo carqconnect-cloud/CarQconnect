@@ -597,26 +597,22 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
                     vertical: 7,
                   ),
                   decoration: BoxDecoration(
-                    color: isSelected
-                        ? const Color(0xFF0066FF)
-                        : (isLight ? Colors.white : const Color(0xFF0F1728)),
+                    color: isLight ? Colors.white : const Color(0xFF0F1728),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isSelected
-                          ? const Color(0xFF0066FF)
+                          ? (isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF))
                           : (isLight
                                 ? const Color(0xFFE2E8F0)
                                 : const Color(0xFF1E2A44)),
+                      width: isSelected ? 1.4 : 1.0,
                     ),
-                    boxShadow: (!isSelected && isLight)
-                        ? AppTheme.cardShadow
-                        : null,
                   ),
                   child: Text(
                     cat,
                     style: TextStyle(
                       color: isSelected
-                          ? Colors.white
+                          ? (isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF))
                           : (isLight
                                 ? const Color(0xFF64748B)
                                 : const Color(0xFF8E9BAE)),
@@ -644,7 +640,6 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
           color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1B263C),
           width: 1,
         ),
-        boxShadow: AppTheme.settingsCardShadow,
       ),
       child: Material(
         color: Colors.transparent,

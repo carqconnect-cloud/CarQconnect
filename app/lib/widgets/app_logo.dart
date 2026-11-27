@@ -3,9 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../theme/app_theme.dart';
 
 /// Reusable CarQConnect Logo Widget.
-///
-/// Automatically switches between dark mode (white + electric cyan)
-/// and light mode (black + electric cyan) or allows manual override.
 class AppLogo extends StatelessWidget {
   final double? width;
   final double? height;
@@ -14,21 +11,16 @@ class AppLogo extends StatelessWidget {
 
   const AppLogo({
     super.key,
-    this.width = 44,
-    this.height = 36,
+    this.width = 52,
+    this.height = 52,
     this.fit = BoxFit.contain,
     this.isLight,
   });
 
   @override
   Widget build(BuildContext context) {
-    final light = isLight ?? (Theme.of(context).brightness == Brightness.light);
-    final assetPath = light
-        ? 'assets/carqconnectlogo/Logo.svg'
-        : 'assets/carqconnectlogo/Logo_white.svg';
-
     return SvgPicture.asset(
-      assetPath,
+      'assets/carqconnectlogo/Logo.svg',
       width: width,
       height: height,
       fit: fit,
@@ -50,8 +42,8 @@ class AppLogoBadge extends StatelessWidget {
     super.key,
     this.width = 64,
     this.height = 74,
-    this.logoWidth = 44,
-    this.logoHeight = 36,
+    this.logoWidth = 50,
+    this.logoHeight = 50,
     this.isLight,
     this.borderRadius,
   });

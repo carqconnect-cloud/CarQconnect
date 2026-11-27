@@ -242,7 +242,6 @@ class _ConnectingObdScreenState extends State<ConnectingObdScreen>
       animation: _pulseController,
       builder: (context, child) {
         final scale = 1.0 + (_pulseController.value * 0.025);
-        final glowAlpha = 0.25 + (_pulseController.value * 0.2);
 
         return Stack(
           alignment: Alignment.center,

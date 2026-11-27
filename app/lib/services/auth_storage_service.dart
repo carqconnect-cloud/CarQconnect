@@ -217,6 +217,9 @@ class AuthStorageService {
       Globals.vehicleModel = prefs.getString(_keyVehicleModel) ?? '';
       Globals.vehicleRegistration = prefs.getString(_keyVehicleRegistration) ?? '';
 
+      // Load active plan from SharedPreferences
+      await Globals.loadCurrentPlan();
+
       // Verify token in background and refresh if expired
       _validateOrRefreshTokenInBackground(prefs);
 
@@ -392,6 +395,20 @@ class AuthStorageService {
           })
           .catchError((e) {
             debugPrint('Background emergency contacts load error: $e');
+          }),
+      authenticatedGet('/subscriptions/my').then((res) {
+            if (res.statusCode == 200) {
+              final subData = jsonDecode(res.body);
+              if (subData['success'] == true && subData['data'] != null) {
+                final plan = subData['data']['plan'];
+                if (plan != null && plan['name'] != null) {
+                  Globals.saveCurrentPlan(plan['name'], subData['data']['planId'] ?? '');
+                }
+              }
+            }
+          })
+          .catchError((e) {
+            debugPrint('Background subscription plan load error: $e');
           }),
     ]);
   }

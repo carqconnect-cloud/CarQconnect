@@ -101,12 +101,7 @@ const LoginPage = ({ onSwitchToSignup, onSwitchToForgot }: LoginPageProps) => {
 
         {/* Content */}
         <div className="relative z-10">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/30 p-2">
-              <CarQLogo className="w-8 h-8" inverted={true} />
-            </div>
-            <span className="text-white font-bold text-2xl tracking-tight">CarQConnect</span>
-          </div>
+          <CarQLogo variant="wordmark" inverted={true} className="h-8 w-auto" />
         </div>
 
         <div className="relative z-10 space-y-6">
@@ -145,11 +140,8 @@ const LoginPage = ({ onSwitchToSignup, onSwitchToForgot }: LoginPageProps) => {
       <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-16 py-12 bg-white dark:bg-gray-950">
         <div className="max-w-md w-full mx-auto space-y-8">
           {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2.5 mb-2">
-            <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-zinc-800 border border-blue-100 dark:border-zinc-700 p-1 flex items-center justify-center">
-              <CarQLogo className="w-7 h-7" />
-            </div>
-            <span className="text-gray-900 dark:text-white font-bold text-lg">CarQConnect</span>
+          <div className="lg:hidden flex items-center mb-2">
+            <CarQLogo variant="wordmark" className="h-7 w-auto" />
           </div>
 
           <div>

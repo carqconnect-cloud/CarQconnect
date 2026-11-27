@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import '../../globals.dart';
 import '../../theme/app_theme.dart';
 import '../../loading.dart';
-import 'active_qr_tag_screen.dart';
 import 'qr_activated_screen.dart';
 import 'my_qr_screen.dart';
 import '../../utils/api_config.dart';

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../globals.dart';
-import 'qr_code_widget.dart';
 import 'active_qr_tag_screen.dart';
 import 'select_vehicle_screen.dart';
-import '../../utils/api_config.dart';
 
 /// Screen 4: QR Generated Successfully!
 class QrGeneratedScreen extends StatelessWidget {
@@ -229,10 +227,10 @@ class QrGeneratedScreen extends StatelessWidget {
 
                               const SizedBox(height: 22),
 
-                              // QR Code Card
+                              // Smart Safety Physical Tag Card
                               Container(
                                 width: double.infinity,
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                                padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
                                 decoration: BoxDecoration(
                                   color: isLight ? Colors.white : const Color(0xFF0E1724),
                                   borderRadius: BorderRadius.circular(24),
@@ -244,22 +242,81 @@ class QrGeneratedScreen extends StatelessWidget {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text(
-                                      'SMART SAFETY',
-                                      style: TextStyle(
-                                        color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 1.5,
-                                      ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.shield_outlined,
+                                          size: 15,
+                                          color: isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          'SMART SAFETY TAG',
+                                          style: TextStyle(
+                                            color: isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                            letterSpacing: 1.5,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(height: 16),
-                                    QrCodeWidget(
-                                      size: 200,
-                                      darkColor: Colors.black,
-                                      lightColor: Colors.white,
-                                      data: ApiConfig.getQrScanUrl(resolvedTagId),
-                                      isEncrypted: true,
+                                    const SizedBox(height: 18),
+                                    Container(
+                                      width: double.infinity,
+                                      constraints: const BoxConstraints(maxWidth: 240),
+                                      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
+                                      decoration: BoxDecoration(
+                                        color: isLight ? const Color(0xFFF8FAFC) : const Color(0xFF0F1726),
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(
+                                          color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D42),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            width: 58,
+                                            height: 58,
+                                            decoration: BoxDecoration(
+                                              color: (isLight ? AppTheme.primaryBlue : const Color(0xFF00C2FF))
+                                                  .withValues(alpha: 0.12),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.verified_user_rounded,
+                                                color: isLight ? AppTheme.primaryBlue : const Color(0xFF00C2FF),
+                                                size: 30,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 12),
+                                          Text(
+                                            'Tag Created',
+                                            style: TextStyle(
+                                              color: isLight ? const Color(0xFF0F172A) : Colors.white,
+                                              fontSize: 15.5,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 0.2,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            'Order physical sticker to\npaste on vehicle windshield',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
+                                              fontSize: 12,
+                                              height: 1.35,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                     const SizedBox(height: 18),
                                     Row(
@@ -289,8 +346,8 @@ class QrGeneratedScreen extends StatelessWidget {
                                           ),
                                           child: Text(
                                             resolvedTagId,
-                                            style: const TextStyle(
-                                              color: Color(0xFFD6E2F0),
+                                            style: TextStyle(
+                                              color: isLight ? const Color(0xFF0F172A) : const Color(0xFFD6E2F0),
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,
                                               letterSpacing: 0.5,

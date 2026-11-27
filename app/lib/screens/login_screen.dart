@@ -224,7 +224,7 @@ class _LogInScreenState extends State<LogInScreen> {
         await GoogleSignIn.instance.signOut();
       } catch (_) {}
 
-      GoogleSignInAccount? account;
+      final GoogleSignInAccount account;
       try {
         account = await GoogleSignIn.instance.authenticate();
       } catch (e) {
@@ -242,11 +242,6 @@ class _LogInScreenState extends State<LogInScreen> {
             );
           }
         }
-        return;
-      }
-
-      if (account == null) {
-        if (mounted) setState(() => _isLoading = false);
         return;
       }
 
@@ -382,8 +377,8 @@ class _LogInScreenState extends State<LogInScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Official CarQConnect Logo (without badge container background)
-                      const AppLogo(width: 64, height: 52),
+                      // Official CarQConnect Logo
+                      const AppLogo(width: 82, height: 82),
                       const SizedBox(height: 24),
                       Text(
                         'Log In',

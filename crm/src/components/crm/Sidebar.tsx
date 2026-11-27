@@ -115,12 +115,7 @@ const Sidebar = () => {
       <aside className="w-64 bg-white dark:bg-zinc-900 border-r border-gray-200 dark:border-zinc-800 flex flex-col h-screen hidden md:flex transition-all duration-300 shrink-0">
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-gray-200 dark:border-zinc-800">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-zinc-800 border border-blue-100 dark:border-zinc-700 p-1 flex items-center justify-center shadow-sm">
-              <CarQLogo className="w-7 h-7" />
-            </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 tracking-tight">CarQConnect</span>
-          </div>
+          <CarQLogo variant="wordmark" className="h-7 w-auto" />
         </div>
 
         {/* Navigation */}
@@ -211,12 +206,7 @@ const Sidebar = () => {
           <div className="relative w-72 max-w-[85vw] bg-white dark:bg-zinc-900 shadow-2xl flex flex-col z-50 border-r border-gray-200 dark:border-zinc-800 animate-in slide-in-from-left duration-300">
             {/* Header */}
             <div className="h-16 flex items-center justify-between px-5 border-b border-gray-200 dark:border-zinc-800">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-zinc-800 border border-blue-100 dark:border-zinc-700 p-1 flex items-center justify-center shadow-sm">
-                  <CarQLogo className="w-7 h-7" />
-                </div>
-                <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 tracking-tight">CarQConnect</span>
-              </div>
+              <CarQLogo variant="wordmark" className="h-6 w-auto" />
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-zinc-400 dark:hover:bg-zinc-800 transition-colors"

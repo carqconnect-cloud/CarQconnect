@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/app_logo.dart';
 
 /// Animated generative topographical soundwave / contour orb matching Image 1
 class GenerativeOrbWidget extends StatefulWidget {
@@ -319,7 +320,7 @@ class VoiceVisualizerPainter extends CustomPainter {
       oldDelegate.progress != progress;
 }
 
-/// Circular Bot Avatar icon matching Image 2 ("F" cyan badge)
+/// Circular Bot Avatar icon with CarQConnect logo
 class BotAvatarIcon extends StatelessWidget {
   final double size;
   final bool? isLight;
@@ -336,23 +337,27 @@ class BotAvatarIcon extends StatelessWidget {
           width: size,
           height: size,
           decoration: BoxDecoration(
-            color: light ? const Color(0xFFE0F2FE) : const Color(0xFF0F2B3E),
+            color: const Color(0xFF16393F),
             shape: BoxShape.circle,
             border: Border.all(
               color: light
-                  ? const Color(0xFF0284C7).withValues(alpha: 0.5)
-                  : const Color(0xFF00C2FF).withValues(alpha: 0.5),
+                  ? const Color(0xFF16393F).withValues(alpha: 0.35)
+                  : const Color(0xFF00C2FF).withValues(alpha: 0.45),
               width: 1.0,
             ),
           ),
-          child: Center(
-            child: Text(
-              'F',
-              style: TextStyle(
-                color: light ? const Color(0xFF0284C7) : const Color(0xFF00C2FF),
-                fontSize: size * 0.55,
-                fontWeight: FontWeight.w900,
-                fontStyle: FontStyle.italic,
+          child: ClipOval(
+            child: OverflowBox(
+              maxWidth: size * 1.38,
+              maxHeight: size * 1.38,
+              child: Transform.translate(
+                offset: Offset(0, -size * 0.035),
+                child: AppLogo(
+                  width: size * 1.38,
+                  height: size * 1.38,
+                  fit: BoxFit.contain,
+                  isLight: light,
+                ),
               ),
             ),
           ),

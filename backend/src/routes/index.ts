@@ -102,7 +102,7 @@ v1Router.use('/app-qr', requireAuth, requireAppUser, appQrRouter);
 v1Router.use('/documents', requireAuth, requireAppUser, documentsRouter);
 v1Router.use('/notifications', requireAuth, requireAppUser, notificationRouter);
 v1Router.use('/reminders', requireAuth, requireAppUser, reminderRouter);
-v1Router.use('/subscriptions', requireAuth, requireAppUser, subscriptionRouter);
+v1Router.use('/subscriptions', subscriptionRouter);
 v1Router.use('/trips', requireAuth, requireAppUser, tripsRouter);
 v1Router.use('/vehicles', requireAuth, requireAppUser, vehicleRouter);
 v1Router.use('/memberships', membershipRouter);

@@ -127,19 +127,14 @@ export default function SuperAdminLoginPage({
         />
 
         {/* Header Branding */}
-        <div className="absolute top-8 left-8 lg:top-12 lg:left-12 xl:left-16 z-10 flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-white/[0.06] backdrop-blur-md flex items-center justify-center shadow-lg border border-white/10 p-2">
-            <CarQLogo className="w-8 h-8" inverted={true} />
+        <div className="absolute top-8 left-8 lg:top-12 lg:left-12 xl:left-16 z-10 space-y-1.5">
+          <div className="flex items-center gap-2.5">
+            <CarQLogo variant="wordmark" inverted={true} className="h-7 w-auto" />
+            <span className="text-[10px] font-bold tracking-wider uppercase text-cyan-400 bg-cyan-950/60 border border-cyan-800/60 px-2 py-0.5 rounded-full">
+              Super Admin
+            </span>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-white font-bold text-2xl tracking-tight">CarQConnect</span>
-              <span className="text-[10px] font-bold tracking-wider uppercase text-cyan-400 bg-cyan-950/60 border border-cyan-800/60 px-2 py-0.5 rounded-full">
-                Super Admin
-              </span>
-            </div>
-            <p className="text-xs text-slate-400 font-mono mt-0.5">CarQConnect Control Center</p>
-          </div>
+          <p className="text-xs text-slate-400 font-mono">CarQConnect Control Center</p>
         </div>
 
         {/* Center Hero Information */}
@@ -175,19 +170,14 @@ export default function SuperAdminLoginPage({
       <div className="flex-1 flex flex-col justify-center px-4 py-8 sm:px-12 lg:px-16 sm:py-12 bg-[#070b14] text-white overflow-y-auto">
         <div className="max-w-md w-full mx-auto space-y-6 sm:space-y-7">
           {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center gap-2.5 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-zinc-800 border border-zinc-700 p-1.5 flex items-center justify-center shadow-sm">
-              <CarQLogo className="w-7 h-7" />
+          <div className="lg:hidden space-y-1 mb-2">
+            <div className="flex items-center gap-2">
+              <CarQLogo variant="wordmark" inverted={true} className="h-6 w-auto" />
+              <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950/60 border border-cyan-800/60 px-1.5 py-0.5 rounded">
+                Super Admin
+              </span>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-white font-bold text-lg">CarQConnect</span>
-                <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950/60 border border-cyan-800/60 px-1.5 py-0.5 rounded">
-                  Super Admin
-                </span>
-              </div>
-              <p className="text-xs text-zinc-400">Fioner Control Center</p>
-            </div>
+            <p className="text-xs text-zinc-400">CarQConnect Control Center</p>
           </div>
 
           <div>

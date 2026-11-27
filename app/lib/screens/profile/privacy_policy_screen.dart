@@ -205,7 +205,6 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
           color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1B263C),
           width: 1,
         ),
-        boxShadow: AppTheme.settingsCardShadow,
       ),
       child: Material(
         color: Colors.transparent,

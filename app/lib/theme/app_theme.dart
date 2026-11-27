@@ -194,7 +194,7 @@ class AppTheme {
           secondary: Color(0xFF3875F6),
           surface: Colors.white,
         ),
-        cardTheme: const CardTheme(
+        cardTheme: const CardThemeData(
           elevation: 0,
           shadowColor: Colors.transparent,
         ),
@@ -244,7 +244,7 @@ class AppTheme {
           secondary: Color(0xFF9E8FFF),
           surface: Color(0xFF101726),
         ),
-        cardTheme: const CardTheme(
+        cardTheme: const CardThemeData(
           elevation: 0,
           shadowColor: Colors.transparent,
         ),

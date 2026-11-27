@@ -161,6 +161,51 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
     }
   }
 
+  Future<void> _navigateToVehicle() async {
+    _animateMapTo(_currentPos, 17.0);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Row(
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(width: 12),
+            Text('Opening turn-by-turn navigation...'),
+          ],
+        ),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+    final launched = await TripService.launchMapplsNavigation(
+      toLat: _currentPos.latitude,
+      toLng: _currentPos.longitude,
+      destinationName: widget.vehicle?['regNumber'] ?? 'Vehicle Location',
+    );
+    if (!mounted) return;
+    if (!launched) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Could not open map navigation application.'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Future<void> refreshOnRouteReturn() => _refreshTelemetry();
 
@@ -174,7 +219,7 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
 
     return ValueListenableBuilder<bool>(
       valueListenable: AppTheme.isLightNotifier,
-      builder: (context, isLight, _) {
+      builder: (_, isLight, _) {
         return Scaffold(
           backgroundColor: isLight
               ? const Color(0xFFF8FAFC)
@@ -235,7 +280,7 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
                                     // Animated Outer Pulse Glow
                                     AnimatedBuilder(
                                       animation: _pulseAnimation,
-                                      builder: (context, child) {
+                                      builder: (_, child) {
                                         final ringColor = isLight
                                             ? const Color(0xFF0066FF)
                                             : const Color(0xFF00C2FF);
@@ -732,49 +777,7 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
                                   child: SizedBox(
                                     height: 50,
                                     child: ElevatedButton.icon(
-                                      onPressed: () async {
-                                        _animateMapTo(_currentPos, 17.0);
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: const Row(
-                                              children: [
-                                                SizedBox(
-                                                  width: 16,
-                                                  height: 16,
-                                                  child: CircularProgressIndicator(
-                                                    strokeWidth: 2,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                SizedBox(width: 12),
-                                                Text('Opening turn-by-turn navigation...'),
-                                              ],
-                                            ),
-                                            duration: const Duration(seconds: 2),
-                                            behavior: SnackBarBehavior.floating,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12),
-                                            ),
-                                          ),
-                                        );
-                                        final launched = await TripService.launchMapplsNavigation(
-                                          toLat: _currentPos.latitude,
-                                          toLng: _currentPos.longitude,
-                                          destinationName: widget.vehicle?['regNumber'] ?? 'Vehicle Location',
-                                        );
-                                        if (!launched && mounted) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: const Text('Could not open map navigation application.'),
-                                              backgroundColor: Colors.red,
-                                              behavior: SnackBarBehavior.floating,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(12),
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
+                                      onPressed: _navigateToVehicle,
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: isLight
                                             ? const Color(0xFF0066FF)

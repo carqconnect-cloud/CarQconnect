@@ -5,6 +5,9 @@ import AppProviders from './AppProviders';
 export const metadata: Metadata = {
   title: 'CarQConnect — Super Admin Control Center',
   description: 'CarQConnect Super Admin Authority Console',
+  icons: {
+    icon: '/logo/Logo.svg',
+  },
 };
 
 export const viewport: Viewport = {

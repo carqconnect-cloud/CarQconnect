@@ -309,11 +309,15 @@ class DocumentPage extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: isLight ? const Color(0xFFEFF6FF) : const Color(0xFF162238),
+            color: isLight ? const Color(0xFFF1F5F9) : const Color(0xFF162030),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Center(
-            child: Icon(icon, color: AppTheme.primaryBlue, size: 19),
+            child: Icon(
+              icon,
+              color: isLight ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+              size: 19,
+            ),
           ),
         ),
         const SizedBox(width: 14),

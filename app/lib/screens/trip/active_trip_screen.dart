@@ -1145,7 +1145,6 @@ class _ActiveTripScreenState extends State<ActiveTripScreen> {
     final hudBorder = isLight
         ? const Color(0xFFE2E8F0)
         : Colors.white.withValues(alpha: 0.12);
-    final controlShadow = Colors.black.withValues(alpha: isLight ? 0.14 : 0.35);
 
     return Scaffold(
       backgroundColor: isLight ? const Color(0xFFE8EEF5) : const Color(0xFF0C1017),
