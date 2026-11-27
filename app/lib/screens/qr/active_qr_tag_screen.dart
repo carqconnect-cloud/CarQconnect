@@ -42,6 +42,7 @@ class ActiveQrTagScreen extends StatefulWidget {
   final bool sendMessage;
   final bool bloodGroupVisibility;
   final bool emergencyContact;
+  final bool isDigitalEtagUnlocked;
 
   const ActiveQrTagScreen({
     super.key,
@@ -53,6 +54,7 @@ class ActiveQrTagScreen extends StatefulWidget {
     this.sendMessage = true,
     this.bloodGroupVisibility = false,
     this.emergencyContact = true,
+    this.isDigitalEtagUnlocked = true,
   });
 
   @override
@@ -82,6 +84,8 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
     _bloodGroupVisibility = widget.bloodGroupVisibility;
     _emergencyContact = widget.emergencyContact;
     _currentTagId = widget.tagId;
+    // Once a vehicle has an active/generated tag, the digital E-tag is unlocked by default
+    _isDigitalEtagUnlocked = widget.isDigitalEtagUnlocked || widget.tagId.isNotEmpty;
     _checkDigitalTagStatus();
     if (!kIsWeb) {
       try {
@@ -113,9 +117,19 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
   Future<void> _checkDigitalTagStatus() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final tagKey = widget.tagId;
-      if (prefs.getBool('digital_etag_unlocked_$tagKey') == true) {
-        if (mounted) setState(() => _isDigitalEtagUnlocked = true);
+      final tagKey = _currentTagId.isNotEmpty ? _currentTagId : widget.tagId;
+      
+      final isUnlocked = widget.isDigitalEtagUnlocked ||
+          (tagKey.isNotEmpty && tagKey != 'FN78451236') ||
+          prefs.getBool('digital_etag_unlocked_$tagKey') == true ||
+          (widget.vehicleId.isNotEmpty && prefs.getBool('digital_etag_unlocked_${widget.vehicleId}') == true) ||
+          prefs.getBool('digital_etag_unlocked_any') == true;
+
+      if (isUnlocked && mounted) {
+        setState(() => _isDigitalEtagUnlocked = true);
+        if (tagKey.isNotEmpty) await prefs.setBool('digital_etag_unlocked_$tagKey', true);
+        if (widget.vehicleId.isNotEmpty) await prefs.setBool('digital_etag_unlocked_${widget.vehicleId}', true);
+        await prefs.setBool('digital_etag_unlocked_any', true);
       }
     } catch (_) {}
   }
@@ -135,6 +149,10 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
           orElse: () => null,
         );
         if (current != null && mounted) {
+          final isTagActive = current['isActive'] == true ||
+              current['status'] == 'ACTIVE' ||
+              (current['code'] != null && current['code'].toString().isNotEmpty);
+
           setState(() {
             _currentTagId = current['tagId'] ?? current['code'] ?? _currentTagId;
             _callOwner = current['callOwner'] ?? _callOwner;
@@ -143,8 +161,18 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                 current['bloodGroupVisibility'] ?? _bloodGroupVisibility;
             _emergencyContact =
                 current['emergencyContact'] ?? _emergencyContact;
+            if (isTagActive) {
+              _isDigitalEtagUnlocked = true;
+            }
           });
-          _checkDigitalTagStatus();
+          
+          if (isTagActive) {
+            final prefs = await SharedPreferences.getInstance();
+            final tagKey = _currentTagId.isNotEmpty ? _currentTagId : widget.tagId;
+            if (tagKey.isNotEmpty) await prefs.setBool('digital_etag_unlocked_$tagKey', true);
+            if (widget.vehicleId.isNotEmpty) await prefs.setBool('digital_etag_unlocked_${widget.vehicleId}', true);
+            await prefs.setBool('digital_etag_unlocked_any', true);
+          }
         }
       }
     } catch (e) {
@@ -352,7 +380,9 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
       if (confirmed == true) {
         final prefs = await SharedPreferences.getInstance();
         final tagKey = _currentTagId.isNotEmpty ? _currentTagId : widget.tagId;
-        await prefs.setBool('digital_etag_unlocked_$tagKey', true);
+        if (tagKey.isNotEmpty) await prefs.setBool('digital_etag_unlocked_$tagKey', true);
+        if (widget.vehicleId.isNotEmpty) await prefs.setBool('digital_etag_unlocked_${widget.vehicleId}', true);
+        await prefs.setBool('digital_etag_unlocked_any', true);
 
         if (mounted) {
           setState(() {
@@ -489,7 +519,9 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
       try {
         final prefs = await SharedPreferences.getInstance();
         final tagKey = _currentTagId.isNotEmpty ? _currentTagId : widget.tagId;
-        await prefs.setBool('digital_etag_unlocked_$tagKey', true);
+        if (tagKey.isNotEmpty) await prefs.setBool('digital_etag_unlocked_$tagKey', true);
+        if (widget.vehicleId.isNotEmpty) await prefs.setBool('digital_etag_unlocked_${widget.vehicleId}', true);
+        await prefs.setBool('digital_etag_unlocked_any', true);
 
         await StoreService.orderETag(
           razorpayOrderId: response.orderId ?? '',
