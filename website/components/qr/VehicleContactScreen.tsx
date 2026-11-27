@@ -297,6 +297,12 @@ export default function VehicleContactScreen({ tagId }: VehicleContactScreenProp
             <p className="mt-1 text-[16px] font-medium tracking-[1.2px] text-[#8E9BAE]">
               {vehicleReg}
             </p>
+            {data?.bloodGroup && (
+              <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#FF4B4B]/15 px-3 py-1 text-xs font-semibold text-[#FF4B4B] border border-[#FF4B4B]/30">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#FF4B4B] animate-pulse" />
+                Blood Group: {data.bloodGroup}
+              </div>
+            )}
           </div>
 
           {/* Privacy Info Banner */}
@@ -310,63 +316,87 @@ export default function VehicleContactScreen({ tagId }: VehicleContactScreenProp
           </div>
 
           {/* Prominent Call & Message Actions Row */}
-          <div className="grid grid-cols-2 gap-3.5">
-            {/* Call Owner Action */}
-            <button
-              onClick={() => {
-                setCallTargetType("owner");
-                setCallNotice(null);
-                setCallModalOpen(true);
-              }}
-              className="flex flex-col items-center justify-center rounded-2xl border border-[#00D26A]/35 bg-[#0D251C] py-[18px] shadow-[0_4px_12px_rgba(0,210,106,0.12)] transition-transform active:scale-95"
+          {(data?.callEnabled || data?.messageEnabled) && (
+            <div
+              className={`grid gap-3.5 ${
+                data?.callEnabled && data?.messageEnabled ? "grid-cols-2" : "grid-cols-1"
+              }`}
             >
-              <div className="mb-2.5 flex h-11 w-11 items-center justify-center rounded-full bg-[#00D26A] text-black">
-                <Phone className="h-[22px] w-[22px] fill-black text-black" />
-              </div>
-              <span className="text-[15px] font-bold text-white">Call Owner</span>
-              <span className="mt-0.5 text-[11px] font-medium text-[#00D26A]">Masked Calling</span>
-            </button>
+              {/* Call Owner Action */}
+              {data?.callEnabled && (
+                <button
+                  onClick={() => {
+                    setCallTargetType("owner");
+                    setCallNotice(null);
+                    setCallModalOpen(true);
+                  }}
+                  className={`flex ${
+                    !data?.messageEnabled
+                      ? "flex-row gap-4 px-5 py-4 justify-start"
+                      : "flex-col justify-center py-[18px]"
+                  } items-center rounded-2xl border border-[#00D26A]/35 bg-[#0D251C] shadow-[0_4px_12px_rgba(0,210,106,0.12)] transition-transform active:scale-95`}
+                >
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#00D26A] text-black">
+                    <Phone className="h-[22px] w-[22px] fill-black text-black" />
+                  </div>
+                  <div className={!data?.messageEnabled ? "text-left" : "mt-2.5 text-center"}>
+                    <div className="text-[15px] font-bold text-white">Call Owner</div>
+                    <div className="mt-0.5 text-[11px] font-medium text-[#00D26A]">Masked Calling</div>
+                  </div>
+                </button>
+              )}
 
-            {/* Message Action */}
-            <button
-              onClick={() => {
-                setMessageNotice(null);
-                setMessageModalOpen(true);
-              }}
-              className="flex flex-col items-center justify-center rounded-2xl border border-[#00C2FF]/35 bg-[#0A223B] py-[18px] shadow-[0_4px_12px_rgba(0,194,255,0.12)] transition-transform active:scale-95"
-            >
-              <div className="mb-2.5 flex h-11 w-11 items-center justify-center rounded-full bg-[#00C2FF] text-black">
-                <MessageSquare className="h-5 w-5 fill-black text-black" />
-              </div>
-              <span className="text-[15px] font-bold text-white">Message</span>
-              <span className="mt-0.5 text-[11px] font-medium text-[#00C2FF]">Instant Alert</span>
-            </button>
-          </div>
+              {/* Message Action */}
+              {data?.messageEnabled && (
+                <button
+                  onClick={() => {
+                    setMessageNotice(null);
+                    setMessageModalOpen(true);
+                  }}
+                  className={`flex ${
+                    !data?.callEnabled
+                      ? "flex-row gap-4 px-5 py-4 justify-start"
+                      : "flex-col justify-center py-[18px]"
+                  } items-center rounded-2xl border border-[#00C2FF]/35 bg-[#0A223B] shadow-[0_4px_12px_rgba(0,194,255,0.12)] transition-transform active:scale-95`}
+                >
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#00C2FF] text-black">
+                    <MessageSquare className="h-5 w-5 fill-black text-black" />
+                  </div>
+                  <div className={!data?.callEnabled ? "text-left" : "mt-2.5 text-center"}>
+                    <div className="text-[15px] font-bold text-white">Message</div>
+                    <div className="mt-0.5 text-[11px] font-medium text-[#00C2FF]">Instant Alert</div>
+                  </div>
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Action List Tiles */}
           <div className="space-y-3 pt-1">
             {/* Emergency Contact Button */}
-            <button
-              onClick={() => {
-                setCallTargetType("emergency");
-                setCallNotice(null);
-                setCallModalOpen(true);
-              }}
-              className="flex w-full items-center rounded-2xl border border-[#FF4B4B]/20 bg-[#2E151B] px-[18px] py-4 text-left transition-transform active:scale-[0.99]"
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FF4B4B]/18 text-[#FF4B4B]">
-                <ShieldAlert className="h-[22px] w-[22px]" />
-              </div>
-              <div className="ml-3.5 flex-1 pr-2">
-                <div className="text-[16px] font-semibold text-[#FFC0C0]">
-                  Emergency Contact
+            {data?.emergencyContactEnabled && (
+              <button
+                onClick={() => {
+                  setCallTargetType("emergency");
+                  setCallNotice(null);
+                  setCallModalOpen(true);
+                }}
+                className="flex w-full items-center rounded-2xl border border-[#FF4B4B]/20 bg-[#2E151B] px-[18px] py-4 text-left transition-transform active:scale-[0.99]"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FF4B4B]/18 text-[#FF4B4B]">
+                  <ShieldAlert className="h-[22px] w-[22px]" />
                 </div>
-                <div className="mt-0.5 text-[12px] text-[#FFC0C0]/70">
-                  Connect securely with emergency contact (Masked Call)
+                <div className="ml-3.5 flex-1 pr-2">
+                  <div className="text-[16px] font-semibold text-[#FFC0C0]">
+                    Emergency Contact
+                  </div>
+                  <div className="mt-0.5 text-[12px] text-[#FFC0C0]/70">
+                    Connect securely with emergency contact (Masked Call)
+                  </div>
                 </div>
-              </div>
-              <ChevronRight className="h-4 w-4 shrink-0 text-[#FFC0C0]/40" />
-            </button>
+                <ChevronRight className="h-4 w-4 shrink-0 text-[#FFC0C0]/40" />
+              </button>
+            )}
 
             {/* Report Issue Button */}
             <button

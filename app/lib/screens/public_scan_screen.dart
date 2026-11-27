@@ -837,6 +837,10 @@ class _PublicScanScreenState extends State<PublicScanScreen>
         }
 
         final vehicle = _data?['vehicle'];
+        final callEnabled = _data?['callEnabled'] ?? true;
+        final messageEnabled = _data?['messageEnabled'] ?? true;
+        final emergencyContactEnabled = _data?['emergencyContactEnabled'] ?? true;
+        final bloodGroup = _data?['bloodGroup'];
         final primaryBlue = isLight
             ? AppTheme.primaryBlue
             : const Color(0xFF00C2FF);
@@ -927,6 +931,34 @@ class _PublicScanScreenState extends State<PublicScanScreen>
                             fontWeight: FontWeight.w500,
                           ),
                         ),
+                        if (bloodGroup != null && bloodGroup.toString().isNotEmpty) ...[
+                          const SizedBox(height: 10),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFF4B4B).withValues(alpha: isLight ? 0.1 : 0.18),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: const Color(0xFFFF4B4B).withValues(alpha: 0.35),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.water_drop_rounded, size: 14, color: Color(0xFFFF4B4B)),
+                                const SizedBox(width: 5),
+                                Text(
+                                  'Blood Group: $bloodGroup',
+                                  style: const TextStyle(
+                                    color: Color(0xFFFF4B4B),
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -977,152 +1009,160 @@ class _PublicScanScreenState extends State<PublicScanScreen>
                   const SizedBox(height: 20),
 
                   // 1. Prominent Phone Call & Message Actions Row
-                  Row(
-                    children: [
-                      // Phone Icon & Call Action Button
-                      Expanded(
-                        child: InkWell(
-                          onTap: () =>
-                              _showMaskedCallDialog(targetType: 'owner'),
-                          borderRadius: BorderRadius.circular(16),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 18),
-                            decoration: BoxDecoration(
-                              color: isLight
-                                  ? const Color(0xFFF0FDF4)
-                                  : const Color(0xFF0D251C),
+                  if (callEnabled || messageEnabled) ...[
+                    Row(
+                      children: [
+                        // Phone Icon & Call Action Button
+                        if (callEnabled)
+                          Expanded(
+                            child: InkWell(
+                              onTap: () =>
+                                  _showMaskedCallDialog(targetType: 'owner'),
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: const Color(0xFF00D26A)
-                                    .withValues(alpha: isLight ? 0.3 : 0.35),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 18),
+                                decoration: BoxDecoration(
+                                  color: isLight
+                                      ? const Color(0xFFF0FDF4)
+                                      : const Color(0xFF0D251C),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: const Color(0xFF00D26A)
+                                        .withValues(alpha: isLight ? 0.3 : 0.35),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF00D26A)
+                                          .withValues(alpha: 0.12),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  children: [
+                                    const CircleAvatar(
+                                      radius: 22,
+                                      backgroundColor: Color(0xFF00D26A),
+                                      child: Icon(
+                                        Icons.call_rounded,
+                                        color: Colors.black,
+                                        size: 22,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      'Call Owner',
+                                      style: TextStyle(
+                                        color: isLight
+                                            ? const Color(0xFF0F172A)
+                                            : Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 3),
+                                    const Text(
+                                      'Masked Calling',
+                                      style: TextStyle(
+                                        color: Color(0xFF00D26A),
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF00D26A)
-                                      .withValues(alpha: 0.12),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                const CircleAvatar(
-                                  radius: 22,
-                                  backgroundColor: Color(0xFF00D26A),
-                                  child: Icon(
-                                    Icons.call_rounded,
-                                    color: Colors.black,
-                                    size: 22,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  'Call Owner',
-                                  style: TextStyle(
-                                    color: isLight
-                                        ? const Color(0xFF0F172A)
-                                        : Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                const SizedBox(height: 3),
-                                const Text(
-                                  'Masked Calling',
-                                  style: TextStyle(
-                                    color: Color(0xFF00D26A),
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
                             ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 14),
+                        if (callEnabled && messageEnabled)
+                          const SizedBox(width: 14),
 
-                      // Message Icon & Alert Action Button
-                      Expanded(
-                        child: InkWell(
-                          onTap: () => _showMessageDialog(),
-                          borderRadius: BorderRadius.circular(16),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 18),
-                            decoration: BoxDecoration(
-                              color: isLight
-                                  ? const Color(0xFFEFF6FF)
-                                  : const Color(0xFF0A223B),
+                        // Message Icon & Alert Action Button
+                        if (messageEnabled)
+                          Expanded(
+                            child: InkWell(
+                              onTap: () => _showMessageDialog(),
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: primaryBlue.withValues(alpha: 0.35),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 18),
+                                decoration: BoxDecoration(
+                                  color: isLight
+                                      ? const Color(0xFFEFF6FF)
+                                      : const Color(0xFF0A223B),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: primaryBlue.withValues(alpha: 0.35),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: primaryBlue.withValues(alpha: 0.12),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 22,
+                                      backgroundColor: primaryBlue,
+                                      child: Icon(
+                                        Icons.chat_bubble_rounded,
+                                        color: isLight
+                                            ? Colors.white
+                                            : Colors.black,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      'Message',
+                                      style: TextStyle(
+                                        color: isLight
+                                            ? const Color(0xFF0F172A)
+                                            : Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      'Instant Alert',
+                                      style: TextStyle(
+                                        color: primaryBlue,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: primaryBlue.withValues(alpha: 0.12),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                CircleAvatar(
-                                  radius: 22,
-                                  backgroundColor: primaryBlue,
-                                  child: Icon(
-                                    Icons.chat_bubble_rounded,
-                                    color: isLight
-                                        ? Colors.white
-                                        : Colors.black,
-                                    size: 20,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  'Message',
-                                  style: TextStyle(
-                                    color: isLight
-                                        ? const Color(0xFF0F172A)
-                                        : Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                const SizedBox(height: 3),
-                                Text(
-                                  'Instant Alert',
-                                  style: TextStyle(
-                                    color: primaryBlue,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                  ],
 
                   // 2. Emergency Contact Button
-                  _buildListTile(
-                    icon: Icons.emergency_rounded,
-                    title: 'Emergency Contact',
-                    subtitle:
-                        'Connect securely with emergency contact (Masked Call)',
-                    backgroundColor: isLight
-                        ? const Color(0xFFFEF2F2)
-                        : const Color(0xFF2E151B),
-                    iconColor: const Color(0xFFFF4B4B),
-                    textColor: isLight
-                        ? const Color(0xFF991B1B)
-                        : const Color(0xFFFFC0C0),
-                    onTap: () => _showMaskedCallDialog(targetType: 'emergency'),
-                  ),
+                  if (emergencyContactEnabled) ...[
+                    _buildListTile(
+                      icon: Icons.emergency_rounded,
+                      title: 'Emergency Contact',
+                      subtitle:
+                          'Connect securely with emergency contact (Masked Call)',
+                      backgroundColor: isLight
+                          ? const Color(0xFFFEF2F2)
+                          : const Color(0xFF2E151B),
+                      iconColor: const Color(0xFFFF4B4B),
+                      textColor: isLight
+                          ? const Color(0xFF991B1B)
+                          : const Color(0xFFFFC0C0),
+                      onTap: () => _showMaskedCallDialog(targetType: 'emergency'),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
 
                   // 3. Report Issue Button
                   _buildListTile(

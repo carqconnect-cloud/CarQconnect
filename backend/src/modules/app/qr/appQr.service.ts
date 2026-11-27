@@ -158,9 +158,15 @@ export const appQrService = {
   },
 
   async updateQrPrivacy(userId: string, tagId: string, data: any) {
-    const tag = await prisma.qrCode.findUnique({
+    let tag = await prisma.qrCode.findUnique({
       where: { code: tagId },
     });
+
+    if (!tag) {
+      tag = await prisma.qrCode.findUnique({
+        where: { id: tagId },
+      });
+    }
 
     if (!tag || tag.userId !== userId) {
       throw ApiError.notFound('QR Tag');
@@ -174,7 +180,7 @@ export const appQrService = {
     if (data.isActive !== undefined) sanitizedData.isActive = Boolean(data.isActive);
 
     const updated = await prisma.qrCode.update({
-      where: { code: tagId },
+      where: { id: tag.id },
       data: sanitizedData,
     });
     return {
@@ -184,7 +190,7 @@ export const appQrService = {
   },
 
   async getPublicTagInfo(tagId: string) {
-    const tag = await prisma.qrCode.findUnique({
+    let tag = await prisma.qrCode.findUnique({
       where: { code: tagId },
       include: {
         vehicle: true,
@@ -198,6 +204,23 @@ export const appQrService = {
         },
       },
     });
+
+    if (!tag) {
+      tag = await prisma.qrCode.findUnique({
+        where: { id: tagId },
+        include: {
+          vehicle: true,
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+              phone: true,
+              emergencyContacts: true,
+            },
+          },
+        },
+      });
+    }
 
     if (!tag) {
       throw ApiError.notFound('QR Tag not found');
@@ -214,8 +237,7 @@ export const appQrService = {
     }).catch(() => {});
 
     // Filter sensitive info based on privacy settings
-    const userContacts = (tag.user?.emergencyContacts as any[]) || [];
-    const hasEmergency = Boolean(tag.emergencyContact || userContacts.length > 0);
+    const hasEmergency = Boolean(tag.emergencyContact);
 
     const responseData = {
       vehicle: {
@@ -223,9 +245,9 @@ export const appQrService = {
         regNumber: tag.vehicle?.regNumber || tag.vehicle?.reg,
       },
       ownerName: tag.user?.firstName ? `${tag.user.firstName} ${tag.user.lastName || ''}`.trim() : 'Owner',
-      callEnabled: tag.callOwner ?? true,
-      messageEnabled: tag.sendMessage ?? true,
-      bloodGroup: tag.bloodGroupVisibility ? 'O+' : null,
+      callEnabled: Boolean(tag.callOwner),
+      messageEnabled: Boolean(tag.sendMessage),
+      bloodGroup: tag.bloodGroupVisibility ? ((tag.user as any)?.bloodGroup || 'O+') : null,
       emergencyContactEnabled: hasEmergency,
       supportPhone: process.env.EXOTEL_VIRTUAL_NUMBER || '09513886363',
       supportMessage: 'CarQConnect 24x7 Helpline',
@@ -235,7 +257,7 @@ export const appQrService = {
   },
 
   async initiateMaskedCall(tagId: string, callerPhone: string, targetType: 'owner' | 'emergency' = 'owner') {
-    const tag = await prisma.qrCode.findUnique({
+    let tag = await prisma.qrCode.findUnique({
       where: { code: tagId },
       include: {
         user: {
@@ -247,6 +269,20 @@ export const appQrService = {
       },
     });
 
+    if (!tag) {
+      tag = await prisma.qrCode.findUnique({
+        where: { id: tagId },
+        include: {
+          user: {
+            include: {
+              emergencyContacts: true,
+            },
+          },
+          vehicle: true,
+        },
+      });
+    }
+
     if (!tag || !tag.isActive) {
       throw ApiError.badRequest('Invalid or inactive tag');
     }
@@ -254,6 +290,9 @@ export const appQrService = {
     let targetPhone = tag.user?.phone;
 
     if (targetType === 'emergency') {
+      if (tag.emergencyContact === false) {
+        throw ApiError.badRequest('Owner has disabled emergency contact calls');
+      }
       const emergencyContacts = (tag.user?.emergencyContacts as any[]) || [];
       if (emergencyContacts.length > 0 && emergencyContacts[0]?.phone) {
         targetPhone = emergencyContacts[0].phone;
@@ -321,13 +360,24 @@ export const appQrService = {
   },
 
   async sendMessageToOwner(tagId: string, messageText: string, callerPhone?: string) {
-    const tag = await prisma.qrCode.findUnique({
+    let tag = await prisma.qrCode.findUnique({
       where: { code: tagId },
       include: { vehicle: true, user: true }
     });
 
+    if (!tag) {
+      tag = await prisma.qrCode.findUnique({
+        where: { id: tagId },
+        include: { vehicle: true, user: true }
+      });
+    }
+
     if (!tag || !tag.isActive) {
       throw ApiError.badRequest('Invalid or inactive tag');
+    }
+
+    if (tag.sendMessage === false) {
+      throw ApiError.badRequest('Owner has disabled messages for this tag');
     }
 
     const cleanPhone = callerPhone?.trim() || '';

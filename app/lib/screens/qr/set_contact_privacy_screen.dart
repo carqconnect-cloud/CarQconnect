@@ -6,6 +6,7 @@ import '../../globals.dart';
 import '../../theme/app_theme.dart';
 import '../../loading.dart';
 import 'active_qr_tag_screen.dart';
+import 'qr_activated_screen.dart';
 import 'my_qr_screen.dart';
 import '../../utils/api_config.dart';
 import '../../utils/app_icons.dart';
@@ -874,15 +875,11 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => ActiveQrTagScreen(
+                                      builder: (context) => QrActivatedScreen(
                                         vehicleId: widget.vehicleId,
                                         vehicleName: widget.vehicleName,
                                         vehicleReg: widget.vehicleReg,
                                         tagId: generatedTagId,
-                                        callOwner: _allowCall,
-                                        sendMessage: _allowMessage,
-                                        bloodGroupVisibility: _bloodGroupController.text.trim().isNotEmpty,
-                                        emergencyContact: _showEmergencyContact,
                                       ),
                                     ),
                                   );

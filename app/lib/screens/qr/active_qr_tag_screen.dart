@@ -190,8 +190,9 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
 
     if (Globals.accessToken.isNotEmpty) {
       try {
+        final tagCode = _currentTagId.isNotEmpty ? _currentTagId : widget.tagId;
         await http.patch(
-          ApiConfig.uri('/app-qr/tags/${widget.tagId}/privacy'),
+          ApiConfig.uri('/app-qr/tags/$tagCode/privacy'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ${Globals.accessToken}',
@@ -259,155 +260,6 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
       await _simulateOrConfirmOrder(
         paymentId: 'PAY_${DateTime.now().millisecondsSinceEpoch}',
       );
-    } finally {
-      if (mounted) setState(() => _isOrdering = false);
-    }
-  }
-
-
-  Future<void> _onOrderDigitalEtag() async {
-    if (_isOrdering) return;
-    setState(() {
-      _isOrdering = true;
-      _currentPaymentType = 'digital';
-    });
-
-    const int amount = 80;
-
-    // 1. Native Mobile (Android / iOS): Open Razorpay native SDK
-    if (!kIsWeb && _razorpay != null) {
-      try {
-        final orderData = await StoreService.createRazorpayOrder(amount);
-
-        if (orderData != null && orderData['id'] != null) {
-          final displayName = widget.vehicleName.isNotEmpty
-              ? widget.vehicleName
-              : (Globals.vehicleModel.isNotEmpty
-                    ? Globals.vehicleModel
-                    : 'Vehicle');
-          final displayReg = widget.vehicleReg.isNotEmpty
-              ? widget.vehicleReg
-              : Globals.vehicleRegistration;
-          final options = {
-            'key': 'rzp_test_Tm9BKNGeBE7GAx',
-            'amount': amount * 100, // 8000 paise
-            'name': 'CarQConnect',
-            'order_id': orderData['id'],
-            'description': 'Order Digital E-tag for $displayName ($displayReg)',
-            'prefill': {
-              'contact': Globals.phone.isNotEmpty
-                  ? Globals.phone
-                  : '9513886363',
-              'email': Globals.email.isNotEmpty
-                  ? Globals.email
-                  : 'customer@carqconnect.com',
-            },
-            'theme': {'color': '#0066FF'},
-          };
-
-          _razorpay!.open(options);
-          return;
-        }
-      } catch (e) {
-        debugPrint('Error initiating native Razorpay payment: $e');
-      } finally {
-        if (mounted) setState(() => _isOrdering = false);
-      }
-    }
-
-    // 2. Web & Fallback Checkout: Confirm test order dialog
-    try {
-      if (!mounted) return;
-      final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          backgroundColor: AppTheme.isLight ? Colors.white : const Color(0xFF101726),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text(
-            'Order Digital E-tag',
-            style: TextStyle(
-              color: AppTheme.isLight ? const Color(0xFF0F172A) : Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Unlock and download the high-resolution Digital QR E-tag for your vehicle.',
-                style: TextStyle(
-                  color: AppTheme.isLight ? const Color(0xFF475569) : const Color(0xFF94A3B8),
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0066FF).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFF0066FF).withValues(alpha: 0.3)),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Total Amount:', style: TextStyle(fontWeight: FontWeight.w600)),
-                    Text('₹80', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF0066FF))),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0066FF),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: const Text('Pay ₹80 & Unlock'),
-            ),
-          ],
-        ),
-      );
-
-      if (confirmed == true) {
-        final prefs = await SharedPreferences.getInstance();
-        final tagKey = _currentTagId.isNotEmpty ? _currentTagId : widget.tagId;
-        if (tagKey.isNotEmpty) await prefs.setBool('digital_etag_unlocked_$tagKey', true);
-        if (widget.vehicleId.isNotEmpty) await prefs.setBool('digital_etag_unlocked_${widget.vehicleId}', true);
-        await prefs.setBool('digital_etag_unlocked_any', true);
-
-        if (mounted) {
-          setState(() {
-            _isDigitalEtagUnlocked = true;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              backgroundColor: Color(0xFF10B981),
-              duration: Duration(seconds: 4),
-              content: Row(
-                children: [
-                  Icon(Icons.check_circle_rounded, color: Colors.white),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'Payment successful! Your Digital E-tag is unlocked.',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-      }
     } finally {
       if (mounted) setState(() => _isOrdering = false);
     }
@@ -514,59 +366,6 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     if (!mounted) return;
     setState(() => _isOrdering = true);
-
-    if (_currentPaymentType == 'digital') {
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        final tagKey = _currentTagId.isNotEmpty ? _currentTagId : widget.tagId;
-        if (tagKey.isNotEmpty) await prefs.setBool('digital_etag_unlocked_$tagKey', true);
-        if (widget.vehicleId.isNotEmpty) await prefs.setBool('digital_etag_unlocked_${widget.vehicleId}', true);
-        await prefs.setBool('digital_etag_unlocked_any', true);
-
-        await StoreService.orderETag(
-          razorpayOrderId: response.orderId ?? '',
-          razorpayPaymentId: response.paymentId ?? '',
-          razorpaySignature: response.signature ?? '',
-          tagId: tagKey,
-          vehicleReg: widget.vehicleReg.isNotEmpty
-              ? widget.vehicleReg
-              : Globals.vehicleRegistration,
-          amount: 80,
-        ).catchError((_) => null);
-
-        if (mounted) {
-          setState(() {
-            _isDigitalEtagUnlocked = true;
-            _isOrdering = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              backgroundColor: Color(0xFF10B981),
-              duration: Duration(seconds: 4),
-              content: Row(
-                children: [
-                  Icon(Icons.check_circle_rounded, color: Colors.white),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'Payment successful! Your Digital E-tag is now unlocked.',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-      } catch (e) {
-        debugPrint('Error unlocking digital E-tag: $e');
-        if (mounted) setState(() => _isOrdering = false);
-      }
-      return;
-    }
 
     try {
       final displayTagId = _currentTagId.isNotEmpty
@@ -1249,7 +1048,7 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
-                                      _isDigitalEtagUnlocked ? 'Digital E-tag active! You can download your official QR code to your device.' : 'Protected against screenshot copying. Order Digital E-tag to unlock and download.',
+                                      'Digital E-tag active! You can download your official QR code to your device.',
                                       style: TextStyle(
                                         color: isLight
                                             ? const Color(0xFF334155)
@@ -1266,45 +1065,35 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
 
                             const SizedBox(height: 22),
 
-                            // Button 1: Order Digital E-tag / Download
+                            // Button 1: Download
                             SizedBox(
                               width: double.infinity,
                               height: 50,
                               child: ElevatedButton(
-                                onPressed: _isOrdering || _isDownloading
-                                    ? null
-                                    : (_isDigitalEtagUnlocked
-                                        ? _onDownloadQr
-                                        : _onOrderDigitalEtag),
+                                onPressed: _isDownloading ? null : _onDownloadQr,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: _isDigitalEtagUnlocked
-                                      ? const Color(0xFF10B981)
-                                      : AppTheme.primaryBlue,
+                                  backgroundColor: const Color(0xFF10B981),
                                   foregroundColor: Colors.white,
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25),
                                   ),
                                 ),
-                                child: _isOrdering || _isDownloading
+                                child: _isDownloading
                                     ? const AppLoadingSpinner(size: 22)
                                     : Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
-                                        children: [
+                                        children: const [
                                           Icon(
-                                            _isDigitalEtagUnlocked
-                                                ? Icons.download_rounded
-                                                : Icons.qr_code_2_rounded,
+                                            Icons.download_rounded,
                                             color: Colors.white,
                                             size: 20,
                                           ),
-                                          const SizedBox(width: 8),
+                                          SizedBox(width: 8),
                                           Text(
-                                            _isDigitalEtagUnlocked
-                                                ? 'Download'
-                                                : 'Order Digital E-tag',
-                                            style: const TextStyle(
+                                            'Download',
+                                            style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 15.5,
                                               fontWeight: FontWeight.bold,
@@ -1480,7 +1269,14 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                                       fontSize: 12.5,
                                     ),
                                   ),
-                                  const SizedBox(height: 14),
+                                  const SizedBox(height: 10),
+                                  Divider(
+                                    color: isLight
+                                        ? const Color(0xFFE2E8F0)
+                                        : const Color(0xFF1E293B),
+                                    thickness: 1,
+                                    height: 16,
+                                  ),
 
                                   // Switch 1: Call owner
                                   _buildSwitchRow(
@@ -1490,7 +1286,13 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                                         _updatePrivacy('callOwner', val),
                                     isLight: isLight,
                                   ),
-                                  const SizedBox(height: 8),
+                                  Divider(
+                                    color: isLight
+                                        ? const Color(0xFFE2E8F0)
+                                        : const Color(0xFF1E293B),
+                                    thickness: 1,
+                                    height: 16,
+                                  ),
 
                                   // Switch 2: Send message
                                   _buildSwitchRow(
@@ -1500,7 +1302,13 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                                         _updatePrivacy('sendMessage', val),
                                     isLight: isLight,
                                   ),
-                                  const SizedBox(height: 8),
+                                  Divider(
+                                    color: isLight
+                                        ? const Color(0xFFE2E8F0)
+                                        : const Color(0xFF1E293B),
+                                    thickness: 1,
+                                    height: 16,
+                                  ),
 
                                   // Switch 3: Blood group visibility
                                   _buildSwitchRow(
@@ -1512,7 +1320,13 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                                     ),
                                     isLight: isLight,
                                   ),
-                                  const SizedBox(height: 8),
+                                  Divider(
+                                    color: isLight
+                                        ? const Color(0xFFE2E8F0)
+                                        : const Color(0xFF1E293B),
+                                    thickness: 1,
+                                    height: 16,
+                                  ),
 
                                   // Switch 4: Emergency contact
                                   _buildSwitchRow(
