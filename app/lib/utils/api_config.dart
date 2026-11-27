@@ -189,7 +189,7 @@ class ApiConfig {
 
 
   /// Default Production Vercel Frontend Domain
-  static const String defaultVercelFrontendUrl = 'https://carqconnect.vercel.app';
+  static const String defaultVercelFrontendUrl = 'https://car-qconnect.vercel.app';
   static String? _customFrontendUrl;
 
   /// Web URL for QR code generation & browser scanning

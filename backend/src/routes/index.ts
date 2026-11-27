@@ -55,7 +55,7 @@ publicRouter.get('/scan/:tagId', (req, res, next) => {
   // If request is from a browser navigating to this URL (e.g. scanned via phone camera), redirect to web frontend
   const acceptHeader = req.headers.accept || '';
   if (acceptHeader.includes('text/html')) {
-    const frontendBase = process.env.FRONTEND_URL || 'https://carqconnect.vercel.app';
+    const frontendBase = process.env.FRONTEND_URL || 'https://car-qconnect.vercel.app';
     return res.redirect(302, `${frontendBase}/scan/${req.params.tagId}`);
   }
   next();

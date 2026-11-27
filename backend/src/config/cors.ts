@@ -2,6 +2,8 @@ import type { CorsOptions } from 'cors';
 import { env } from './env';
 
 const ALLOWED_PRODUCTION_ORIGINS = [
+  'https://car-qconnect.vercel.app',
+  'https://carqconnect.vercel.app',
   'https://fioner.vercel.app',
   'https://fioner-crm.vercel.app',
   'https://carqconnect.com',
