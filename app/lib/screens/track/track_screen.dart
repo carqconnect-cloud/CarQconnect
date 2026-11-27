@@ -89,15 +89,15 @@ class _TrackScreenState extends State<TrackScreen>
       setState(() => _isLoading = true);
     }
 
-    // 1. Fetch real user vehicles
-    final vList = await TrackService.getUserVehicles();
+    // Fetch user vehicles, live GPS position and trip history concurrently
+    final vehiclesFuture = TrackService.getUserVehicles();
+    final posFuture = TrackService.getLivePosition();
+    final historyFuture = TrackService.getLocationHistory();
 
-    // 2. Fetch real live position & address
-    final pos = await TrackService.getLivePosition();
+    final vList = await vehiclesFuture;
+    final pos = await posFuture;
+    final history = await historyFuture;
     final addr = await TrackService.getLiveAddress(pos);
-
-    // 3. Fetch real location history from completed trips
-    final history = await TrackService.getLocationHistory();
 
     final sel = _selectedVehicle ?? (vList.isNotEmpty ? vList.first : null);
     final reg = sel?['regNumber'] ?? Globals.vehicleRegistration;

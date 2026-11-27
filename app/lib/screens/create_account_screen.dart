@@ -23,6 +23,7 @@ class CreateAccountScreen extends StatefulWidget {
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
+  bool _submitted = false;
   bool _agreeTerms = false;
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -69,6 +70,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   void _submitForm() async {
     if (_isLoading) return;
+    setState(() => _submitted = true);
     if (_formKey.currentState!.validate()) {
       if (!_agreeTerms) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -99,7 +101,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   headers: {'Content-Type': 'application/json'},
                   body: jsonEncode({'email': email, 'phone': phone}),
                 )
-                .timeout(const Duration(seconds: 45));
+                .timeout(const Duration(seconds: 15));
             response = res;
             if (res.statusCode == 200) break;
           } catch (_) {}
@@ -465,7 +467,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
                 child: Form(
                   key: _formKey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  autovalidateMode: _submitted
+                      ? AutovalidateMode.onUserInteraction
+                      : AutovalidateMode.disabled,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [

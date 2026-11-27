@@ -20,28 +20,10 @@ class ApiConfig {
   static const String localhostBaseUrl = 'http://localhost:4000/api/v1';
 
   /// Determines the best initial base URL dynamically based on environment
-  static String get _initialBaseUrl {
-    // 1. Native mobile builds (Android APK, iOS): ALWAYS default to the deployed Cloud backend!
-    if (!kIsWeb) {
-      return cloudBaseUrl;
-    }
-
-    // 2. Web browser:
-    final host = Uri.base.host;
-    // Local LAN development (e.g. 192.168.x.x, 10.x.x.x, 172.x.x.x)
-    if (host.startsWith('192.168.') || host.startsWith('10.') || host.startsWith('172.')) {
-      return '${Uri.base.scheme}://$host:4000/api/v1';
-    }
-    // Localhost on web
-    if (host == 'localhost' || host == '127.0.0.1') {
-      return localhostBaseUrl;
-    }
-    // Remote web deployment (Render, Vercel, etc.)
-    return cloudBaseUrl;
-  }
+  static String get _initialBaseUrl => cloudBaseUrl;
 
   /// Active URL
-  static String _activeBaseUrl = _initialBaseUrl;
+  static String _activeBaseUrl = cloudBaseUrl;
 
   /// Returns the current active base URL
   static String get baseUrl => _activeBaseUrl;
@@ -62,22 +44,18 @@ class ApiConfig {
   static List<String> get candidateBaseUrls {
     final List<String> list = [];
 
-    // Prioritize active URL (e.g. local backend during local development)
-    if (!list.contains(_activeBaseUrl)) list.add(_activeBaseUrl);
+    // 1. Primary: Deployed Cloud Backend on Render
+    if (!list.contains(cloudBaseUrl)) list.add(cloudBaseUrl);
 
-    // Add local endpoints if running in web development mode
-    if (kIsWeb && !kReleaseMode) {
-      final host = Uri.base.host;
-      if (host.startsWith('192.168.') || host.startsWith('10.') || host.startsWith('172.')) {
-        final originCandidate = '${Uri.base.scheme}://$host:4000/api/v1';
-        if (!list.contains(originCandidate)) list.add(originCandidate);
-      }
-      if (!list.contains(localhostBaseUrl)) list.add(localhostBaseUrl);
-      if (!list.contains(localBaseUrl)) list.add(localBaseUrl);
+    // 2. Active URL if user explicitly switched to another host
+    if (_activeBaseUrl.isNotEmpty && !list.contains(_activeBaseUrl)) {
+      list.insert(0, _activeBaseUrl);
     }
 
-    // Fall back to deployed Cloud backend
-    if (!list.contains(cloudBaseUrl)) list.add(cloudBaseUrl);
+    // 3. Only if developing locally on web and local backend was chosen
+    if (kIsWeb && kDebugMode && _activeBaseUrl != cloudBaseUrl) {
+      if (!list.contains(localhostBaseUrl)) list.add(localhostBaseUrl);
+    }
 
     return list;
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'confirm_vehicle_screen.dart';
 import 'bottom_navigation_screen.dart';
 import '../globals.dart';
@@ -117,6 +118,10 @@ class AddVehicleScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 TextField(
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\s\-]')),
+                                    LengthLimitingTextInputFormatter(13),
+                                  ],
                                   decoration: InputDecoration(
                                     hintText: 'MP 09 AB 1234',
                                     hintStyle: TextStyle(
@@ -136,7 +141,7 @@ class AddVehicleScreen extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                   ),
                                   textCapitalization: TextCapitalization.characters,
-                                  onChanged: (val) => Globals.vehicleRegistration = val,
+                                  onChanged: (val) => Globals.vehicleRegistration = val.trim().toUpperCase(),
                                 ),
                               ],
                             ),
@@ -152,6 +157,35 @@ class AddVehicleScreen extends StatelessWidget {
                       height: 56,
                       child: ElevatedButton(
                         onPressed: () {
+                          final cleanReg = Globals.vehicleRegistration
+                              .replaceAll(RegExp(r'[\s\-]'), '')
+                              .toUpperCase();
+                          final regExp = RegExp(
+                            r'^([A-Z]{2}[0-9]{1,2}[A-Z]{0,3}[0-9]{4}|[0-9]{2}BH[0-9]{4}[A-Z]{1,2})$',
+                          );
+
+                          if (cleanReg.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please enter your vehicle registration number'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
+                          }
+
+                          if (!regExp.hasMatch(cleanReg)) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Please enter a valid registration number (e.g. MP 09 AB 1234 or 22 BH 1234 AA)',
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
+                          }
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const ConfirmVehicleScreen()),

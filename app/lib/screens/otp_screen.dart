@@ -148,7 +148,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
                 headers: {'Content-Type': 'application/json'},
                 body: jsonEncode({'email': email, 'phone': phone}),
               )
-              .timeout(const Duration(seconds: 25));
+              .timeout(const Duration(seconds: 15));
           resendRes = res;
           if (res.statusCode == 200) {
             ApiConfig.setBaseUrl(base);
@@ -228,7 +228,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
                 headers: {'Content-Type': 'application/json'},
                 body: verifyBody,
               )
-              .timeout(const Duration(seconds: 25));
+              .timeout(const Duration(seconds: 15));
           verifyRes = res;
           if (res.statusCode == 200) {
             workingBaseUrl = base;
@@ -270,7 +270,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
                     headers: {'Content-Type': 'application/json'},
                     body: regBody,
                   )
-                  .timeout(const Duration(seconds: 35));
+                  .timeout(const Duration(seconds: 15));
               regRes = res;
               if (res.statusCode == 201 || res.statusCode == 200) {
                 ApiConfig.setBaseUrl(base);

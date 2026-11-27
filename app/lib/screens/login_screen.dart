@@ -201,8 +201,17 @@ class _LogInScreenState extends State<LogInScreen> {
         await GoogleSignIn.instance.signOut();
       } catch (_) {}
 
-      final GoogleSignInAccount account =
-          await GoogleSignIn.instance.authenticate();
+      GoogleSignInAccount? account;
+      try {
+        account = await GoogleSignIn.instance.authenticate();
+      } catch (e) {
+        debugPrint('[GoogleSignIn] authenticate failed: $e');
+      }
+
+      if (account == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
 
       final GoogleSignInAuthentication auth = account.authentication;
       final String? idToken = auth.idToken;

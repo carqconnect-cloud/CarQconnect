@@ -1,5 +1,6 @@
 import '../../services/vehicle_type_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'dart:async';
 import 'dart:convert';
@@ -15,6 +16,7 @@ import '../../theme/app_theme.dart';
 import '../../loading.dart';
 import '../../utils/app_icons.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../garage/vehicle_tabs.dart';
 
 class VehicleProfileItem {
   final String id;
@@ -388,6 +390,10 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                     const SizedBox(height: 12),
                     TextField(
                       controller: regController,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\s\-]')),
+                        LengthLimitingTextInputFormatter(13),
+                      ],
                       style: TextStyle(
                         color: isLight ? const Color(0xFF0F172A) : Colors.white,
                       ),
@@ -547,7 +553,43 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                                 final newReg = regController.text
                                     .trim()
                                     .toUpperCase();
-                                if (newName.isEmpty || newReg.isEmpty) return;
+
+                                if (newName.length < 2) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Please enter a valid vehicle model/name (min 2 characters)'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                final cleanReg = newReg.replaceAll(RegExp(r'[\s\-]'), '');
+                                final regExp = RegExp(
+                                  r'^([A-Z]{2}[0-9]{1,2}[A-Z]{0,3}[0-9]{4}|[0-9]{2}BH[0-9]{4}[A-Z]{1,2})$',
+                                );
+
+                                if (cleanReg.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Please enter vehicle registration number'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                if (!regExp.hasMatch(cleanReg)) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Please enter a valid registration number (e.g. MP 09 AB 1234 or 22 BH 1234 AA)',
+                                      ),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                  return;
+                                }
 
                                 final formattedReg = formatRegistrationNumber(newReg);
 
@@ -855,11 +897,13 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
               Globals.vehicleRegistration = vehicle.regNumber;
               _vehicles = _vehicles.map((v) => v.copyWith(isSelected: v.id == vehicle.id)).toList();
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('${vehicle.name} set as active vehicle'),
-                duration: const Duration(seconds: 1),
-                behavior: SnackBarBehavior.floating,
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => VehicleTabsScreen(
+                  vehicleName: vehicle.name,
+                  vehiclePlate: vehicle.regNumber,
+                ),
               ),
             );
           },
@@ -1003,6 +1047,12 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                       ),
                     ],
                   ),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14,
+                  color: isLight ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
                 ),
               ],
             ),

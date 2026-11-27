@@ -21,7 +21,7 @@ class StoreService {
           'Content-Type': 'application/json',
           if (token != null) 'Authorization': 'Bearer $token',
         },
-      );
+      ).timeout(const Duration(seconds: 8));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -105,7 +105,7 @@ class StoreService {
           'code': upper,
           'subtotal': subtotal,
         }),
-      );
+      ).timeout(const Duration(seconds: 8));
 
       final data = json.decode(response.body);
       if (response.statusCode == 200 && data['success'] == true) {
@@ -163,7 +163,7 @@ class StoreService {
           'Authorization': 'Bearer $token',
         },
         body: json.encode({'amount': amount}),
-      );
+      ).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -206,7 +206,7 @@ class StoreService {
             'price': i.product.price,
           }).toList(),
         }),
-      );
+      ).timeout(const Duration(seconds: 10));
 
       return response.statusCode == 200;
     } catch (e) {
@@ -241,7 +241,7 @@ class StoreService {
           'paymentId': 'COD',
           'paymentOrderId': 'CASH_ON_DELIVERY',
         }),
-      );
+      ).timeout(const Duration(seconds: 10));
 
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
@@ -284,7 +284,7 @@ class StoreService {
           if (token != null) 'Authorization': 'Bearer $token',
         },
         body: body,
-      );
+      ).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body);
@@ -327,7 +327,7 @@ class StoreService {
           if (token != null) 'Authorization': 'Bearer $token',
         },
         body: body,
-      );
+      ).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body);
@@ -351,7 +351,7 @@ class StoreService {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-      );
+      ).timeout(const Duration(seconds: 8));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);

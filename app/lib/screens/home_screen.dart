@@ -11,6 +11,7 @@ import 'subscription/subscription.dart';
 import 'documents/document_screens.dart';
 import 'track/track_screen.dart';
 import 'fastag/fastag_screen.dart';
+import 'garage/garage.dart';
 import 'notifications/notifications.dart';
 import 'reminder/reminder.dart';
 import 'bot/bot.dart';
@@ -1001,7 +1002,7 @@ class _HomeScreenState extends State<HomeScreen>
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const AddFastagScreen(),
+                          builder: (context) => const FastagScreen(),
                         ),
                       );
                     },
@@ -1067,7 +1068,22 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                 ),
                 SizedBox(width: (10 * scale).roundToDouble()),
-                const Expanded(child: SizedBox()),
+                Expanded(
+                  child: _buildActionCard(
+                    'assets/homescreensicons/garage.png',
+                    'Garage',
+                    'OBD & Health',
+                    const Color(0xFF00C2FF),
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const GarageScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
                 SizedBox(width: (10 * scale).roundToDouble()),
                 const Expanded(child: SizedBox()),
               ],

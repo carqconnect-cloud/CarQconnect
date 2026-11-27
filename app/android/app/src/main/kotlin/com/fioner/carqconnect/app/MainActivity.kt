@@ -99,15 +99,12 @@ class MainActivity : FlutterActivity() {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
                     put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
                     put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + "CarQConnect")
-                    put(MediaStore.MediaColumns.IS_PENDING, 1)
                 }
                 val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues) ?: return false
                 resolver.openOutputStream(uri)?.use { stream ->
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                }
-                contentValues.clear()
-                contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
-                resolver.update(uri, contentValues, null, null)
+                    stream.flush()
+                } ?: return false
                 true
             } else {
                 val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
