@@ -193,16 +193,23 @@ class ApiConfig {
   static String? _customFrontendUrl;
 
   /// Web URL for QR code generation & browser scanning
-  /// In Web browser: uses current window origin (e.g. localhost, Vercel domain)
-  /// In Mobile App build: uses the deployed Vercel frontend domain (NOT the backend API)
+  /// In Web browser: if on public domain, uses origin; if on localhost/local IP, uses deployed Vercel domain
+  /// In Mobile App build (APK): always uses the deployed Vercel frontend domain
   static String get webBaseUrl {
+    if (_customFrontendUrl != null && _customFrontendUrl!.isNotEmpty) {
+      return _customFrontendUrl!;
+    }
     if (kIsWeb) {
       final origin = Uri.base.origin;
-      if (origin.isNotEmpty && origin != 'null') {
+      final isLocal = origin.contains('localhost') ||
+          origin.contains('127.0.0.1') ||
+          origin.contains('192.168.') ||
+          origin.contains('10.');
+      if (origin.isNotEmpty && origin != 'null' && !isLocal) {
         return origin;
       }
     }
-    return _customFrontendUrl ?? defaultVercelFrontendUrl;
+    return defaultVercelFrontendUrl;
   }
 
   /// Sets a custom Vercel / Web frontend URL dynamically
