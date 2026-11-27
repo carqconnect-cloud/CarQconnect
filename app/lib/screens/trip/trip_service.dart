@@ -1892,12 +1892,12 @@ class TripService {
       'mappls://navigation?places=$toLat,$toLng$cleanDest&isNav=true&mode=driving',
     );
 
-    // 2. Secondary: Mappls Universal Web Navigation Link
-    final mapplsWebUri = Uri.parse(
-      'https://mappls.com/navigation?places=$toLat,$toLng$cleanDest&isNav=true&mode=driving',
+    // 2. Native Android Google Maps Turn-by-Turn Intent
+    final googleNavUri = Uri.parse(
+      'google.navigation:q=$toLat,$toLng&mode=d',
     );
 
-    // 3. Fallback: Google Maps Navigation Link (if device does not have Mappls or network fails)
+    // 3. Fallback: Google Maps Universal Navigation URL
     final queryParameters = <String, String>{
       'api': '1',
       if (fromLat != null && fromLng != null) 'origin': '$fromLat,$fromLng',
@@ -1910,6 +1910,15 @@ class TripService {
     };
     final googleMapsUri = Uri.https('www.google.com', '/maps/dir/', queryParameters);
 
+    // 4. Apple Maps (iOS)
+    final appleMapsUri = Uri.parse('https://maps.apple.com/?daddr=$toLat,$toLng&dirflg=d');
+
+    // 5. Mappls Universal Web Navigation Link
+    final mapplsWebUri = Uri.parse(
+      'https://mappls.com/navigation?places=$toLat,$toLng$cleanDest&isNav=true&mode=driving',
+    );
+
+    // Try 1: Mappls Native App
     try {
       if (await canLaunchUrl(mapplsAppUri)) {
         final ok = await launchUrl(mapplsAppUri, mode: LaunchMode.externalApplication);
@@ -1917,15 +1926,33 @@ class TripService {
       }
     } catch (_) {}
 
+    // Try 2: Google Maps Native Navigation (Android)
     try {
-      if (await canLaunchUrl(mapplsWebUri)) {
-        final ok = await launchUrl(mapplsWebUri, mode: LaunchMode.externalApplication);
+      if (await canLaunchUrl(googleNavUri)) {
+        final ok = await launchUrl(googleNavUri, mode: LaunchMode.externalApplication);
         if (ok) return true;
       }
     } catch (_) {}
 
+    // Try 3: Google Maps Universal URL
     try {
-      return await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication);
+      if (await canLaunchUrl(googleMapsUri)) {
+        final ok = await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication);
+        if (ok) return true;
+      }
+    } catch (_) {}
+
+    // Try 4: Apple Maps
+    try {
+      if (await canLaunchUrl(appleMapsUri)) {
+        final ok = await launchUrl(appleMapsUri, mode: LaunchMode.externalApplication);
+        if (ok) return true;
+      }
+    } catch (_) {}
+
+    // Try 5: Mappls Web Link
+    try {
+      return await launchUrl(mapplsWebUri, mode: LaunchMode.externalApplication);
     } catch (_) {
       return false;
     }

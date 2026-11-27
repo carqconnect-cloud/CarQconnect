@@ -73,6 +73,23 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
     super.dispose();
   }
 
+  void _animateMapTo(LatLng pos, [double zoom = 16.0]) {
+    try {
+      if (_nativeMapplsController != null) {
+        _nativeMapplsController?.animateCamera(
+          mappls.CameraUpdate.newLatLngZoom(
+            mappls.LatLng(pos.latitude, pos.longitude),
+            zoom,
+          ),
+        );
+      } else {
+        _mapController.move(pos, zoom);
+      }
+    } catch (e) {
+      debugPrint('Map animate camera error: $e');
+    }
+  }
+
   Future<void> _loadRealLocation() async {
     setState(() => _isLoading = true);
     try {
@@ -88,9 +105,10 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
           _lastUpdated = 'Just now';
           _isLoading = false;
         });
-        _mapController.move(pos, 16.0);
+        _animateMapTo(pos, 16.0);
       }
-    } catch (_) {
+    } catch (e) {
+      debugPrint('Error loading real location: $e');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -114,7 +132,7 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
           _lastUpdated = 'Just now';
           _isRefreshing = false;
         });
-        _mapController.move(pos, 16.0);
+        _animateMapTo(pos, 16.0);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: isLight
@@ -320,96 +338,121 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
                       top: 0,
                       left: 0,
                       right: 0,
-                      child: SafeArea(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(
+                          16,
+                          MediaQuery.of(context).padding.top + 8,
+                          16,
+                          12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isLight
+                              ? Colors.white.withValues(alpha: 0.95)
+                              : const Color(0xFF090E17).withValues(alpha: 0.95),
+                          border: Border(
+                            bottom: BorderSide(
+                              color: isLight
+                                  ? const Color(0xFFE2E8F0)
+                                  : const Color(0xFF1C273C),
+                              width: 1,
+                            ),
                           ),
-                          child: Row(
-                            children: [
-                              AnimatedBackArrowButton(onTap: () => Navigator.pop(context)),
-                              Expanded(
-                                child: Text(
-                                  'Live Vehicle Location',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: isLight
-                                        ? const Color(0xFF0F172A)
-                                        : Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.2,
-                                    shadows: isLight
-                                        ? null
-                                        : const [
-                                            Shadow(
-                                              color: Colors.black,
-                                              blurRadius: 10,
-                                            ),
-                                          ],
-                                  ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(
+                                alpha: isLight ? 0.08 : 0.45,
+                              ),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 42,
+                              height: 42,
+                              decoration: BoxDecoration(
+                                color: isLight
+                                    ? const Color(0xFFF1F5F9)
+                                    : const Color(0xFF101726),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isLight
+                                      ? const Color(0xFFCBD5E1)
+                                      : const Color(0xFF1E2B40),
                                 ),
                               ),
-                              InkWell(
-                                onTap: _refreshTelemetry,
-                                borderRadius: BorderRadius.circular(14),
-                                child: Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
+                              child: Center(
+                                child: AnimatedBackArrowButton(
+                                  onTap: () => Navigator.pop(context),
+                                  color: isLight
+                                      ? const Color(0xFF0F172A)
+                                      : Colors.white,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                'Live Vehicle Location',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: isLight
+                                      ? const Color(0xFF0F172A)
+                                      : Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.2,
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: _refreshTelemetry,
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                width: 42,
+                                height: 42,
+                                decoration: BoxDecoration(
+                                  color: isLight
+                                      ? const Color(0xFFF1F5F9)
+                                      : const Color(0xFF101726),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
                                     color: isLight
-                                        ? Colors.white.withValues(alpha: 0.95)
-                                        : const Color(0xFF101726)
-                                              .withValues(alpha: 0.88),
-                                    borderRadius: BorderRadius.circular(14),
-                                    border: Border.all(
-                                      color: isLight
-                                          ? const Color(0xFFCBD5E1)
-                                          : const Color(0xFF1E2B40),
-                                    ),
-                                    boxShadow: isLight
-                                        ? AppTheme.cardShadow
-                                        : [
-                                            BoxShadow(
-                                              color: Colors.black.withValues(
-                                                alpha: 0.4,
-                                              ),
-                                              blurRadius: 10,
-                                            ),
-                                          ],
+                                        ? const Color(0xFFCBD5E1)
+                                        : const Color(0xFF1E2B40),
                                   ),
-                                  child: Center(
-                                    child: _isRefreshing
-                                        ? SizedBox(
-                                            width: 18,
-                                            height: 18,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              color: isLight
-                                                  ? const Color(0xFF0066FF)
-                                                  : const Color(0xFF00C2FF),
-                                            ),
-                                          )
-                                        : Icon(
-                                            Icons.refresh_rounded,
+                                ),
+                                child: Center(
+                                  child: _isRefreshing
+                                      ? SizedBox(
+                                          width: 18,
+                                          height: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
                                             color: isLight
-                                                ? const Color(0xFF0F172A)
-                                                : Colors.white,
-                                            size: 20,
+                                                ? const Color(0xFF0066FF)
+                                                : const Color(0xFF00C2FF),
                                           ),
-                                  ),
+                                        )
+                                      : Icon(
+                                          Icons.refresh_rounded,
+                                          color: isLight
+                                              ? const Color(0xFF0F172A)
+                                              : Colors.white,
+                                          size: 20,
+                                        ),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
 
                     // 3. Floating Map Controls (Right Side)
                     Positioned(
-                      top: 110,
+                      top: MediaQuery.of(context).padding.top + 76,
                       right: 16,
                       child: Column(
                         children: [
@@ -420,8 +463,10 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
                               if (_nativeMapplsController != null) {
                                 _nativeMapplsController?.animateCamera(mappls.CameraUpdate.zoomIn());
                               } else {
-                                final zoom = _mapController.camera.zoom;
-                                _mapController.move(_currentPos, zoom + 1);
+                                try {
+                                  final zoom = _mapController.camera.zoom;
+                                  _mapController.move(_currentPos, zoom + 1);
+                                } catch (_) {}
                               }
                             },
                           ),
@@ -433,8 +478,10 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
                               if (_nativeMapplsController != null) {
                                 _nativeMapplsController?.animateCamera(mappls.CameraUpdate.zoomOut());
                               } else {
-                                final zoom = _mapController.camera.zoom;
-                                _mapController.move(_currentPos, zoom - 1);
+                                try {
+                                  final zoom = _mapController.camera.zoom;
+                                  _mapController.move(_currentPos, zoom - 1);
+                                } catch (_) {}
                               }
                             },
                           ),
@@ -443,16 +490,7 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
                             svgAsset: AppIcons.navigation,
                             isLight: isLight,
                             onTap: () {
-                              if (_nativeMapplsController != null) {
-                                _nativeMapplsController?.animateCamera(
-                                  mappls.CameraUpdate.newLatLngZoom(
-                                    mappls.LatLng(_currentPos.latitude, _currentPos.longitude),
-                                    16.5,
-                                  ),
-                                );
-                              } else {
-                                _mapController.move(_currentPos, 16.5);
-                              }
+                              _animateMapTo(_currentPos, 16.5);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   backgroundColor: isLight
@@ -727,12 +765,47 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
                                     height: 50,
                                     child: ElevatedButton.icon(
                                       onPressed: () async {
-                                        _mapController.move(_currentPos, 17.0);
-                                        await TripService.launchMapplsNavigation(
+                                        _animateMapTo(_currentPos, 17.0);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: const Row(
+                                              children: [
+                                                SizedBox(
+                                                  width: 16,
+                                                  height: 16,
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 12),
+                                                Text('Opening turn-by-turn navigation...'),
+                                              ],
+                                            ),
+                                            duration: const Duration(seconds: 2),
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                        );
+                                        final launched = await TripService.launchMapplsNavigation(
                                           toLat: _currentPos.latitude,
                                           toLng: _currentPos.longitude,
                                           destinationName: widget.vehicle?['regNumber'] ?? 'Vehicle Location',
                                         );
+                                        if (!launched && mounted) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: const Text('Could not open map navigation application.'),
+                                              backgroundColor: Colors.red,
+                                              behavior: SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          );
+                                        }
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: isLight
