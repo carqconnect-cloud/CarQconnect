@@ -931,13 +931,6 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                                   color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF182436),
                                   width: 1.2,
                                 ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: isLight ? 0.05 : 0.4),
-                                    blurRadius: 18,
-                                    offset: const Offset(0, 6),
-                                  ),
-                                ],
                               ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,

@@ -370,13 +370,6 @@ Completed safely via CarQConnect.''';
         color: isLight ? Colors.white : const Color(0xFF0B1420),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         border: isLight ? Border.all(color: const Color(0xFFE2E8F0)) : null,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isLight ? 0.15 : 0.54),
-            blurRadius: 20,
-            spreadRadius: 4,
-          ),
-        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -949,15 +942,6 @@ Completed safely via CarQConnect.''';
                                   decoration: BoxDecoration(
                                     color: primaryColor,
                                     shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: primaryColor.withValues(
-                                          alpha: 0.35,
-                                        ),
-                                        blurRadius: 24,
-                                        spreadRadius: 4,
-                                      ),
-                                    ],
                                   ),
                                   child: Center(
                                     child: Icon(

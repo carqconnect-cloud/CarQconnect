@@ -306,15 +306,6 @@ class _LanguageScreenState extends State<LanguageScreen> {
                                         : cardBorder,
                                     width: isSelected ? 1.8 : 1,
                                   ),
-                                  boxShadow: isSelected
-                                      ? [
-                                          BoxShadow(
-                                            color: const Color(0xFF0066FF).withValues(alpha: 0.18),
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ]
-                                      : AppTheme.settingsCardShadow,
                                 ),
                                 child: Material(
                                   color: Colors.transparent,
@@ -440,13 +431,6 @@ class _LanguageScreenState extends State<LanguageScreen> {
                     width: 1,
                   ),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 10,
-                    offset: const Offset(0, -4),
-                  ),
-                ],
               ),
               child: SafeArea(
                 child: SizedBox(

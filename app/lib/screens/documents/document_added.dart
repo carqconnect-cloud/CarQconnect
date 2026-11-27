@@ -248,17 +248,9 @@ class DocumentAddedScreen extends StatelessWidget {
                               child: Container(
                                 width: 44,
                                 height: 44,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF00C853),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF00C853),
                                   shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFF00C853)
-                                          .withValues(alpha: 0.4),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
                                 ),
                                 child: const Center(
                                   child: Icon(

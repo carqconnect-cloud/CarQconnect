@@ -1324,13 +1324,6 @@ class _SosScreenState extends State<SosScreen>
                           decoration: BoxDecoration(
                             color: const Color(0xFF8B0000),
                             borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.35),
-                                blurRadius: 10,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
                           ),
                           child: const Text(
                             'Your emergency contacts will be notified and your live location will be shared.',
@@ -1516,13 +1509,6 @@ class _SosScreenState extends State<SosScreen>
                   fontWeight: FontWeight.bold,
                   letterSpacing: -1,
                   height: 1.0,
-                  shadows: [
-                    BoxShadow(
-                      color: Colors.black54,
-                      blurRadius: 20,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -1605,20 +1591,6 @@ class _SosScreenState extends State<SosScreen>
                                         Color(0xFFB71C1C),
                                       ],
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF4A0000)
-                                      .withValues(alpha: 0.55),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 10),
-                                ),
-                                BoxShadow(
-                                  color: const Color(0xFFFF8A80)
-                                      .withValues(alpha: _isHolding ? 0.5 : 0.3),
-                                  blurRadius: _isHolding ? 25 : 15,
-                                  spreadRadius: _isHolding ? 4 : 2,
-                                ),
-                              ],
                             ),
                             child: Center(
                               child: Column(

@@ -77,15 +77,6 @@ class AppLogoBadge extends StatelessWidget {
               bottomLeft: Radius.circular(32),
               bottomRight: Radius.circular(32),
             ),
-        boxShadow: [
-          BoxShadow(
-            color: light
-                ? AppTheme.primaryBlue.withValues(alpha: 0.22)
-                : primaryCyan.withValues(alpha: 0.45),
-            blurRadius: light ? 20 : 26,
-            spreadRadius: 2,
-          ),
-        ],
       ),
       child: Center(
         child: AppLogo(

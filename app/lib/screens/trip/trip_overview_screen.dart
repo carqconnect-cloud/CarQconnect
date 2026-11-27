@@ -1102,16 +1102,6 @@ class _TripOverviewScreenState extends State<TripOverviewScreen> {
                                             : const Color(0xFF1E3046),
                                         width: 1,
                                       ),
-                                      boxShadow: isLight
-                                          ? AppTheme.cardShadow
-                                          : [
-                                              BoxShadow(
-                                                color: Colors.black.withValues(
-                                                  alpha: 0.35,
-                                                ),
-                                                blurRadius: 8,
-                                              ),
-                                            ],
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
@@ -1962,17 +1952,6 @@ class _TripOverviewScreenState extends State<TripOverviewScreen> {
                 : (isLight ? const Color(0xFFE2E8F0) : const Color(0xFF182232)),
             width: isSelected ? 1.5 : 1,
           ),
-          boxShadow: isLight
-              ? (isSelected
-                    ? [
-                        BoxShadow(
-                          color: primaryColor.withValues(alpha: 0.15),
-                          blurRadius: 10,
-                          offset: const Offset(0, 3),
-                        ),
-                      ]
-                    : AppTheme.cardShadow)
-              : null,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

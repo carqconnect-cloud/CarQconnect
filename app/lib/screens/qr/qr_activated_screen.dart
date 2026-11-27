@@ -180,16 +180,9 @@ class QrActivatedScreen extends StatelessWidget {
                                   Container(
                                     width: 82,
                                     height: 82,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF00C853),
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF00C853),
                                       shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: const Color(0xFF00C853).withValues(alpha: 0.35),
-                                          blurRadius: 24,
-                                          spreadRadius: 4,
-                                        ),
-                                      ],
                                     ),
                                     child: const Center(
                                       child: Icon(
@@ -229,15 +222,6 @@ class QrActivatedScreen extends StatelessWidget {
                                     color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1D2633),
                                     width: 1,
                                   ),
-                                  boxShadow: isLight
-                                      ? AppTheme.cardShadow
-                                      : [
-                                          BoxShadow(
-                                            color: Colors.black.withValues(alpha: 0.35),
-                                            blurRadius: 20,
-                                            offset: const Offset(0, 8),
-                                          ),
-                                        ],
                                 ),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,

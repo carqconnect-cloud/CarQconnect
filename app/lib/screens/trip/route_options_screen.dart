@@ -1370,26 +1370,6 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
                 : (isLight ? const Color(0xFFE2E8F0) : const Color(0xFF182232)),
             width: isSelected ? 1.5 : 1,
           ),
-          boxShadow: isLight
-              ? (isSelected
-                    ? [
-                        BoxShadow(
-                          color: primaryColor.withValues(alpha: 0.18),
-                          blurRadius: 16,
-                          offset: const Offset(0, 4),
-                        ),
-                      ]
-                    : AppTheme.cardShadow)
-              : (isSelected
-                    ? [
-                        BoxShadow(
-                          color: const Color(0xFF00C2FF)
-                              .withValues(alpha: 0.12),
-                          blurRadius: 16,
-                          offset: const Offset(0, 4),
-                        ),
-                      ]
-                    : null),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1601,14 +1581,6 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
                               : const Color(0xFF1E3046),
                           width: 1,
                         ),
-                        boxShadow: isLight
-                            ? AppTheme.cardShadow
-                            : [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.3),
-                                  blurRadius: 6,
-                                ),
-                              ],
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

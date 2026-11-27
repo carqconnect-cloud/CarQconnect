@@ -289,13 +289,6 @@ class _SetGeofenceScreenState extends State<SetGeofenceScreen> {
                                 color: isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF),
                                 shape: BoxShape.circle,
                                 border: Border.all(color: Colors.white, width: 2.5),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.28),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 3),
-                                  ),
-                                ],
                               ),
                               child: const Icon(
                                 Icons.location_on,
@@ -356,14 +349,6 @@ class _SetGeofenceScreenState extends State<SetGeofenceScreen> {
                     border: Border.all(
                       color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2B40),
                     ),
-                    boxShadow: isLight
-                        ? AppTheme.cardShadow
-                        : [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.4),
-                              blurRadius: 16,
-                            ),
-                          ],
                   ),
                   child: Row(
                     children: [
@@ -487,15 +472,6 @@ class _SetGeofenceScreenState extends State<SetGeofenceScreen> {
                         width: 1.2,
                       ),
                     ),
-                    boxShadow: isLight
-                        ? AppTheme.cardShadow
-                        : const [
-                            BoxShadow(
-                              color: Colors.black,
-                              blurRadius: 30,
-                              offset: Offset(0, -6),
-                            ),
-                          ],
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -645,13 +621,6 @@ class _SetGeofenceScreenState extends State<SetGeofenceScreen> {
                           : [const Color(0xFF00C2FF), const Color(0xFF00E5FF)],
                     ),
                     borderRadius: BorderRadius.circular(2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: (isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF))
-                            .withValues(alpha: 0.6),
-                        blurRadius: 6,
-                      ),
-                    ],
                   ),
                 ),
 
@@ -660,16 +629,8 @@ class _SetGeofenceScreenState extends State<SetGeofenceScreen> {
                   left: thumbOffset,
                   child: Container(
                     padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: (isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF))
-                              .withValues(alpha: 0.5),
-                          blurRadius: 14,
-                          spreadRadius: 2,
-                        ),
-                      ],
                     ),
                     child: Transform.rotate(
                       angle: 1.5708, // 90 degrees horizontal facing forward
@@ -709,14 +670,6 @@ class _SetGeofenceScreenState extends State<SetGeofenceScreen> {
           border: Border.all(
             color: isLight ? const Color(0xFFCBD5E1) : const Color(0xFF1E2B40),
           ),
-          boxShadow: isLight
-              ? AppTheme.cardShadow
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.35),
-                    blurRadius: 8,
-                  ),
-                ],
         ),
         child: Center(
           child: svgAsset != null

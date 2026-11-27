@@ -302,14 +302,6 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
                                                   ? const Color(0xFF0066FF)
                                                   : const Color(0xFF00C2FF),
                                               shape: BoxShape.circle,
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: isLight
-                                                      ? const Color(0xFF0066FF)
-                                                      : const Color(0xFF00C2FF),
-                                                  blurRadius: 14,
-                                                ),
-                                              ],
                                             ),
                                             child: const Center(
                                               child: Icon(
@@ -357,15 +349,6 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
                               width: 1,
                             ),
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(
-                                alpha: isLight ? 0.08 : 0.45,
-                              ),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
                         ),
                         child: Row(
                           children: [
@@ -531,15 +514,6 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
                               width: 1.2,
                             ),
                           ),
-                          boxShadow: isLight
-                              ? AppTheme.cardShadow
-                              : const [
-                                  BoxShadow(
-                                    color: Colors.black,
-                                    blurRadius: 30,
-                                    offset: Offset(0, -6),
-                                  ),
-                                ],
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -572,12 +546,6 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
                                       decoration: const BoxDecoration(
                                         color: Color(0xFF00E676),
                                         shape: BoxShape.circle,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Color(0xFF00E676),
-                                            blurRadius: 6,
-                                          ),
-                                        ],
                                       ),
                                     ),
                                     const SizedBox(width: 8),
@@ -937,14 +905,6 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
           border: Border.all(
             color: isLight ? const Color(0xFFCBD5E1) : const Color(0xFF1E2B40),
           ),
-          boxShadow: isLight
-              ? AppTheme.cardShadow
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.35),
-                    blurRadius: 8,
-                  ),
-                ],
         ),
         child: Center(
           child: svgAsset != null

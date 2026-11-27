@@ -139,15 +139,9 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                           Container(
                             width: 7,
                             height: 7,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF00E676),
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF00E676),
                               shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF00E676).withValues(alpha: 0.8),
-                                  blurRadius: 6,
-                                ),
-                              ],
                             ),
                           ),
                         ],

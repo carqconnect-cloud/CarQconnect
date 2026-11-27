@@ -329,15 +329,6 @@ class _VehicleAlertsScreenState extends State<VehicleAlertsScreen> {
                                     : (isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D4A)),
                                 width: 1.0,
                               ),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: const Color(0xFF0066FF).withValues(alpha: isLight ? 0.2 : 0.35),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ]
-                                  : (isLight ? AppTheme.cardShadow : null),
                             ),
                             child: Text(
                               _filters[index],

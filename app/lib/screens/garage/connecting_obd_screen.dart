@@ -247,19 +247,12 @@ class _ConnectingObdScreenState extends State<ConnectingObdScreen>
         return Stack(
           alignment: Alignment.center,
           children: [
-            // Ambient cyan glow behind the ring
+            // Ambient ring
             Container(
               width: 190 * scale,
               height: 190 * scale,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF0066FF).withValues(alpha: isLight ? glowAlpha * 0.5 : glowAlpha),
-                    blurRadius: 40,
-                    spreadRadius: 4,
-                  ),
-                ],
               ),
             ),
 
@@ -372,16 +365,9 @@ class _ConnectingObdScreenState extends State<ConnectingObdScreen>
                 ? Container(
                     width: 24,
                     height: 24,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0066FF),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF0066FF),
                       shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF0066FF).withValues(alpha: 0.6),
-                          blurRadius: 8,
-                          spreadRadius: 1,
-                        ),
-                      ],
                     ),
                     child: const Icon(
                       Icons.check,
@@ -399,12 +385,6 @@ class _ConnectingObdScreenState extends State<ConnectingObdScreen>
                             color: const Color(0xFF0066FF),
                             width: 2.2,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF0066FF).withValues(alpha: 0.4),
-                              blurRadius: 8,
-                            ),
-                          ],
                         ),
                         child: Center(
                           child: Container(

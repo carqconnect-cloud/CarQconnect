@@ -38,15 +38,6 @@ class VehicleHealthScreen extends StatelessWidget {
                     color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D4A),
                     width: 1.0,
                   ),
-                  boxShadow: isLight
-                      ? AppTheme.cardShadow
-                      : [
-                          BoxShadow(
-                            color: const Color(0xFF04C9FB).withValues(alpha: 0.08),
-                            blurRadius: 30,
-                            spreadRadius: 2,
-                          ),
-                        ],
                 ),
                 child: Column(
                   children: [
@@ -61,15 +52,8 @@ class VehicleHealthScreen extends StatelessWidget {
                           Container(
                             width: 110,
                             height: 110,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF0066FF).withValues(alpha: isLight ? 0.08 : 0.12),
-                                  blurRadius: 25,
-                                  spreadRadius: 10,
-                                ),
-                              ],
                             ),
                           ),
                           CustomPaint(

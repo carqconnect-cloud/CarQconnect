@@ -378,14 +378,6 @@ class _ChatSupportScreenState extends State<ChatSupportScreen> {
           color: const Color(0xFF0066FF).withValues(alpha: isLight ? 0.3 : 0.4),
           width: 1.2,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF0066FF).withValues(alpha: isLight ? 0.08 : 0.15),
-            blurRadius: 16,
-            spreadRadius: 1,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -544,18 +544,6 @@ class _HomeScreenState extends State<HomeScreen>
           color: Colors.white.withValues(alpha: 0.15),
           width: 0.8,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF292D78).withValues(alpha: 0.35),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Center(
         child: Image.asset(
@@ -661,14 +649,6 @@ class _HomeScreenState extends State<HomeScreen>
                                 ? const Color(0xFFE2E8F0)
                                 : const Color(0xFF1E2D44),
                           ),
-                          boxShadow: isLight
-                              ? AppTheme.cardShadow
-                              : [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.25),
-                                    blurRadius: 6,
-                                  ),
-                                ],
                         ),
                         child: Center(
                           child: ValueListenableBuilder<bool>(
@@ -1138,17 +1118,8 @@ class _HomeScreenState extends State<HomeScreen>
                           Container(
                             width: 32,
                             height: 24,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFFE29C26).withValues(
-                                    alpha: AppTheme.isLight ? 0.25 : 0.15,
-                                  ),
-                                  blurRadius: 16,
-                                  spreadRadius: 4,
-                                ),
-                              ],
                             ),
                           ),
                           Image.asset(
@@ -1494,13 +1465,6 @@ class _HomeScreenState extends State<HomeScreen>
               decoration: BoxDecoration(
                 color: color,
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withValues(alpha: 0.8),
-                    blurRadius: 6,
-                    spreadRadius: 1.5,
-                  ),
-                ],
               ),
             ),
             const SizedBox(width: 6),
@@ -1525,13 +1489,6 @@ class _HomeScreenState extends State<HomeScreen>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.20),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1736,13 +1693,6 @@ class _HomeScreenState extends State<HomeScreen>
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.20),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
                     ),
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
@@ -1942,13 +1892,6 @@ class _HomeScreenState extends State<HomeScreen>
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.20),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
                     ),
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
@@ -2035,13 +1978,6 @@ class _HomeScreenState extends State<HomeScreen>
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.10),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
                 child: Center(child: Image.asset(icon, fit: BoxFit.contain)),
@@ -2054,14 +1990,6 @@ class _HomeScreenState extends State<HomeScreen>
                 decoration: BoxDecoration(
                   color: bgColor,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: bgColor.withValues(alpha: 0.35),
-                      blurRadius: 10,
-                      spreadRadius: 1,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
                 ),
                 padding: EdgeInsets.all((11 * scale).roundToDouble()),
                 child: Center(
@@ -2086,13 +2014,6 @@ class _HomeScreenState extends State<HomeScreen>
                 decoration: BoxDecoration(
                   color: bgColor,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: bgColor.withValues(alpha: 0.35),
-                      blurRadius: 10,
-                      spreadRadius: 1,
-                    ),
-                  ],
                 ),
                 child: Center(
                   child: icon is IconData

@@ -58,13 +58,6 @@ class TicketSubmittedScreen extends StatelessWidget {
                           color: const Color(0xFF0066FF),
                           width: 2.5,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF0066FF).withValues(alpha: isLight ? 0.2 : 0.3),
-                            blurRadius: 32,
-                            spreadRadius: 4,
-                          ),
-                        ],
                       ),
                       child: const Center(
                         child: Icon(

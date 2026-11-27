@@ -477,23 +477,6 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
                                             : isFocused
                                                 ? activeColor.withValues(alpha: isLight ? 0.05 : 0.08)
                                                 : (isLight ? Colors.white : Colors.transparent),
-                                        boxShadow: isFocused
-                                            ? [
-                                                BoxShadow(
-                                                  color: activeColor.withValues(alpha: isLight ? 0.25 : 0.4),
-                                                  blurRadius: 14,
-                                                  spreadRadius: 2,
-                                                ),
-                                              ]
-                                            : (isLight
-                                                ? [
-                                                    const BoxShadow(
-                                                      color: Color(0x0A000000),
-                                                      blurRadius: 8,
-                                                      offset: Offset(0, 2),
-                                                    ),
-                                                  ]
-                                                : null),
                                       ),
                                       child: Center(
                                         child: hasValue
@@ -683,15 +666,6 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
                                       : Colors.white.withValues(alpha: 0.08),
                                   width: 1.0,
                                 ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: isLight
-                                        ? const Color(0x1A000000)
-                                        : Colors.black.withValues(alpha: 0.5),
-                                    blurRadius: 20,
-                                    offset: const Offset(0, -4),
-                                  ),
-                                ],
                               ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,

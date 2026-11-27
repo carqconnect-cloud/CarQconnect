@@ -233,12 +233,6 @@ class _AboutScreenState extends State<AboutScreen> {
                                   color: const Color(0xFF0066FF).withValues(alpha: isLight ? 0.3 : 0.4),
                                   width: 1.5,
                                 ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFF0066FF).withValues(alpha: isLight ? 0.12 : 0.2),
-                                    blurRadius: 18,
-                                  ),
-                                ],
                               ),
                               child: Center(
                                 child: AppLogo(
@@ -461,13 +455,6 @@ class _AboutScreenState extends State<AboutScreen> {
                     decoration: BoxDecoration(
                       color: isLight ? Colors.white : const Color(0xFF0F1728),
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 16,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,

@@ -1159,7 +1159,7 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                                                   width: 0.8,
                                                 ),
                                               ),
-                                              elevation: 8,
+                                              elevation: 0,
                                             ),
                                           ),
                                           child: PopupMenuButton<String>(
@@ -1923,18 +1923,6 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                                         : const Color(0xFF1E3048),
                                     width: 1,
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color:
-                                          (isLight
-                                                  ? Colors.black12
-                                                  : Colors.black)
-                                              .withValues(
-                                                alpha: isLight ? 0.08 : 0.4,
-                                              ),
-                                      blurRadius: 8,
-                                    ),
-                                  ],
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -2091,13 +2079,6 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                                         : const Color(0xFF1E2D3E),
                                     width: 1,
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: isLight ? 0.08 : 0.35),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
                                 ),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -2905,16 +2886,6 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                       width: 1.0,
                     ),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(
-                        alpha: isLight ? 0.06 : 0.4,
-                      ),
-                      blurRadius: 10,
-                      offset: const Offset(0, -3),
-                    ),
-                  ],
-                ),
                 child: SafeArea(
                   top: false,
                   child: SizedBox(

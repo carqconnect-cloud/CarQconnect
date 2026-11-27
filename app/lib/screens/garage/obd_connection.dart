@@ -236,9 +236,6 @@ class _ObdConnectionScreenState extends State<ObdConnectionScreen>
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(color: color, blurRadius: 4, spreadRadius: 1),
-            ],
           ),
         ),
         const SizedBox(width: 10),
@@ -656,20 +653,6 @@ class _ObdConnectionScreenState extends State<ObdConnectionScreen>
           color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF24324D),
           width: 1.5,
         ),
-        boxShadow: isLight
-            ? AppTheme.cardShadow
-            : [
-                BoxShadow(
-                  color: const Color(0xFF0066FF).withValues(alpha: 0.12),
-                  blurRadius: 32,
-                  spreadRadius: 6,
-                ),
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
       ),
       child: Column(
         children: [
@@ -770,13 +753,6 @@ class _ObdConnectionScreenState extends State<ObdConnectionScreen>
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: color.withValues(alpha: 0.8),
-                blurRadius: 5,
-                spreadRadius: 1,
-              ),
-            ],
           ),
         ),
         const SizedBox(width: 5),

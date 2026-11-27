@@ -590,13 +590,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     : Colors.white.withValues(alpha: 0.12),
                 width: 1.2,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.35),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-              ],
             ),
             child: Icon(
               Icons.arrow_forward,

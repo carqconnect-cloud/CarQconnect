@@ -209,13 +209,6 @@ class _RouteBuilderInlineWidgetState extends State<RouteBuilderInlineWidget> {
         color: cardBg,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: borderColor, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isLight ? 0.05 : 0.25),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

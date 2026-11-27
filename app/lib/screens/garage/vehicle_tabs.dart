@@ -184,16 +184,6 @@ class _VehicleTabsScreenState extends State<VehicleTabsScreen> {
                                     ? const Color(0xFF0066FF)
                                     : Colors.transparent,
                                 borderRadius: BorderRadius.circular(24),
-                                boxShadow: isSelected
-                                    ? [
-                                        BoxShadow(
-                                          color: const Color(0xFF0066FF)
-                                              .withValues(alpha: isLight ? 0.2 : 0.35),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ]
-                                    : null,
                               ),
                               child: Text(
                                 _tabs[index],

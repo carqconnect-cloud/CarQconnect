@@ -472,16 +472,6 @@ class _GeofenceScreenState extends State<GeofenceScreen>
                                         ? const Color(0xFF0066FF)
                                         : const Color(0xFF00C2FF),
                                     shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color:
-                                            (isLight
-                                                    ? const Color(0xFF0066FF)
-                                                    : const Color(0xFF00C2FF))
-                                                .withValues(alpha: 0.4),
-                                        blurRadius: 14,
-                                      ),
-                                    ],
                                   ),
                                   child: Center(
                                     child: Icon(
@@ -669,13 +659,6 @@ class _GeofenceScreenState extends State<GeofenceScreen>
                     width: 1.2,
                   ),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isLight ? 0.08 : 0.6),
-                    blurRadius: 24,
-                    offset: const Offset(0, -6),
-                  ),
-                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -923,14 +906,6 @@ class _GeofenceScreenState extends State<GeofenceScreen>
           border: Border.all(
             color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2B40),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: (isLight ? Colors.black12 : Colors.black).withValues(
-                alpha: isLight ? 0.08 : 0.35,
-              ),
-              blurRadius: 8,
-            ),
-          ],
         ),
         child: Center(
           child: svgAsset != null

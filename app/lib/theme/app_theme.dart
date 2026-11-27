@@ -171,30 +171,14 @@ class AppTheme {
   static Color get pillBorder =>
       isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2E48);
 
-  /// Subtle soft shadow for cards in light mode
-  static List<BoxShadow> get cardShadow => isLight
-      ? const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 14,
-            offset: Offset(0, 4),
-          ),
-        ]
-      : const [];
+  /// Cards have no background shadow
+  static List<BoxShadow> get cardShadow => const [];
 
   /// Settings / Menu Option Card Styling (Color: 0D1728, Shadow: 15233D)
   static Color get settingsCardBg =>
       isLight ? Colors.white : const Color(0xFF0D1728);
 
-  static List<BoxShadow> get settingsCardShadow => isLight
-      ? cardShadow
-      : const [
-          BoxShadow(
-            color: Color(0xFF15233D),
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ];
+  static List<BoxShadow> get settingsCardShadow => const [];
 
   /// Theme Data for MaterialApp
   static ThemeData get lightTheme => ThemeData(
@@ -209,6 +193,30 @@ class AppTheme {
           primary: Color(0xFF0066FF),
           secondary: Color(0xFF3875F6),
           surface: Colors.white,
+        ),
+        cardTheme: const CardTheme(
+          elevation: 0,
+          shadowColor: Colors.transparent,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            shadowColor: Colors.transparent,
+          ),
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          elevation: 0,
+          focusElevation: 0,
+          hoverElevation: 0,
+          disabledElevation: 0,
+          highlightElevation: 0,
+        ),
+        appBarTheme: const AppBarTheme(
+          elevation: 0,
+          shadowColor: Colors.transparent,
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          elevation: 0,
         ),
         switchTheme: SwitchThemeData(
           thumbColor: WidgetStateProperty.all(Colors.white),
@@ -235,6 +243,30 @@ class AppTheme {
           primary: Color(0xFF3875F6),
           secondary: Color(0xFF9E8FFF),
           surface: Color(0xFF101726),
+        ),
+        cardTheme: const CardTheme(
+          elevation: 0,
+          shadowColor: Colors.transparent,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            shadowColor: Colors.transparent,
+          ),
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          elevation: 0,
+          focusElevation: 0,
+          hoverElevation: 0,
+          disabledElevation: 0,
+          highlightElevation: 0,
+        ),
+        appBarTheme: const AppBarTheme(
+          elevation: 0,
+          shadowColor: Colors.transparent,
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          elevation: 0,
         ),
         switchTheme: SwitchThemeData(
           thumbColor: WidgetStateProperty.all(Colors.white),

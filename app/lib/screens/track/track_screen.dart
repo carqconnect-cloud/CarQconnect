@@ -275,13 +275,6 @@ class _TrackScreenState extends State<TrackScreen>
                         color: primaryColor.withValues(alpha: 0.35),
                         width: 1.5,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: primaryColor.withValues(alpha: 0.2),
-                          blurRadius: 18,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
                     ),
                     child: Center(
                       child: Icon(
@@ -1531,13 +1524,6 @@ class _TrackScreenState extends State<TrackScreen>
                                               decoration: BoxDecoration(
                                                 color: AppTheme.primaryColor,
                                                 shape: BoxShape.circle,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color:
-                                                        AppTheme.primaryColor,
-                                                    blurRadius: 12,
-                                                  ),
-                                                ],
                                               ),
                                               child: const Center(
                                                 child: Icon(
@@ -1814,16 +1800,6 @@ class _TrackScreenState extends State<TrackScreen>
                                         : const Color(0xFF00C2FF),
                                     width: 1.4,
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color:
-                                          (AppTheme.isLight
-                                                  ? const Color(0xFF0066FF)
-                                                  : const Color(0xFF00C2FF))
-                                              .withValues(alpha: 0.35),
-                                      blurRadius: 10,
-                                    ),
-                                  ],
                                 ),
                                 child: Center(
                                   child: Icon(

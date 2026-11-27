@@ -54,13 +54,6 @@ class VehicleDashboardScreen extends StatelessWidget {
                             decoration: const BoxDecoration(
                               color: Color(0xFF10B981),
                               shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0xFF10B981),
-                                  blurRadius: 4,
-                                  spreadRadius: 1,
-                                ),
-                              ],
                             ),
                           ),
                           const SizedBox(width: 6),
@@ -134,25 +127,6 @@ class VehicleDashboardScreen extends StatelessWidget {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      Positioned(
-                        bottom: 12,
-                        child: Container(
-                          width: 220,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(
-                              Radius.elliptical(220, 30),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF0066FF).withValues(alpha: isLight ? 0.12 : 0.25),
-                                blurRadius: 30,
-                                spreadRadius: 8,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
                       Image.asset(
                         'assets/homescreensicons/carimage.png',
                         height: 185,

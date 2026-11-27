@@ -347,14 +347,6 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
                                   : const Color(0xFF00C2FF).withValues(alpha: 0.5),
                               width: 1.5,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: isLight
-                                    ? const Color(0xFF0066FF).withValues(alpha: 0.15)
-                                    : const Color(0xFF00C2FF).withValues(alpha: 0.3),
-                                blurRadius: 12,
-                              ),
-                            ],
                           ),
                           child: Center(
                             child: AppLogo(
@@ -656,19 +648,6 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
                             : const Color(0xFF1E2D4A)),
                   width: isSelected ? 1.8 : 1.0,
                 ),
-                boxShadow: isSelected
-                    ? [
-                        BoxShadow(
-                          color:
-                              (isLight
-                                      ? const Color(0xFF0066FF)
-                                      : const Color(0xFF00C2FF))
-                                  .withValues(alpha: isLight ? 0.16 : 0.22),
-                          blurRadius: 16,
-                          offset: const Offset(0, 4),
-                        ),
-                      ]
-                    : null,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -739,13 +718,6 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
                   decoration: BoxDecoration(
                     color: badgeColor,
                     borderRadius: BorderRadius.circular(9),
-                    boxShadow: [
-                      BoxShadow(
-                        color: badgeColor.withValues(alpha: 0.35),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
                   ),
                   child: Text(
                     badgeText,
@@ -1072,19 +1044,6 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
                                           : const Color(0xFF00C2FF))
                                     : Colors.transparent,
                                 borderRadius: BorderRadius.circular(24),
-                                boxShadow: isSelected
-                                    ? [
-                                        BoxShadow(
-                                          color:
-                                              (isLight
-                                                      ? const Color(0xFF0066FF)
-                                                      : const Color(0xFF00C2FF))
-                                                  .withValues(alpha: 0.35),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ]
-                                    : null,
                               ),
                               child: Text(
                                 _planTabs[index],
@@ -1163,37 +1122,6 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
                           : const Color(0xFF1E2D4A)),
                 width: isHighlighted ? 1.4 : 1.0,
               ),
-              boxShadow: isLight
-                  ? [
-                      if (isHighlighted)
-                        BoxShadow(
-                          color: const Color(0xFF0066FF).withValues(alpha: 0.16),
-                          blurRadius: 24,
-                          spreadRadius: 0,
-                          offset: const Offset(0, 0),
-                        )
-                      else
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                    ]
-                  : [
-                      if (isHighlighted)
-                        BoxShadow(
-                          color: const Color(0xFF4CD6FB).withValues(alpha: 0.18),
-                          blurRadius: 24,
-                          spreadRadius: 0,
-                          offset: const Offset(0, 0),
-                        )
-                      else
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
-                          blurRadius: 14,
-                          offset: const Offset(0, 4),
-                        ),
-                    ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

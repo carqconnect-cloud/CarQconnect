@@ -290,15 +290,6 @@ class _EmergencyContactSheetState extends State<EmergencyContactSheet> {
           decoration: BoxDecoration(
             color: isLight ? Colors.white : const Color(0xFF101726),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-            boxShadow: isLight
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 20,
-                      offset: const Offset(0, -4),
-                    )
-                  ]
-                : null,
           ),
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
           child: SafeArea(
@@ -516,13 +507,6 @@ class _EmergencyContactSheetState extends State<EmergencyContactSheet> {
                               decoration: BoxDecoration(
                                 color: const Color(0xFFB71C1C),
                                 borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFFB71C1C).withValues(alpha: 0.35),
-                                    blurRadius: 6,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
                               ),
                               child: const Icon(
                                 Icons.phone_rounded,

@@ -44,17 +44,7 @@ class TopViewCarWidget extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      decoration: BoxDecoration(
-        boxShadow: showGlow
-            ? [
-                BoxShadow(
-                  color: const Color(0xFF00C2FF).withValues(alpha: 0.5),
-                  blurRadius: 16,
-                  spreadRadius: 2,
-                ),
-              ]
-            : null,
-      ),
+      decoration: const BoxDecoration(),
       child: CustomPaint(
         size: Size(width, height),
         painter: _TopViewCarPainter(),

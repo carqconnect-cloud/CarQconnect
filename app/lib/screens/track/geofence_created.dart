@@ -94,17 +94,9 @@ class GeofenceCreatedScreen extends StatelessWidget {
                                 Container(
                                   width: 72,
                                   height: 72,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: const Color(0xFF00C853),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color(0xFF00C853)
-                                            .withValues(alpha: 0.5),
-                                        blurRadius: 20,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ],
+                                    color: Color(0xFF00C853),
                                   ),
                                   child: const Center(
                                     child: Icon(
@@ -416,12 +408,6 @@ class GeofenceRadarThumbnail extends StatelessWidget {
                   color: primary.withValues(alpha: 0.85),
                   width: 1.4,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: primary.withValues(alpha: 0.35),
-                    blurRadius: 8,
-                  ),
-                ],
               ),
             ),
             // Center glowing dot
@@ -431,13 +417,6 @@ class GeofenceRadarThumbnail extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: primary,
-                boxShadow: [
-                  BoxShadow(
-                    color: primary,
-                    blurRadius: 6,
-                    spreadRadius: 1,
-                  ),
-                ],
               ),
             ),
           ],

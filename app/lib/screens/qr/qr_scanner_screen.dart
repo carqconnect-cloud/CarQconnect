@@ -507,12 +507,6 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                   color: const Color(0xFF00C2FF).withValues(alpha: 0.3),
                   width: 1,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    blurRadius: 16,
-                  ),
-                ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -568,14 +562,6 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                     : const Color(0xFF00C2FF).withValues(alpha: 0.4),
                 width: 1.2,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: isActive
-                      ? const Color(0xFF00C2FF).withValues(alpha: 0.3)
-                      : Colors.black.withValues(alpha: 0.5),
-                  blurRadius: 12,
-                ),
-              ],
             ),
             child: Icon(
               icon,

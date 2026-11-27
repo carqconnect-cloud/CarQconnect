@@ -283,22 +283,6 @@ class NoSosContactScreen extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Soft radial glow behind the siren
-          Container(
-            width: 180,
-            height: 180,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFFF1A1A).withValues(alpha: 0.18),
-                  blurRadius: 70,
-                  spreadRadius: 20,
-                ),
-              ],
-            ),
-          ),
-
           // Primary siren image (uses PNG extracted from nosos.svg for optimal rendering, with SVG fallback)
           Image.asset(
             'assets/icons/nosos.png',
@@ -472,13 +456,6 @@ class NoSosContactScreen extends StatelessWidget {
                   color: const Color(0xFF00C2FF).withValues(alpha: 0.35),
                   width: 1.2,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF00C2FF).withValues(alpha: 0.08),
-                    blurRadius: 10,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
               ),
               child: Icon(
                 icon,
@@ -520,8 +497,8 @@ class NoSosContactScreen extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF00C2FF),
           foregroundColor: Colors.black,
-          elevation: 4,
-          shadowColor: const Color(0xFF00C2FF).withValues(alpha: 0.4),
+          elevation: 0,
+          shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
           ),

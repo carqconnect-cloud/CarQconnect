@@ -73,15 +73,6 @@ class ConfirmVehicleScreen extends StatelessWidget {
                               ? const Color(0xFFE2E8F0)
                               : Colors.white.withValues(alpha: 0.05),
                         ),
-                        boxShadow: isLight
-                            ? [
-                                const BoxShadow(
-                                  color: Color(0x0A000000),
-                                  blurRadius: 14,
-                                  offset: Offset(0, 4),
-                                ),
-                              ]
-                            : null,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

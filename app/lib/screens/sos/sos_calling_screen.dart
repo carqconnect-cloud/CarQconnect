@@ -451,15 +451,6 @@ class _SosCallingScreenState extends State<SosCallingScreen>
                     ),
                     width: 1.2,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFFFF1744).withValues(
-                        alpha: 0.3 * _glowAnimation.value,
-                      ),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -537,13 +528,6 @@ class _SosCallingScreenState extends State<SosCallingScreen>
           color: const Color(0xFFE53935).withValues(alpha: 0.45),
           width: 1.2,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFFFF1744).withValues(alpha: 0.15),
-            blurRadius: 20,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
       child: Column(
         children: [
@@ -861,13 +845,6 @@ class _SosCallingScreenState extends State<SosCallingScreen>
                                   decoration: const BoxDecoration(
                                     color: Color(0xFFE53935),
                                     shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Color(0xFFFF1744),
-                                        blurRadius: 10,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
                                   ),
                                   child: const Icon(
                                     Icons.warning_rounded,
@@ -904,7 +881,7 @@ class _SosCallingScreenState extends State<SosCallingScreen>
                           borderRadius: BorderRadius.circular(10),
                           side: const BorderSide(color: Color(0xFF1E2D4A)),
                         ),
-                        elevation: 4,
+                        elevation: 0,
                       ),
                       icon: const Icon(Icons.navigation_rounded,
                           size: 14, color: Color(0xFF00C2FF)),

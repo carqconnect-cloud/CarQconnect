@@ -233,15 +233,6 @@ class NoGpsScreen extends StatelessWidget {
         color: cardBg,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: cardBorder),
-        boxShadow: isLight
-            ? AppTheme.cardShadow
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-              ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -403,16 +394,6 @@ class NoGpsScreen extends StatelessWidget {
               height: 12,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: (isLight
-                            ? const Color(0xFF94A3B8)
-                            : const Color(0xFF1E2A38))
-                        .withValues(alpha: 0.25),
-                    blurRadius: 18,
-                    spreadRadius: 4,
-                  ),
-                ],
               ),
             ),
           ),

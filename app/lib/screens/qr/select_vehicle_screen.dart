@@ -1208,16 +1208,6 @@ class _SelectVehicleScreenState extends State<SelectVehicleScreen>
                                                                   ? const Color(0xFF10B981)
                                                                   : const Color(0xFFEF4444),
                                                               shape: BoxShape.circle,
-                                                              boxShadow: [
-                                                                BoxShadow(
-                                                                  color: (isActivated
-                                                                          ? const Color(0xFF10B981)
-                                                                          : const Color(0xFFEF4444))
-                                                                      .withValues(alpha: 0.5),
-                                                                  blurRadius: 4,
-                                                                  spreadRadius: 1,
-                                                                ),
-                                                              ],
                                                             ),
                                                           ),
                                                           const SizedBox(width: 6),

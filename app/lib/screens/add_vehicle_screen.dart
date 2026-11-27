@@ -84,15 +84,6 @@ class AddVehicleScreen extends StatelessWidget {
                         border: Border.all(
                           color: isLight ? const Color(0xFFCBD5E1) : Colors.transparent,
                         ),
-                        boxShadow: isLight
-                            ? [
-                                const BoxShadow(
-                                  color: Color(0x0A000000),
-                                  blurRadius: 10,
-                                  offset: Offset(0, 2),
-                                ),
-                              ]
-                            : null,
                       ),
                       child: Row(
                         children: [

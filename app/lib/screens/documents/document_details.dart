@@ -152,13 +152,6 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
                   height: 220,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.25),
-                        blurRadius: 16,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(18),
@@ -191,13 +184,6 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(18),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.25),
-                        blurRadius: 16,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

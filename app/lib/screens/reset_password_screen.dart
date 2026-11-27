@@ -258,15 +258,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                           : const Color(0xFF1E2D44),
                                       width: 1.0,
                                     ),
-                                    boxShadow: isLight
-                                        ? [
-                                            const BoxShadow(
-                                              color: Color(0x0A000000),
-                                              blurRadius: 10,
-                                              offset: Offset(0, 2),
-                                            ),
-                                          ]
-                                        : null,
                                   ),
                                   child: Row(
                                     children: [
@@ -341,15 +332,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                           : const Color(0xFF1E2D44),
                                       width: 1.0,
                                     ),
-                                    boxShadow: isLight
-                                        ? [
-                                            const BoxShadow(
-                                              color: Color(0x0A000000),
-                                              blurRadius: 10,
-                                              offset: Offset(0, 2),
-                                            ),
-                                          ]
-                                        : null,
                                   ),
                                   child: Row(
                                     children: [

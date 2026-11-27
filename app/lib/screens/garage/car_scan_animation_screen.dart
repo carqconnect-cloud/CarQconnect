@@ -414,18 +414,6 @@ class _CarScanAnimationScreenState extends State<CarScanAnimationScreen>
           ],
           stops: const [0.0, 0.15, 0.42, 0.5, 0.58, 0.85, 1.0],
         ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0xFF0066FF),
-            blurRadius: 16,
-            spreadRadius: 2.5,
-          ),
-          BoxShadow(
-            color: Colors.white,
-            blurRadius: 5,
-            spreadRadius: 1,
-          ),
-        ],
       ),
     );
   }

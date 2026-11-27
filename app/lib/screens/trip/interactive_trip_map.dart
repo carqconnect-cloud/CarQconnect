@@ -451,14 +451,6 @@ class _InteractiveTripMapState extends State<InteractiveTripMap> {
                                 color: Colors.white,
                                 width: 2.5,
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF00E676)
-                                      .withValues(alpha: 0.6),
-                                  blurRadius: 8,
-                                  spreadRadius: 2,
-                                ),
-                              ],
                             ),
                             child: const Center(
                               child: Icon(
@@ -502,13 +494,6 @@ class _InteractiveTripMapState extends State<InteractiveTripMap> {
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFF59E0B),
                                   borderRadius: BorderRadius.circular(8),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      blurRadius: 4,
-                                      offset: Offset(0, 1),
-                                    ),
-                                  ],
                                 ),
                                 child: Text(
                                   label.split(',').first,
@@ -532,12 +517,6 @@ class _InteractiveTripMapState extends State<InteractiveTripMap> {
                                     color: Colors.white,
                                     width: 2,
                                   ),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Colors.black38,
-                                      blurRadius: 4,
-                                    ),
-                                  ],
                                 ),
                                 child: Center(
                                   child: Text(
@@ -616,14 +595,6 @@ class _InteractiveTripMapState extends State<InteractiveTripMap> {
                                       color: Colors.white,
                                       width: 2.5,
                                     ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color(0xFF0091FF)
-                                            .withValues(alpha: 0.9),
-                                        blurRadius: 10,
-                                        spreadRadius: 2,
-                                      ),
-                                    ],
                                   ),
                                   child: const Center(
                                     child: Icon(
@@ -692,13 +663,6 @@ class DestinationPinWidget extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.25),
                 width: 1,
               ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black45,
-                  blurRadius: 5,
-                  offset: Offset(0, 2),
-                ),
-              ],
             ),
             child: Text(
               label!,
@@ -730,13 +694,6 @@ class DestinationPinWidget extends StatelessWidget {
                     borderRadius: BorderRadius.all(
                       Radius.elliptical(size * 0.44, size * 0.16),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.25),
-                        blurRadius: 4,
-                        spreadRadius: 1,
-                      ),
-                    ],
                   ),
                 ),
               ),
@@ -874,13 +831,6 @@ class NavigationVehicleMarker extends StatelessWidget {
               color: const Color(0xFF0091FF),
               borderRadius: BorderRadius.circular(7),
               border: Border.all(color: Colors.white, width: 1.5),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.45),
-                  blurRadius: 7,
-                  offset: const Offset(0, 3),
-                ),
-              ],
             ),
             child: Column(
               children: [
@@ -993,13 +943,6 @@ class NavigationVehicleMarker extends StatelessWidget {
                     color: const Color(0xFF00C2FF),
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.white, width: 1.5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.45),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
                   ),
                 ),
                 // Rider Helmet

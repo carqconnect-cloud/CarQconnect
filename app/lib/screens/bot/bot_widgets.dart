@@ -31,15 +31,6 @@ class VehicleHealthCardWidget extends StatelessWidget {
               color: light ? const Color(0xFFE2E8F0) : const Color(0xFF1E2B40),
               width: 1.2,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: light
-                    ? Colors.black.withValues(alpha: 0.06)
-                    : Colors.black.withValues(alpha: 0.35),
-                blurRadius: 18,
-                offset: const Offset(0, 6),
-              ),
-            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,12 +208,6 @@ class VehicleHealthCardWidget extends StatelessWidget {
           decoration: BoxDecoration(
             color: statusColor,
             shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: statusColor.withValues(alpha: 0.5),
-                blurRadius: 4,
-              ),
-            ],
           ),
         ),
         const SizedBox(width: 8),
@@ -547,16 +532,6 @@ class _ChatHistoryDrawerState extends State<ChatHistoryDrawer> {
                             ? const Color(0xFF0066FF)
                             : const Color(0xFF38BDF8),
                         shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: (light
-                                    ? const Color(0xFF0066FF)
-                                    : const Color(0xFF38BDF8))
-                                .withValues(alpha: 0.35),
-                            blurRadius: 16,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
                       ),
                       child: Center(
                         child: Icon(
@@ -611,15 +586,6 @@ class ChatOptionsPopup extends StatelessWidget {
               color: light ? const Color(0xFFE2E8F0) : const Color(0xFF1E2B40),
               width: 1.2,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: light
-                    ? Colors.black.withValues(alpha: 0.12)
-                    : Colors.black.withValues(alpha: 0.6),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,

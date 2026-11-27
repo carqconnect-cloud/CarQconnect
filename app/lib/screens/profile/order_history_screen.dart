@@ -283,13 +283,6 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF0D47A1).withValues(alpha: 0.3),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

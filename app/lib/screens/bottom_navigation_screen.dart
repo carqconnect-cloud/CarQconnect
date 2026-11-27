@@ -204,21 +204,6 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
                 topLeft: Radius.circular(24),
                 topRight: Radius.circular(24),
               ),
-              boxShadow: isLight
-                  ? [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.08),
-                        blurRadius: 16,
-                        offset: const Offset(0, -4),
-                      ),
-                    ]
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.4),
-                        blurRadius: 12,
-                        offset: const Offset(0, -2),
-                      ),
-                    ],
             ),
             child: SizedBox(
               height: barHeight,
@@ -289,21 +274,6 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
                         : Colors.white.withValues(alpha: 0.14),
                     width: 1.4,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(
-                        alpha: isLight ? 0.12 : 0.55,
-                      ),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4),
-                    ),
-                    if (!isLight)
-                      BoxShadow(
-                        color: const Color(0xFF00C2FF).withValues(alpha: 0.16),
-                        blurRadius: 12,
-                        spreadRadius: 1,
-                      ),
-                  ],
                 ),
                 child: Center(
                   child: Icon(

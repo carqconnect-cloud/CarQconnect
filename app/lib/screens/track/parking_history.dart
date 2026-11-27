@@ -467,22 +467,6 @@ class _VehicleHistoryScreenState extends State<VehicleHistoryScreen>
                                                       : const Color(0xFF00C2FF),
                                                   width: 1.4,
                                                 ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color:
-                                                        (isLight
-                                                                ? const Color(
-                                                                    0xFF0066FF,
-                                                                  )
-                                                                : const Color(
-                                                                    0xFF00C2FF,
-                                                                  ))
-                                                            .withValues(
-                                                              alpha: 0.25,
-                                                            ),
-                                                    blurRadius: 8,
-                                                  ),
-                                                ],
                                               ),
                                             ),
                                             // Mini Top-View Car
@@ -502,18 +486,6 @@ class _VehicleHistoryScreenState extends State<VehicleHistoryScreen>
                                                   color: isLight
                                                       ? const Color(0xFF0066FF)
                                                       : const Color(0xFF00C2FF),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: isLight
-                                                          ? const Color(
-                                                              0xFF0066FF,
-                                                            )
-                                                          : const Color(
-                                                              0xFF00C2FF,
-                                                            ),
-                                                      blurRadius: 4,
-                                                    ),
-                                                  ],
                                                 ),
                                               ),
                                             ),

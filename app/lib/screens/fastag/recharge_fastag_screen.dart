@@ -261,18 +261,6 @@ class _RechargeFastagScreenState extends State<RechargeFastagScreen> {
                                               ? AppTheme.primaryColor
                                               : (isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2B40)),
                                         ),
-                                        boxShadow: isLight
-                                            ? AppTheme.cardShadow
-                                            : (isSelected
-                                                ? [
-                                                    BoxShadow(
-                                                      color: const Color(0xFF00C2FF)
-                                                          .withValues(alpha: 0.35),
-                                                      blurRadius: 8,
-                                                      offset: const Offset(0, 2),
-                                                    ),
-                                                  ]
-                                                : null),
                                       ),
                                       child: Center(
                                         child: Text(

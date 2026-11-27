@@ -914,7 +914,7 @@ class _TripsScreenState extends State<TripsScreen>
                                           width: 0.8,
                                         ),
                                       ),
-                                      elevation: 8,
+                                      elevation: 0,
                                     ),
                                   ),
                                   child: PopupMenuButton<String>(

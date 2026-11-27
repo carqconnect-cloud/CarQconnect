@@ -885,15 +885,6 @@ class _PublicScanScreenState extends State<PublicScanScreen>
                             ? const Color(0xFFE2E8F0)
                             : const Color(0xFF1C273C),
                       ),
-                      boxShadow: isLight
-                          ? [
-                              const BoxShadow(
-                                color: Color(0x0A000000),
-                                blurRadius: 14,
-                                offset: Offset(0, 4),
-                              ),
-                            ]
-                          : null,
                     ),
                     child: Column(
                       children: [
@@ -1030,14 +1021,6 @@ class _PublicScanScreenState extends State<PublicScanScreen>
                                     color: const Color(0xFF00D26A)
                                         .withValues(alpha: isLight ? 0.3 : 0.35),
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFF00D26A)
-                                          .withValues(alpha: 0.12),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
                                 ),
                                 child: Column(
                                   children: [
@@ -1094,13 +1077,6 @@ class _PublicScanScreenState extends State<PublicScanScreen>
                                   border: Border.all(
                                     color: primaryBlue.withValues(alpha: 0.35),
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: primaryBlue.withValues(alpha: 0.12),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
                                 ),
                                 child: Column(
                                   children: [

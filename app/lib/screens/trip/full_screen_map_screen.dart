@@ -194,13 +194,6 @@ class _FullScreenMapScreenState extends State<FullScreenMapScreen> {
                               color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D3E),
                               width: 1,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: isLight ? 0.08 : 0.4),
-                                blurRadius: 16,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
                           ),
                           child: Row(
                             children: [
@@ -359,13 +352,6 @@ class _FullScreenMapScreenState extends State<FullScreenMapScreen> {
               color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D3E),
               width: 1.2,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isLight ? 0.08 : 0.35),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
           ),
           child: Icon(icon, color: effectiveColor, size: 22),
         ),

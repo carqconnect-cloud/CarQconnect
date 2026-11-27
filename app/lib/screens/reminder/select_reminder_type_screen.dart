@@ -121,15 +121,6 @@ class _SelectReminderTypeScreenState extends State<SelectReminderTypeScreen> {
                                     : (isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1C273C)),
                                 width: isSelected ? 2.0 : 1.0,
                               ),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: const Color(0xFF0066FF).withValues(alpha: 0.25),
-                                        blurRadius: 16,
-                                        spreadRadius: 1,
-                                      ),
-                                    ]
-                                  : (isLight ? AppTheme.cardShadow : []),
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,

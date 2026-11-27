@@ -1302,15 +1302,6 @@ class _GarageScreenState extends State<GarageScreen>
                                           ? const Color(0xFF10B981)
                                           : const Color(0xFF64748B),
                                       shape: BoxShape.circle,
-                                      boxShadow: isConnected
-                                          ? const [
-                                              BoxShadow(
-                                                color: Color(0xFF10B981),
-                                                blurRadius: 4,
-                                                spreadRadius: 1,
-                                              ),
-                                            ]
-                                          : null,
                                     ),
                                   ),
                                   const SizedBox(width: 5),
@@ -1845,13 +1836,6 @@ class _GarageScreenState extends State<GarageScreen>
             color: const Color(0xFF1E4082).withValues(alpha: 0.7),
             width: 1.0,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF0055FF).withValues(alpha: 0.16),
-              blurRadius: 20,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),

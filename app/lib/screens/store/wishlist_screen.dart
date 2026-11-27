@@ -354,13 +354,6 @@ class _WishlistScreenState extends State<WishlistScreen> {
                   color: const Color(0xFFEF4444).withValues(alpha: 0.3),
                   width: 1.5,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFEF4444).withValues(alpha: isLight ? 0.12 : 0.2),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
               ),
               child: const Center(
                 child: Icon(
@@ -807,15 +800,6 @@ class _WishlistScreenState extends State<WishlistScreen> {
             width: 1.0,
           ),
         ),
-        boxShadow: isLight
-            ? [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -3),
-                )
-              ]
-            : null,
       ),
       child: SafeArea(
         top: false,

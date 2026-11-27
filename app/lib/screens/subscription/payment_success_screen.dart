@@ -231,15 +231,6 @@ class PlanPurchaseSuccessScreen extends StatelessWidget {
                                   color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D4A),
                                   width: 1,
                                 ),
-                                boxShadow: isLight
-                                    ? AppTheme.cardShadow
-                                    : [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(alpha: 0.25),
-                                          blurRadius: 16,
-                                          offset: const Offset(0, 4),
-                                        ),
-                                      ],
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

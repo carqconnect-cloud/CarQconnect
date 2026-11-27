@@ -175,25 +175,6 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Positioned(
-                      bottom: 15,
-                      child: Container(
-                        width: 220,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(
-                            Radius.elliptical(220, 30),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF0066FF).withValues(alpha: isLight ? 0.12 : 0.22),
-                              blurRadius: 30,
-                              spreadRadius: 8,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                     Image.asset(
                       'assets/homescreensicons/carimage.png',
                       height: 170,

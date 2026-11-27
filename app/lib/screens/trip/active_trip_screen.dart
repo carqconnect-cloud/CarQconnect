@@ -1244,13 +1244,6 @@ class _ActiveTripScreenState extends State<ActiveTripScreen> {
                       color: hudBorder,
                       width: 1,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: isLight ? 0.12 : 0.5),
-                        blurRadius: 18,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
                   child: Row(
                     children: [
@@ -1376,13 +1369,6 @@ class _ActiveTripScreenState extends State<ActiveTripScreen> {
                         color: hudBorder,
                         width: 1,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.4),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -1424,9 +1410,6 @@ class _ActiveTripScreenState extends State<ActiveTripScreen> {
                     decoration: BoxDecoration(
                       color: const Color(0xFFF59E0B),
                       borderRadius: BorderRadius.circular(14),
-                      boxShadow: const [
-                        BoxShadow(color: Colors.black38, blurRadius: 8, offset: Offset(0, 2)),
-                      ],
                     ),
                     child: Row(
                       children: [
@@ -1485,13 +1468,6 @@ class _ActiveTripScreenState extends State<ActiveTripScreen> {
                       color: controlSurface,
                       shape: BoxShape.circle,
                       border: Border.all(color: hudBorder, width: 1),
-                      boxShadow: [
-                        BoxShadow(
-                          color: controlShadow,
-                          blurRadius: 10,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
                     ),
                     child: Icon(
                       isLight ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
@@ -1533,13 +1509,6 @@ class _ActiveTripScreenState extends State<ActiveTripScreen> {
                       color: controlSurface,
                       shape: BoxShape.circle,
                       border: Border.all(color: hudBorder, width: 1.2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: controlShadow,
-                          blurRadius: 10,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
                     ),
                     child: Stack(
                       alignment: Alignment.center,
@@ -1596,13 +1565,6 @@ class _ActiveTripScreenState extends State<ActiveTripScreen> {
                         color: hudBorder,
                         width: 1,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: controlShadow,
-                          blurRadius: 10,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
                     ),
                     child: Center(
                       child: Icon(
@@ -1633,13 +1595,6 @@ class _ActiveTripScreenState extends State<ActiveTripScreen> {
                     width: 1,
                   ),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                  color: Colors.black.withValues(alpha: isLight ? 0.14 : 0.6),
-                    blurRadius: 20,
-                    offset: const Offset(0, -4),
-                  ),
-                ],
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1803,13 +1758,6 @@ class _ActiveTripScreenState extends State<ActiveTripScreen> {
                         decoration: BoxDecoration(
                           color: const Color(0xFFB91C1C),
                           borderRadius: BorderRadius.circular(21),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFFB91C1C).withValues(alpha: 0.45),
-                              blurRadius: 10,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,

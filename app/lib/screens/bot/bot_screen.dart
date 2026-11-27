@@ -663,13 +663,6 @@ class _BotScreenState extends State<BotScreen>
               color: light ? const Color(0xFFE2E8F0) : const Color(0xFF1E2B40),
               width: 1.2,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: light ? 0.12 : 0.5),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -969,15 +962,6 @@ class _BotScreenState extends State<BotScreen>
                           : const Color(0xFF1C273C),
                       width: 1,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(
-                          alpha: isLight ? 0.04 : 0.2,
-                        ),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
                   ),
                   child: Center(
                     child: Text(
@@ -1069,17 +1053,6 @@ class _BotScreenState extends State<BotScreen>
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(6),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color:
-                          (isLight
-                                  ? const Color(0xFF0066FF)
-                                  : const Color(0xFF38BDF8))
-                              .withValues(alpha: 0.25),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
                 ),
                 child: Text(
                   msg.text,
@@ -1137,15 +1110,6 @@ class _BotScreenState extends State<BotScreen>
                                   : const Color(0xFF1C273C),
                               width: 1,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(
-                                  alpha: isLight ? 0.05 : 0.2,
-                                ),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
                           ),
                           child: Text(
                             msg.text,
@@ -1200,13 +1164,6 @@ class _BotScreenState extends State<BotScreen>
           color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1C273C),
           width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isLight ? 0.05 : 0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1250,13 +1207,6 @@ class _BotScreenState extends State<BotScreen>
                     ? const Color(0xFFE2E8F0)
                     : const Color(0xFF1C273C),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isLight ? 0.05 : 0.2),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -1308,13 +1258,6 @@ class _BotScreenState extends State<BotScreen>
                       : const Color(0xFF1C273C),
                   width: 1,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isLight ? 0.06 : 0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
               ),
               child: Row(
                 children: [
@@ -1373,17 +1316,6 @@ class _BotScreenState extends State<BotScreen>
                     ? const Color(0xFF0066FF)
                     : const Color(0xFF38BDF8),
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color:
-                        (isLight
-                                ? const Color(0xFF0066FF)
-                                : const Color(0xFF38BDF8))
-                            .withValues(alpha: 0.35),
-                    blurRadius: 12,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
               ),
               child: Center(
                 child: Icon(

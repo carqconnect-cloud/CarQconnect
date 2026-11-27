@@ -212,14 +212,6 @@ class _LinkQrTagScreenState extends State<LinkQrTagScreen>
                                               height: 2.5,
                                               decoration: BoxDecoration(
                                                 color: AppTheme.primaryColor,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: AppTheme.primaryColor
-                                                        .withValues(alpha: 0.8),
-                                                    blurRadius: 10,
-                                                    spreadRadius: 2,
-                                                  ),
-                                                ],
                                               ),
                                             ),
                                           );

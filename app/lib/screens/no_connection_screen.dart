@@ -67,15 +67,6 @@ class _NoConnectionScreenState extends State<NoConnectionScreen> {
                 topLeft: Radius.circular(24),
                 topRight: Radius.circular(24),
               ),
-              boxShadow: isLight
-                  ? [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.08),
-                        blurRadius: 16,
-                        offset: const Offset(0, -4),
-                      ),
-                    ]
-                  : null,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -140,15 +131,8 @@ class _NoConnectionScreenState extends State<NoConnectionScreen> {
               child: Container(
                 width: 76,
                 height: 76,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFFFF2222).withValues(alpha: 0.35),
-                      blurRadius: 14,
-                      spreadRadius: 2,
-                    ),
-                  ],
                 ),
                 child: Image.asset(
                   'assets/bottomnavigation/sos.png',

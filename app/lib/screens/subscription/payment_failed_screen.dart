@@ -71,17 +71,8 @@ class PaymentFailedScreen extends StatelessWidget {
                     child: Container(
                       width: 104,
                       height: 104,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: isLight
-                                ? const Color(0x33FF0019)
-                                : const Color(0x59FF0019),
-                            blurRadius: 36,
-                            spreadRadius: 2,
-                          ),
-                        ],
                       ),
                       child: const CustomPaint(
                         size: Size(104, 104),

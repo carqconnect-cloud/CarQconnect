@@ -219,15 +219,6 @@ class _MembershipScreenState extends State<MembershipScreen> {
                                 : const Color(0xFF00C2FF).withValues(alpha: 0.35),
                             width: 1.2,
                           ),
-                          boxShadow: isLight
-                              ? AppTheme.cardShadow
-                              : [
-                                  BoxShadow(
-                                    color: const Color(0xFF00C2FF).withValues(alpha: 0.12),
-                                    blurRadius: 24,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

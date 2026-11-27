@@ -48,26 +48,6 @@ class AppLoading {
                   color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF00C2FF).withValues(alpha: 0.25),
                   width: 1.2,
                 ),
-                boxShadow: isLight
-                    ? [
-                        const BoxShadow(
-                          color: Color(0x1F000000),
-                          blurRadius: 28,
-                          offset: Offset(0, 10),
-                        ),
-                      ]
-                    : [
-                        BoxShadow(
-                          color: const Color(0xFF00C2FF).withValues(alpha: 0.12),
-                          blurRadius: 30,
-                          spreadRadius: 2,
-                        ),
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.6),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -231,13 +211,6 @@ class _AppLoadingScreenState extends State<AppLoadingScreen> {
                           decoration: const BoxDecoration(
                             color: Color(0xFF00C2FF),
                             shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0xFF00C2FF),
-                                blurRadius: 6,
-                                spreadRadius: 1,
-                              ),
-                            ],
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -544,13 +517,6 @@ class _AppLoadingSpinnerState extends State<AppLoadingSpinner>
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(4),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: widget.primaryColor.withValues(alpha: 0.28),
-                                      blurRadius: 8,
-                                      spreadRadius: 1,
-                                    ),
-                                  ],
                                 ),
                               ),
                             ),

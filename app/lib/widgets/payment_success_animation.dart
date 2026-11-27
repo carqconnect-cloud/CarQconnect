@@ -216,16 +216,6 @@ class _GooglePaySuccessBadgeState extends State<GooglePaySuccessBadge>
                             .toColor(),
                       ],
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: widget.primaryColor.withValues(
-                          alpha: (_circleScaleAnim.value * 0.5).clamp(0.0, 0.6),
-                        ),
-                        blurRadius: 32,
-                        spreadRadius: 4,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
                   child: Center(
                     child: Transform.rotate(

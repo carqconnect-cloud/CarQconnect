@@ -561,15 +561,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   width: 1.0,
                 ),
               ),
-              boxShadow: isLight
-                  ? [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, -3),
-                      )
-                    ]
-                  : null,
             ),
             child: SafeArea(
               top: false,
