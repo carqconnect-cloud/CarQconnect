@@ -51,7 +51,15 @@ publicRouter.use('/webhooks', webhookRouter);
 publicRouter.use('/qr', publicRateLimiter, qrPublicRouter);
 
 // Public Scan and Vehicle Image for QR tags
-publicRouter.get('/scan/:tagId', asyncHandler(appQrController.getPublicTagInfo));
+publicRouter.get('/scan/:tagId', (req, res, next) => {
+  // If request is from a browser navigating to this URL (e.g. scanned via phone camera), redirect to web frontend
+  const acceptHeader = req.headers.accept || '';
+  if (acceptHeader.includes('text/html')) {
+    const frontendBase = process.env.FRONTEND_URL || 'https://carqconnect.vercel.app';
+    return res.redirect(302, `${frontendBase}/scan/${req.params.tagId}`);
+  }
+  next();
+}, asyncHandler(appQrController.getPublicTagInfo));
 publicRouter.post('/scan/:tagId/call', asyncHandler(appQrController.initiateMaskedCall));
 publicRouter.post('/scan/:tagId/message', asyncHandler(appQrController.sendOwnerMessage));
 publicRouter.get('/vehicle-image', asyncHandler(appQrController.getVehicleImage));

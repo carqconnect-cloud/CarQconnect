@@ -250,18 +250,28 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 38,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isLight
+                      ? const Color(0xFFCBD5E1)
+                      : const Color(0xFF334155),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
                 child: Text(
                   'Select Blood Group',
                   style: TextStyle(
                     color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                    fontSize: 16,
+                    fontSize: 16.5,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              const Divider(height: 1),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -272,7 +282,11 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
                     return ListTile(
                       leading: Icon(
                         Icons.water_drop_outlined,
-                        color: isSel ? AppTheme.primaryColor : (isLight ? const Color(0xFF64748B) : const Color(0xFF7B8C9F)),
+                        color: isSel
+                            ? AppTheme.primaryColor
+                            : (isLight
+                                ? const Color(0xFF64748B)
+                                : const Color(0xFF7B8C9F)),
                         size: 20,
                       ),
                       title: Text(
@@ -282,9 +296,17 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
                           fontWeight: isSel ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
-                      trailing: isSel
-                          ? Icon(Icons.check_rounded, color: AppTheme.primaryColor)
-                          : null,
+                      trailing: Icon(
+                        isSel
+                            ? Icons.radio_button_checked_rounded
+                            : Icons.radio_button_off_rounded,
+                        color: isSel
+                            ? AppTheme.primaryColor
+                            : (isLight
+                                ? const Color(0xFFCBD5E1)
+                                : const Color(0xFF475569)),
+                        size: 22,
+                      ),
                       onTap: () {
                         setState(() => _bloodGroupController.text = bg);
                         Navigator.pop(ctx);

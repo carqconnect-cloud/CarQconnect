@@ -764,22 +764,6 @@ class _AccountScreenState extends State<AccountScreen>
                       ),
                       const SizedBox(height: 12),
 
-                      // Theme & Display
-                      _buildSettingsTile(
-                        icon: Icons.brightness_6_rounded,
-                        iconColor: AppTheme.primaryColor,
-                        title: 'Theme & Display',
-                        subtitle: 'Auto (6 AM - 6 PM), Light or Dark',
-                        trailingText: AppTheme.mode == ThemeModeSetting.autoTime
-                            ? 'Auto'
-                            : AppTheme.mode == ThemeModeSetting.light
-                            ? 'Light'
-                            : 'Dark',
-                        onTap: () => AppTheme.showThemeDialog(context),
-                        isLight: isLight,
-                      ),
-                      const SizedBox(height: 10),
-
                       _buildSettingsTile(
                         icon: Icons.qr_code_2_rounded,
                         iconColor: AppTheme.primaryColor,
@@ -883,6 +867,22 @@ class _AccountScreenState extends State<AccountScreen>
                             });
                           }
                         },
+                        isLight: isLight,
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Theme & Display (Moved to the bottom after Language)
+                      _buildSettingsTile(
+                        icon: Icons.brightness_6_rounded,
+                        iconColor: AppTheme.primaryColor,
+                        title: 'Theme & Display',
+                        subtitle: 'Auto (6 AM - 6 PM), Light or Dark',
+                        trailingText: AppTheme.mode == ThemeModeSetting.autoTime
+                            ? 'Auto'
+                            : AppTheme.mode == ThemeModeSetting.light
+                            ? 'Light'
+                            : 'Dark',
+                        onTap: () => AppTheme.showThemeDialog(context),
                         isLight: isLight,
                       ),
 
@@ -1128,10 +1128,12 @@ class _AccountScreenState extends State<AccountScreen>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
         decoration: BoxDecoration(
-          color: AppTheme.cardBg,
+          color: AppTheme.settingsCardBg,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppTheme.cardBorder),
-          boxShadow: AppTheme.cardShadow,
+          border: Border.all(
+            color: isLight ? AppTheme.cardBorder : const Color(0xFF1C273C),
+          ),
+          boxShadow: AppTheme.settingsCardShadow,
         ),
         child: Row(
           children: [

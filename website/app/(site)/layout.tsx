@@ -5,6 +5,7 @@ import "./globals.css";
 import { Navbar } from "@/components/navbar/navbar";
 import { Footer } from "@/components/footer/footer";
 import WhatsAppFloat from "@/components/whatsapp-float";
+import HashRedirect from "@/components/HashRedirect";
 
 const display = Archivo({
   subsets: ["latin"],
@@ -63,7 +64,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`scroll-smooth ${inter.variable} ${manrope.variable} ${display.variable}`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined' && window.location.hash) {
+                var m = window.location.hash.match(/^#\\/?(scan|qr)\\/([^/?#]+)/i);
+                if (m && m[2]) {
+                  window.location.replace('/scan/' + m[2]);
+                }
+              }
+            `,
+          }}
+        />
+      </head>
       <body className="font-body antialiased flex flex-col min-h-[100svh] bg-[#0D0E13]">
+        <HashRedirect />
         <Navbar />
         <main className="flex-1 flex flex-col bg-[#f7f9fc]">{children}</main>
         <Footer />

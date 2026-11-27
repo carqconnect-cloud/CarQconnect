@@ -18,15 +18,12 @@ class QrScannerScreen extends StatefulWidget {
   State<QrScannerScreen> createState() => _QrScannerScreenState();
 }
 
-class _QrScannerScreenState extends State<QrScannerScreen>
-    with SingleTickerProviderStateMixin {
+class _QrScannerScreenState extends State<QrScannerScreen> {
   late final MobileScannerController _controller;
-  late final AnimationController _animController;
-  late final Animation<double> _laserAnimation;
 
   bool _isProcessing = false;
   bool _isTorchOn = false;
-  CameraFacing _facing = CameraFacing.back;
+  final CameraFacing _facing = CameraFacing.back;
 
   @override
   void initState() {
@@ -36,20 +33,10 @@ class _QrScannerScreenState extends State<QrScannerScreen>
       facing: _facing,
       returnImage: false,
     );
-
-    _animController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1800),
-    )..repeat(reverse: true);
-
-    _laserAnimation = Tween<double>(begin: 0.05, end: 0.95).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeInOut),
-    );
   }
 
   @override
   void dispose() {
-    _animController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -113,42 +100,6 @@ class _QrScannerScreenState extends State<QrScannerScreen>
     }
   }
 
-  Future<void> _scanFromCameraCapture() async {
-    try {
-      final picker = ImagePicker();
-      final image = await picker.pickImage(source: ImageSource.camera);
-      if (image == null) return;
-
-      final capture = await _controller.analyzeImage(image.path);
-      if (capture != null && capture.barcodes.isNotEmpty) {
-        final rawValue = capture.barcodes.first.rawValue?.trim();
-        if (rawValue != null && rawValue.isNotEmpty) {
-          _onDetect(capture);
-          return;
-        }
-      }
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No valid QR code found in photo. Please try again.'),
-            backgroundColor: Color(0xFF1E293B),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Camera capture error: $e'),
-            backgroundColor: const Color(0xFF280B0B),
-          ),
-        );
-      }
-    }
-  }
-
   Future<void> _toggleTorch() async {
     try {
       await _controller.toggleTorch();
@@ -165,21 +116,6 @@ class _QrScannerScreenState extends State<QrScannerScreen>
           duration: Duration(seconds: 2),
         ),
       );
-    }
-  }
-
-  Future<void> _switchCamera() async {
-    try {
-      await _controller.switchCamera();
-      if (mounted) {
-        setState(() {
-          _facing = _facing == CameraFacing.back
-              ? CameraFacing.front
-              : CameraFacing.back;
-        });
-      }
-    } catch (e) {
-      debugPrint('Camera flip error: $e');
     }
   }
 
@@ -412,8 +348,10 @@ class _QrScannerScreenState extends State<QrScannerScreen>
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
+      body: SizedBox.expand(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
           // 1. Live Camera Preview with MobileScanner
           Positioned.fill(
             child: MobileScanner(
@@ -489,51 +427,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
             ),
           ),
 
-          // 3. Animated Laser Scan Bar
-          Center(
-            child: SizedBox(
-              width: scanAreaSize - 20,
-              height: scanAreaSize - 20,
-              child: AnimatedBuilder(
-                animation: _laserAnimation,
-                builder: (context, child) {
-                  return Stack(
-                    children: [
-                      Positioned(
-                        top: (scanAreaSize - 20) * _laserAnimation.value,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          height: 3,
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [
-                                Colors.transparent,
-                                Color(0xFF00C2FF),
-                                Color(0xFF00E5FF),
-                                Color(0xFF00C2FF),
-                                Colors.transparent,
-                              ],
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF00C2FF)
-                                    .withValues(alpha: 0.8),
-                                blurRadius: 10,
-                                spreadRadius: 2,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
-
-          // 4. Instructions under Viewfinder
+          // 3. Instructions under Viewfinder
           Positioned(
             left: 20,
             right: 20,
@@ -566,47 +460,46 @@ class _QrScannerScreenState extends State<QrScannerScreen>
             ),
           ),
 
-          // 5. Top Navigation & Action Bar
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Back Button
-                  AnimatedBackArrowButton(onTap: () => Navigator.pop(context)),
+          // 4. Top Navigation Bar
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Back Button
+                    AnimatedBackArrowButton(onTap: () => Navigator.pop(context)),
 
-                  // Title
-                  const Text(
-                    'Scan QR Code',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.3,
+                    // Title
+                    const Text(
+                      'Scan QR Code',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.3,
+                      ),
                     ),
-                  ),
 
-                  // Flashlight Toggle Button
-                  _buildCircleButton(
-                    icon: _isTorchOn
-                        ? Icons.flash_on_rounded
-                        : Icons.flash_off_rounded,
-                    color: _isTorchOn ? const Color(0xFF00C2FF) : Colors.white,
-                    onTap: _toggleTorch,
-                  ),
-                ],
+                    // Balance spacing for centered title
+                    const SizedBox(width: 44),
+                  ],
+                ),
               ),
             ),
           ),
 
-          // 6. Bottom Floating Controls (Capture, Gallery & Camera Flip)
+          // 5. Bottom Floating Controls (Gallery & Light)
           Positioned(
             bottom: 30,
-            left: 20,
-            right: 20,
+            left: 40,
+            right: 40,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
                 color: const Color(0xFF090E17).withValues(alpha: 0.88),
                 borderRadius: BorderRadius.circular(28),
@@ -624,25 +517,21 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  // Camera Capture (Opens phone camera directly)
-                  _buildBottomAction(
-                    icon: Icons.camera_alt_rounded,
-                    label: 'Capture',
-                    onTap: _scanFromCameraCapture,
-                  ),
-
-                  // Scan from Gallery
+                  // Scan from Gallery (replaced Capture)
                   _buildBottomAction(
                     icon: Icons.photo_library_outlined,
                     label: 'Gallery',
                     onTap: _scanFromGallery,
                   ),
 
-                  // Switch Camera (Front/Back)
+                  // Light / Torch Toggle (replaced Gallery, Flip removed)
                   _buildBottomAction(
-                    icon: Icons.flip_camera_ios_outlined,
-                    label: 'Flip',
-                    onTap: _switchCamera,
+                    icon: _isTorchOn
+                        ? Icons.flash_on_rounded
+                        : Icons.flash_off_rounded,
+                    label: 'Light',
+                    onTap: _toggleTorch,
+                    isActive: _isTorchOn,
                   ),
                 ],
               ),
@@ -650,33 +539,15 @@ class _QrScannerScreenState extends State<QrScannerScreen>
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildCircleButton({
-    required IconData icon,
-    required VoidCallback onTap,
-    Color color = Colors.white,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: const Color(0xFF101B2E).withValues(alpha: 0.85),
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-        ),
-        child: Center(child: Icon(icon, color: color, size: 20)),
-      ),
-    );
+    ),
+  );
   }
 
   Widget _buildBottomAction({
     required IconData icon,
     required String label,
     required VoidCallback onTap,
+    bool isActive = false,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -687,26 +558,36 @@ class _QrScannerScreenState extends State<QrScannerScreen>
             width: 54,
             height: 54,
             decoration: BoxDecoration(
-              color: const Color(0xFF101B2E).withValues(alpha: 0.88),
+              color: isActive
+                  ? const Color(0xFF00C2FF).withValues(alpha: 0.22)
+                  : const Color(0xFF101B2E).withValues(alpha: 0.88),
               shape: BoxShape.circle,
               border: Border.all(
-                color: const Color(0xFF00C2FF).withValues(alpha: 0.4),
+                color: isActive
+                    ? const Color(0xFF00C2FF)
+                    : const Color(0xFF00C2FF).withValues(alpha: 0.4),
                 width: 1.2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.5),
+                  color: isActive
+                      ? const Color(0xFF00C2FF).withValues(alpha: 0.3)
+                      : Colors.black.withValues(alpha: 0.5),
                   blurRadius: 12,
                 ),
               ],
             ),
-            child: Icon(icon, color: const Color(0xFF00C2FF), size: 24),
+            child: Icon(
+              icon,
+              color: isActive ? const Color(0xFF00C2FF) : Colors.white,
+              size: 24,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             label,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: isActive ? const Color(0xFF00C2FF) : Colors.white,
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),

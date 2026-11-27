@@ -11,6 +11,14 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/scan/:tagId',
+        destination: '/qr/:tagId',
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

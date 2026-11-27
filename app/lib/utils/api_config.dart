@@ -65,6 +65,10 @@ class ApiConfig {
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedUrl = prefs.getString('preferred_api_base_url');
+      final savedFrontend = prefs.getString('preferred_frontend_web_url');
+      if (savedFrontend != null && savedFrontend.isNotEmpty) {
+        _customFrontendUrl = savedFrontend;
+      }
 
       // Release APKs must never inherit a development machine's LAN address.
       // Such a URL works during local testing but is unreachable for installed users.
@@ -184,8 +188,13 @@ class ApiConfig {
   static String get activeServerName => isCloud ? 'Cloud (Render)' : 'Local ($_activeBaseUrl)';
 
 
+  /// Default Production Vercel Frontend Domain
+  static const String defaultVercelFrontendUrl = 'https://carqconnect.vercel.app';
+  static String? _customFrontendUrl;
+
   /// Web URL for QR code generation & browser scanning
-  /// Automatically uses the origin when running in browser (e.g. 3000, 3001, 3002, or live domain)
+  /// In Web browser: uses current window origin (e.g. localhost, Vercel domain)
+  /// In Mobile App build: uses the deployed Vercel frontend domain (NOT the backend API)
   static String get webBaseUrl {
     if (kIsWeb) {
       final origin = Uri.base.origin;
@@ -193,13 +202,21 @@ class ApiConfig {
         return origin;
       }
     }
-    // Deployed domain for mobile / native app
-    return 'https://carqconnect-backend.onrender.com';
+    return _customFrontendUrl ?? defaultVercelFrontendUrl;
+  }
+
+  /// Sets a custom Vercel / Web frontend URL dynamically
+  static Future<void> setCustomFrontendUrl(String url) async {
+    _customFrontendUrl = url.trim().replaceAll(RegExp(r'/+$'), '');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('preferred_frontend_web_url', _customFrontendUrl!);
+    } catch (_) {}
   }
 
   /// Returns the complete URL for QR Code Tag scanning
   static String getQrScanUrl(String tagId) {
-    return '$webBaseUrl/#/scan/$tagId';
+    return '$webBaseUrl/scan/$tagId';
   }
 
   /// Executes an HTTP request with automatic fallback between servers

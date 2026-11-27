@@ -200,6 +200,22 @@ class _LogInScreenState extends State<LogInScreen> {
 
   Future<void> _handleGoogleSignIn() async {
     if (_isLoading) return;
+
+    // Google Sign-In SDK (v7.x) uses native Credential Manager on Android / iOS builds.
+    // On Web browsers, Google strictly enforces GIS iframe renderButton, so authenticate() throws UnimplementedError.
+    if (kIsWeb && !GoogleSignIn.instance.supportsAuthenticate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Google Sign-In is configured for Mobile (Android APK). Please test in the Android build.',
+          ),
+          backgroundColor: Colors.blueGrey,
+          duration: Duration(seconds: 4),
+        ),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
@@ -366,8 +382,8 @@ class _LogInScreenState extends State<LogInScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Official CarQConnect Logo Badge
-                      const AppLogoBadge(),
+                      // Official CarQConnect Logo (without badge container background)
+                      const AppLogo(width: 64, height: 52),
                       const SizedBox(height: 24),
                       Text(
                         'Log In',

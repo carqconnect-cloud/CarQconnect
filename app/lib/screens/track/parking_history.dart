@@ -125,7 +125,7 @@ class _VehicleHistoryScreenState extends State<VehicleHistoryScreen>
               leadingWidth: 56,
               leading: AnimatedBackArrowButton(onTap: () => Navigator.pop(context)),
               title: Text(
-                'Vehicle History',
+                'Location History',
                 style: TextStyle(
                   color: isLight ? const Color(0xFF0F172A) : Colors.white,
                   fontSize: 19,

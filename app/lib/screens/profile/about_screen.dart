@@ -282,13 +282,13 @@ class _AboutScreenState extends State<AboutScreen> {
                       Container(
                         padding: const EdgeInsets.all(18),
                         decoration: BoxDecoration(
-                          color: isLight ? Colors.white : const Color(0xFF0F1728),
+                          color: AppTheme.settingsCardBg,
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
                             color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1B263C),
                             width: 1,
                           ),
-                          boxShadow: isLight ? AppTheme.cardShadow : null,
+                          boxShadow: AppTheme.settingsCardShadow,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,13 +336,13 @@ class _AboutScreenState extends State<AboutScreen> {
                       // Settings & Legal Links Card
                       Container(
                         decoration: BoxDecoration(
-                          color: isLight ? Colors.white : const Color(0xFF0F1728),
+                          color: AppTheme.settingsCardBg,
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
                             color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1B263C),
                             width: 1,
                           ),
-                          boxShadow: isLight ? AppTheme.cardShadow : null,
+                          boxShadow: AppTheme.settingsCardShadow,
                         ),
                         child: Column(
                           children: [

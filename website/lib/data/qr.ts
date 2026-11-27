@@ -41,6 +41,37 @@ const records: Record<string, QrRecord> = {
   },
 };
 
-export function resolveQr(id: string): QrRecord {
-  return records[id] ?? { id, status: "not_found", vehicleLabel: "", safetyStatus: "", actions: { call: false, message: false, report: false, emergency: false } };
+export async function resolveQr(id: string): Promise<QrRecord> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.BACKEND_API_URL || 'https://carqconnect-backend.onrender.com';
+  try {
+    const res = await fetch(`${apiUrl}/api/v1/scan/${id}`, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && json.data) {
+        const item = json.data;
+        return {
+          id,
+          status: 'active',
+          vehicleLabel: item.vehicle?.regNumber || item.vehicle?.name || 'Vehicle Protected',
+          safetyStatus: 'Active',
+          actions: {
+            call: item.callEnabled ?? true,
+            message: item.messageEnabled ?? true,
+            report: true,
+            emergency: item.emergencyContactEnabled ?? true,
+          },
+        };
+      }
+    }
+  } catch (e) {
+    console.error('Error resolving QR from backend:', e);
+  }
+
+  return records[id] ?? {
+    id,
+    status: 'not_found',
+    vehicleLabel: '',
+    safetyStatus: '',
+    actions: { call: false, message: false, report: false, emergency: false },
+  };
 }

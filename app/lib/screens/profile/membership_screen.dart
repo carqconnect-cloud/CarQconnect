@@ -389,13 +389,13 @@ class _MembershipScreenState extends State<MembershipScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 18, vertical: 16),
                           decoration: BoxDecoration(
-                            color: isLight ? Colors.white : const Color(0xFF0F1728),
+                            color: AppTheme.settingsCardBg,
                             borderRadius: BorderRadius.circular(18),
                             border: Border.all(
                               color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2A44),
                               width: 1,
                             ),
-                            boxShadow: isLight ? AppTheme.cardShadow : null,
+                            boxShadow: AppTheme.settingsCardShadow,
                           ),
                           child: Row(
                             children: [

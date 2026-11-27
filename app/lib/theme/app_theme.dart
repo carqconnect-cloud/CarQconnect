@@ -182,6 +182,20 @@ class AppTheme {
         ]
       : const [];
 
+  /// Settings / Menu Option Card Styling (Color: 0D1728, Shadow: 15233D)
+  static Color get settingsCardBg =>
+      isLight ? Colors.white : const Color(0xFF0D1728);
+
+  static List<BoxShadow> get settingsCardShadow => isLight
+      ? cardShadow
+      : const [
+          BoxShadow(
+            color: Color(0xFF15233D),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ];
+
   /// Theme Data for MaterialApp
   static ThemeData get lightTheme => ThemeData(
         brightness: Brightness.light,

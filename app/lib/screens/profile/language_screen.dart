@@ -198,7 +198,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
     return ValueListenableBuilder<bool>(
       valueListenable: AppTheme.isLightNotifier,
       builder: (context, isLight, _) {
-        final cardBg = isLight ? Colors.white : const Color(0xFF0F1728);
+        final cardBg = AppTheme.settingsCardBg;
         final cardBorder = isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1B263C);
         final textPrimary = isLight ? const Color(0xFF0F172A) : Colors.white;
         final textSecondary = isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE);
@@ -314,7 +314,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                                             offset: const Offset(0, 4),
                                           ),
                                         ]
-                                      : (isLight ? AppTheme.cardShadow : null),
+                                      : AppTheme.settingsCardShadow,
                                 ),
                                 child: Material(
                                   color: Colors.transparent,

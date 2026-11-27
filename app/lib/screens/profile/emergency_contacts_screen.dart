@@ -700,13 +700,13 @@ class _EmergencyContactsScreenState extends State<EmergencyContactsScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isLight ? Colors.white : const Color(0xFF0F1728),
+        color: AppTheme.settingsCardBg,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2A44),
           width: 1.2,
         ),
-        boxShadow: isLight ? AppTheme.cardShadow : null,
+        boxShadow: AppTheme.settingsCardShadow,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -771,13 +771,13 @@ class _EmergencyContactsScreenState extends State<EmergencyContactsScreen>
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isLight ? Colors.white : const Color(0xFF0F1728),
+        color: AppTheme.settingsCardBg,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1B263C),
           width: 1,
         ),
-        boxShadow: isLight ? AppTheme.cardShadow : null,
+        boxShadow: AppTheme.settingsCardShadow,
       ),
       child: Material(
         color: Colors.transparent,
