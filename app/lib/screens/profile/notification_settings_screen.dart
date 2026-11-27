@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../utils/app_icons.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../../widgets/app_toggle_switch.dart';
 
 /// Screen 3: Notification Settings Screen
 class NotificationSettingsScreen extends StatefulWidget {
@@ -396,16 +397,9 @@ class _NotificationSettingsScreenState
           ),
 
           // Switch
-          Transform.scale(
-            scale: 0.85,
-            child: Switch(
-              value: value,
-              onChanged: onChanged,
-              activeThumbColor: Colors.white,
-              activeTrackColor: const Color(0xFF0066FF),
-              inactiveThumbColor: Colors.white,
-              inactiveTrackColor: isLight ? const Color(0xFFCBD5E1) : const Color(0xFF334155),
-            ),
+          AppToggleSwitch(
+            value: value,
+            onChanged: onChanged,
           ),
         ],
       ),

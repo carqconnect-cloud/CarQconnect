@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../../widgets/app_toggle_switch.dart';
 
 class AddressModel {
   final String id;
@@ -666,14 +667,10 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                                     ],
                                   ),
                                 ),
-                                Switch(
+                                AppToggleSwitch(
                                   value: _isDefault,
                                   onChanged: (val) =>
                                       setState(() => _isDefault = val),
-                                  activeThumbColor: Colors.white,
-                                  activeTrackColor: AppTheme.primaryColor,
-                                  inactiveTrackColor: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1C273C),
-                                  inactiveThumbColor: isLight ? const Color(0xFF94A3B8) : const Color(0xFF8E9BAE),
                                 ),
                               ],
                             ),

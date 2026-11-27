@@ -12,6 +12,7 @@ import '../../loading.dart';
 import 'payment_success_screen.dart';
 import 'payment_failed_screen.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../../widgets/app_toggle_switch.dart';
 
 class ReviewDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> plan;
@@ -475,12 +476,8 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              Switch(
+                              AppToggleSwitch(
                                 value: _autoRenewal,
-                                activeTrackColor: isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF),
-                                activeThumbColor: Colors.white,
-                                inactiveThumbColor: isLight ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
-                                inactiveTrackColor: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D4A),
                                 onChanged: (val) {
                                   setState(() => _autoRenewal = val);
                                 },

@@ -1,4 +1,5 @@
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import '../../widgets/app_toggle_switch.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'package:flutter/rendering.dart';
@@ -1532,20 +1533,9 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
               fontWeight: FontWeight.w500,
             ),
           ),
-          Transform.scale(
-            scale: 0.82,
-            child: Switch(
-              value: value,
-              onChanged: onChanged,
-              activeThumbColor: Colors.white,
-              activeTrackColor: AppTheme.primaryBlue,
-              inactiveTrackColor: isLight
-                  ? const Color(0xFFE2E8F0)
-                  : const Color(0xFF1E2D3E),
-              inactiveThumbColor: isLight
-                  ? const Color(0xFF94A3B8)
-                  : const Color(0xFF6B7C91),
-            ),
+          AppToggleSwitch(
+            value: value,
+            onChanged: onChanged,
           ),
         ],
       ),

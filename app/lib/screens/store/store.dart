@@ -12,6 +12,7 @@ import '../../theme/app_theme.dart';
 import '../../loading.dart';
 import '../../services/screen_refresh_service.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../../widgets/app_toggle_switch.dart';
 
 export 'store_models.dart';
 export 'product_detail.dart';
@@ -1653,12 +1654,8 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                                             ],
                                           ),
                                         ),
-                                        Switch(
+                                        AppToggleSwitch(
                                           value: _inStock,
-                                          activeTrackColor: primaryCol,
-                                          activeThumbColor: Colors.white,
-                                          inactiveThumbColor: textSec,
-                                          inactiveTrackColor: borderColor,
                                           onChanged: (val) =>
                                               setState(() => _inStock = val),
                                         ),
@@ -1716,12 +1713,8 @@ class _FiltersBottomSheetState extends State<FiltersBottomSheet> {
                                             ],
                                           ),
                                         ),
-                                        Switch(
+                                        AppToggleSwitch(
                                           value: _onSale,
-                                          activeTrackColor: primaryCol,
-                                          activeThumbColor: Colors.white,
-                                          inactiveThumbColor: textSec,
-                                          inactiveTrackColor: borderColor,
                                           onChanged: (val) =>
                                               setState(() => _onSale = val),
                                         ),

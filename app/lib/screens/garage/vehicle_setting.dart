@@ -3,6 +3,7 @@ import '../../theme/app_theme.dart';
 import 'vehicle_details.dart';
 import 'obd_connection.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../../widgets/app_toggle_switch.dart';
 
 class VehicleSettingsScreen extends StatefulWidget {
   const VehicleSettingsScreen({super.key});
@@ -162,14 +163,8 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
                                 ),
                               ),
                               const Spacer(),
-                              Switch(
+                              AppToggleSwitch(
                                 value: _isPrimaryVehicle,
-                                activeThumbColor: Colors.white,
-                                activeTrackColor: const Color(0xFF0066FF),
-                                inactiveThumbColor: Colors.white,
-                                inactiveTrackColor: isLight
-                                    ? const Color(0xFFCBD5E1)
-                                    : const Color(0xFF1E2D4A),
                                 onChanged: (value) {
                                   setState(() {
                                     _isPrimaryVehicle = value;

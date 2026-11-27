@@ -13,6 +13,7 @@ import 'set_geofence.dart';
 import '../../utils/app_icons.dart';
 import '../../services/screen_refresh_service.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../../widgets/app_toggle_switch.dart';
 
 class GeofenceScreen extends StatefulWidget {
   final bool initialEmptyState;
@@ -843,18 +844,8 @@ class _GeofenceScreenState extends State<GeofenceScreen>
                                   onPressed: () => _deleteGeofence(item),
                                   tooltip: 'Delete zone',
                                 ),
-                                Switch(
+                                AppToggleSwitch(
                                   value: item.isEnabled,
-                                  activeTrackColor: isLight
-                                      ? const Color(0xFF0066FF)
-                                      : const Color(0xFF00C2FF),
-                                  activeThumbColor: Colors.white,
-                                  inactiveThumbColor: isLight
-                                      ? const Color(0xFF94A3B8)
-                                      : const Color(0xFF8E9BAE),
-                                  inactiveTrackColor: isLight
-                                      ? const Color(0xFFE2E8F0)
-                                      : const Color(0xFF1C273C),
                                   onChanged: (val) =>
                                       _toggleGeofence(item, val),
                                 ),

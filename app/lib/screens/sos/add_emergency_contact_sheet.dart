@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/app_toggle_switch.dart';
 
 class SosContactModel {
   final String id;
@@ -339,9 +340,8 @@ class _AddEmergencyContactSheetState extends State<AddEmergencyContactSheet> {
                       ),
                     ],
                   ),
-                  Switch(
+                  AppToggleSwitch(
                     value: _isPrimary,
-                    activeThumbColor: const Color(0xFFED3833),
                     onChanged: (val) {
                       setState(() => _isPrimary = val);
                     },

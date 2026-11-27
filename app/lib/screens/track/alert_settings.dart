@@ -4,6 +4,7 @@ import 'track_models.dart';
 import 'track_service.dart';
 import 'geofence_created.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../../widgets/app_toggle_switch.dart';
 
 class AlertSettingsScreen extends StatefulWidget {
   final String geofenceName;
@@ -331,16 +332,8 @@ class _AlertSettingsScreenState extends State<AlertSettingsScreen> {
                                           ],
                                         ),
                                       ),
-                                      Switch(
+                                      AppToggleSwitch(
                                         value: _notifyOnEntry,
-                                        activeThumbColor: Colors.white,
-                                        activeTrackColor: primaryColor,
-                                        inactiveThumbColor: isLight
-                                            ? const Color(0xFF94A3B8)
-                                            : const Color(0xFF8E9BAE),
-                                        inactiveTrackColor: isLight
-                                            ? const Color(0xFFE2E8F0)
-                                            : const Color(0xFF162238),
                                         onChanged: (val) {
                                           setState(() {
                                             _notifyOnEntry = val;
@@ -411,16 +404,8 @@ class _AlertSettingsScreenState extends State<AlertSettingsScreen> {
                                           ],
                                         ),
                                       ),
-                                      Switch(
+                                      AppToggleSwitch(
                                         value: _notifyOnExit,
-                                        activeThumbColor: Colors.white,
-                                        activeTrackColor: primaryColor,
-                                        inactiveThumbColor: isLight
-                                            ? const Color(0xFF94A3B8)
-                                            : const Color(0xFF8E9BAE),
-                                        inactiveTrackColor: isLight
-                                            ? const Color(0xFFE2E8F0)
-                                            : const Color(0xFF162238),
                                         onChanged: (val) {
                                           setState(() {
                                             _notifyOnExit = val;

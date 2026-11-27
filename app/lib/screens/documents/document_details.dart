@@ -11,6 +11,7 @@ import '../../utils/api_config.dart';
 import '../../theme/app_theme.dart';
 import '../../loading.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../../widgets/app_toggle_switch.dart';
 
 class DocumentDetailsScreen extends StatefulWidget {
   final VehicleDocument? document;
@@ -512,13 +513,8 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
                         ],
                       ),
                     ),
-                    Switch(
+                    AppToggleSwitch(
                       value: _reminderEnabled,
-                      activeThumbColor: isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF),
-                      activeTrackColor:
-                          (isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF)).withValues(alpha: 0.3),
-                      inactiveThumbColor: isLight ? const Color(0xFF94A3B8) : const Color(0xFF8E9BAE),
-                      inactiveTrackColor: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF162238),
                       onChanged: (val) {
                         setState(() {
                           _reminderEnabled = val;

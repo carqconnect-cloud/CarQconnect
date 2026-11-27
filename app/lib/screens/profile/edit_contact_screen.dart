@@ -3,6 +3,7 @@ import 'emergency_contacts_screen.dart';
 import '../../utils/app_icons.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../../widgets/app_toggle_switch.dart';
 
 /// Screen 2: Edit / Add Contact Screen
 class EditContactScreen extends StatefulWidget {
@@ -735,16 +736,9 @@ class _EditContactScreenState extends State<EditContactScreen> {
           ),
         ),
         const SizedBox(width: 12),
-        Transform.scale(
-          scale: 0.85,
-          child: Switch(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: Colors.white,
-            activeTrackColor: AppTheme.primaryColor,
-            inactiveThumbColor: isLight ? const Color(0xFF94A3B8) : Colors.white,
-            inactiveTrackColor: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF334155),
-          ),
+        AppToggleSwitch(
+          value: value,
+          onChanged: onChanged,
         ),
       ],
     );

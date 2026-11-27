@@ -11,6 +11,7 @@ import 'my_qr_screen.dart';
 import '../../utils/api_config.dart';
 import '../../utils/app_icons.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../../widgets/app_toggle_switch.dart';
 
 /// Screen 3: Set Contact & Privacy (Step 2 of 2 matching Screenshot 3)
 class SetContactPrivacyScreen extends StatefulWidget {
@@ -951,16 +952,9 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
             ),
           ],
         ),
-        Transform.scale(
-          scale: 0.85,
-          child: Switch(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: Colors.white,
-            activeTrackColor: AppTheme.primaryColor,
-            inactiveTrackColor: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D3E),
-            inactiveThumbColor: isLight ? const Color(0xFF94A3B8) : const Color(0xFF6B7C91),
-          ),
+        AppToggleSwitch(
+          value: value,
+          onChanged: onChanged,
         ),
       ],
     );

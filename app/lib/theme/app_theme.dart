@@ -210,6 +210,17 @@ class AppTheme {
           secondary: Color(0xFF3875F6),
           surface: Colors.white,
         ),
+        switchTheme: SwitchThemeData(
+          thumbColor: WidgetStateProperty.all(Colors.white),
+          trackColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const Color(0xFF00C2FF);
+            }
+            return const Color(0xFF9AA0A6);
+          }),
+          trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+          trackOutlineWidth: WidgetStateProperty.all(0),
+        ),
       );
 
   static ThemeData get darkTheme => ThemeData(
@@ -224,6 +235,17 @@ class AppTheme {
           primary: Color(0xFF3875F6),
           secondary: Color(0xFF9E8FFF),
           surface: Color(0xFF101726),
+        ),
+        switchTheme: SwitchThemeData(
+          thumbColor: WidgetStateProperty.all(Colors.white),
+          trackColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const Color(0xFF00C2FF);
+            }
+            return const Color(0xFF9AA0A6);
+          }),
+          trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+          trackOutlineWidth: WidgetStateProperty.all(0),
         ),
       );
 

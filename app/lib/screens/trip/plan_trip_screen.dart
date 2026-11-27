@@ -15,6 +15,7 @@ import '../profile/my_vehicles_screen.dart';
 import '../bottom_navigation_screen.dart';
 import '../../utils/app_icons.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../../widgets/app_toggle_switch.dart';
 
 /// Screen 2: Plan a Trip matching Screenshot 2
 class PlanTripScreen extends StatefulWidget {
@@ -2763,36 +2764,18 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                                             ],
                                           ),
                                         ),
-                                        const SizedBox(width: 4),
-                                        SizedBox(
-                                          width: 36,
-                                          height: 22,
-                                          child: FittedBox(
-                                            fit: BoxFit.contain,
-                                            child: Switch(
-                                              value: _avoidTolls,
-                                              onChanged: (val) {
-                                                setState(() {
-                                                  _avoidTolls = val;
-                                                });
-                                                if (_fromLocation.isNotEmpty &&
-                                                    _toLocation.isNotEmpty) {
-                                                  _fetchRoute();
-                                                }
-                                              },
-                                              materialTapTargetSize:
-                                                  MaterialTapTargetSize
-                                                      .shrinkWrap,
-                                              activeThumbColor: Colors.white,
-                                              activeTrackColor: primaryColor,
-                                              inactiveThumbColor: isLight
-                                                  ? const Color(0xFF94A3B8)
-                                                  : Colors.white,
-                                              inactiveTrackColor: isLight
-                                                  ? const Color(0xFFE2E8F0)
-                                                  : const Color(0xFF1B283A),
-                                            ),
-                                          ),
+                                        const SizedBox(width: 8),
+                                        AppToggleSwitch(
+                                          value: _avoidTolls,
+                                          onChanged: (val) {
+                                            setState(() {
+                                              _avoidTolls = val;
+                                            });
+                                            if (_fromLocation.isNotEmpty &&
+                                                _toLocation.isNotEmpty) {
+                                              _fetchRoute();
+                                            }
+                                          },
                                         ),
                                       ],
                                     ),
@@ -2881,36 +2864,18 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                                             ],
                                           ),
                                         ),
-                                        const SizedBox(width: 4),
-                                        SizedBox(
-                                          width: 36,
-                                          height: 22,
-                                          child: FittedBox(
-                                            fit: BoxFit.contain,
-                                            child: Switch(
-                                              value: _avoidHighways,
-                                              onChanged: (val) {
-                                                setState(() {
-                                                  _avoidHighways = val;
-                                                });
-                                                if (_fromLocation.isNotEmpty &&
-                                                    _toLocation.isNotEmpty) {
-                                                  _fetchRoute();
-                                                }
-                                              },
-                                              materialTapTargetSize:
-                                                  MaterialTapTargetSize
-                                                      .shrinkWrap,
-                                              activeThumbColor: Colors.white,
-                                              activeTrackColor: primaryColor,
-                                              inactiveThumbColor: isLight
-                                                  ? const Color(0xFF94A3B8)
-                                                  : Colors.white,
-                                              inactiveTrackColor: isLight
-                                                  ? const Color(0xFFE2E8F0)
-                                                  : const Color(0xFF1B283A),
-                                            ),
-                                          ),
+                                        const SizedBox(width: 8),
+                                        AppToggleSwitch(
+                                          value: _avoidHighways,
+                                          onChanged: (val) {
+                                            setState(() {
+                                              _avoidHighways = val;
+                                            });
+                                            if (_fromLocation.isNotEmpty &&
+                                                _toLocation.isNotEmpty) {
+                                              _fetchRoute();
+                                            }
+                                          },
                                         ),
                                       ],
                                     ),
