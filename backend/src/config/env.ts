@@ -80,8 +80,8 @@ export const envSchema = z
       .int()
       .positive()
       .default(15 * 60 * 1000),
-    RATE_LIMIT_MAX: z.coerce.number().int().positive().default(300),
-    AUTH_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(20),
+    RATE_LIMIT_MAX: z.coerce.number().int().positive().default(1000),
+    AUTH_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(60),
     CUSTOM_SEARCH_API: z.string().optional().default(process.env.Custom_Search_API || process.env.CUSTOM_SEARCH_API || ''),
     ENGINE_ID: z.string().optional().default(process.env.ENGINE_ID || ''),
     SUPER_ADMIN_SECURITY_KEY: z.string().default(process.env.SUPER_ADMIN_SECURITY_KEY || ''),

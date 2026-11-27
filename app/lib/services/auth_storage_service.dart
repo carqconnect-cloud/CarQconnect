@@ -260,7 +260,7 @@ class AuthStorageService {
   /// access token. The token used for the retry is read after refresh completes.
   static Future<http.Response> authenticatedGet(
     String path, {
-    Duration timeout = const Duration(seconds: 12),
+    Duration timeout = const Duration(seconds: 25),
   }) async {
     var response = await ApiConfig.get(
       path,

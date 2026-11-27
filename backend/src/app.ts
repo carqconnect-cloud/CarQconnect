@@ -25,17 +25,11 @@ export function createApp(): Express {
   app.use(cors(corsOptions));
   app.use(compression());
 
-  // Root and Health endpoints for cloud load balancers, uptime monitors, and Render health checks
-  app.get('/', (_req, res) => {
+  // Root and Health endpoints for cloud load balancers, uptime monitors, and Render health checks (unthrottled)
+  app.get(['/', '/health', `${env.API_PREFIX}/health`, `${env.API_PREFIX}/v1/health`], (_req, res) => {
     res.status(200).json({ status: 'ok', service: 'Fioner API' });
   });
-  app.head('/', (_req, res) => {
-    res.status(200).end();
-  });
-  app.get('/health', (_req, res) => {
-    res.status(200).json({ status: 'ok', service: 'Fioner API' });
-  });
-  app.head('/health', (_req, res) => {
+  app.head(['/', '/health', `${env.API_PREFIX}/health`, `${env.API_PREFIX}/v1/health`], (_req, res) => {
     res.status(200).end();
   });
 

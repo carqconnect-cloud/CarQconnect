@@ -11,7 +11,6 @@ import 'subscription/subscription.dart';
 import 'documents/document_screens.dart';
 import 'track/track_screen.dart';
 import 'fastag/fastag_screen.dart';
-import 'garage/garage.dart';
 import 'notifications/notifications.dart';
 import 'reminder/reminder.dart';
 import 'bot/bot.dart';
@@ -125,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void _startAutoRefreshTimer() {
-    _autoRefreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+    _autoRefreshTimer = Timer.periodic(const Duration(seconds: 60), (_) {
       if (mounted && isTabActive) _refreshHomeScreen();
     });
   }
@@ -247,10 +246,16 @@ class _HomeScreenState extends State<HomeScreen>
       }
     } catch (_) {}
 
-    // 2. Check QR activation status
+    // 2. Check QR and Document statuses in parallel
     if (Globals.accessToken.isNotEmpty) {
       try {
-        final tagRes = await AuthStorageService.authenticatedGet('/app-qr/tags');
+        final results = await Future.wait([
+          AuthStorageService.authenticatedGet('/app-qr/tags', timeout: const Duration(seconds: 20)),
+          AuthStorageService.authenticatedGet('/documents', timeout: const Duration(seconds: 20)),
+        ]);
+        final tagRes = results[0];
+        final docRes = results[1];
+
         if (tagRes.statusCode == 200) {
           final tagBody = jsonDecode(tagRes.body);
           if (tagBody['data'] is List) {
@@ -266,15 +271,7 @@ class _HomeScreenState extends State<HomeScreen>
             }
           }
         }
-      } catch (_) {}
-    } else if (MyQrScreen.cachedActiveTag != null) {
-      if (mounted) setState(() => _isQrActivated = true);
-    }
 
-    // 3. Check Document upload status
-    if (Globals.accessToken.isNotEmpty) {
-      try {
-        final docRes = await AuthStorageService.authenticatedGet('/documents');
         if (docRes.statusCode == 200) {
           final docBody = jsonDecode(docRes.body);
           if (docBody['success'] == true && docBody['data'] is List) {
@@ -287,6 +284,8 @@ class _HomeScreenState extends State<HomeScreen>
           }
         }
       } catch (_) {}
+    } else if (MyQrScreen.cachedActiveTag != null) {
+      if (mounted) setState(() => _isQrActivated = true);
     }
   }
 
@@ -1068,22 +1067,7 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                 ),
                 SizedBox(width: (10 * scale).roundToDouble()),
-                Expanded(
-                  child: _buildActionCard(
-                    'assets/homescreensicons/garage.png',
-                    'Garage',
-                    'OBD & Health',
-                    const Color(0xFF00C2FF),
-                    () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const GarageScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                const Expanded(child: SizedBox()),
                 SizedBox(width: (10 * scale).roundToDouble()),
                 const Expanded(child: SizedBox()),
               ],

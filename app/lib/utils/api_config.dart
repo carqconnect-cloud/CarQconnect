@@ -229,7 +229,7 @@ class ApiConfig {
   static Future<http.Response> get(
     String path, {
     Map<String, String>? headers,
-    Duration timeout = const Duration(seconds: 12),
+    Duration timeout = const Duration(seconds: 25),
   }) async {
     Object? lastError;
     for (var attempt = 0; attempt < 2; attempt++) {

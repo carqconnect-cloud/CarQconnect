@@ -703,7 +703,7 @@ export const authService = {
   async googleLogin(input: GoogleLoginInput, session: SessionContext): Promise<AuthResult> {
     const webClientId =
       process.env.WEB_CLIENT_ID ||
-      '413549874609-55r88a0qrek9on8onsvcntkls9e9624b.apps.googleusercontent.com';
+      '330567894204-lniefe7bn6vq9nothu4j7bcfsc6gtds4.apps.googleusercontent.com';
 
     let verifiedEmail = input.email ? input.email.trim().toLowerCase() : '';
     let firstName = '';

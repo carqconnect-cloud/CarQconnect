@@ -1,20 +1,20 @@
 {
   "project_info": {
-    "project_number": "413549874609",
-    "project_id": "fioner-e921d",
-    "storage_bucket": "fioner-e921d.firebasestorage.app"
+    "project_number": "330567894204",
+    "project_id": "carqconnect-c0cf7",
+    "storage_bucket": "carqconnect-c0cf7.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:413549874609:android:824c6af7443aa720400190",
+        "mobilesdk_app_id": "1:330567894204:android:00d82f312064d078d9bcb9",
         "android_client_info": {
           "package_name": "com.fioner.carqconnect.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "413549874609-hg39fqqh4jhk6do6hck2j5edg76vbs2u.apps.googleusercontent.com",
+          "client_id": "330567894204-mie2ep0jvkb0nhv095ptea2eim602p3u.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.fioner.carqconnect.app",
@@ -22,20 +22,20 @@
           }
         },
         {
-          "client_id": "413549874609-55r88a0qrek9on8onsvcntkls9e9624b.apps.googleusercontent.com",
+          "client_id": "330567894204-lniefe7bn6vq9nothu4j7bcfsc6gtds4.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAi5-z5QEvn0U6vqC8mD-SkkW8W5tbrGzY"
+          "current_key": "AIzaSyCCzBeMhzj_H23e1g736KuoWYCnerWoS7w"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "413549874609-55r88a0qrek9on8onsvcntkls9e9624b.apps.googleusercontent.com",
+              "client_id": "330567894204-lniefe7bn6vq9nothu4j7bcfsc6gtds4.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

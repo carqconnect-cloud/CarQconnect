@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'dart:convert';
 import 'dart:async';
@@ -33,6 +34,7 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
 
   final List<String> _filters = ['All', 'Valid', 'Expiring Soon', 'Expired'];
 
+  static const String _cacheKey = 'cached_vehicle_documents';
   List<VehicleDocument> _documents = [];
   bool _isLoading = true;
   String? _error;
@@ -41,12 +43,36 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
   @override
   void initState() {
     super.initState();
-    _fetchDocuments(showSpinner: true);
-    _autoRefreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+    _loadCachedDocuments();
+    _fetchDocuments(showSpinner: _documents.isEmpty);
+    _autoRefreshTimer = Timer.periodic(const Duration(seconds: 60), (_) {
       if (mounted) {
         _fetchDocuments(showSpinner: false);
       }
     });
+  }
+
+  Future<void> _loadCachedDocuments() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cachedStr = prefs.getString(_cacheKey);
+      if (cachedStr != null && cachedStr.isNotEmpty) {
+        final List<dynamic> list = jsonDecode(cachedStr);
+        if (mounted && list.isNotEmpty) {
+          setState(() {
+            _documents = list.map((json) => VehicleDocument.fromJson(json)).toList();
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _cacheDocuments(List<dynamic> docsJson) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_cacheKey, jsonEncode(docsJson));
+    } catch (_) {}
   }
 
   @override
@@ -56,7 +82,7 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
   }
 
   Future<void> _fetchDocuments({bool showSpinner = false}) async {
-    if (showSpinner) {
+    if (showSpinner && _documents.isEmpty) {
       setState(() {
         _isLoading = true;
         _error = null;
@@ -64,41 +90,42 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
     }
 
     try {
-      final response = await AuthStorageService.authenticatedGet('/documents');
+      final response = await AuthStorageService.authenticatedGet(
+        '/documents',
+        timeout: const Duration(seconds: 25),
+      );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success'] == true) {
           final List<dynamic> docsJson = data['data'] ?? [];
+          _cacheDocuments(docsJson);
           if (mounted) {
             setState(() {
               _documents = docsJson
                   .map((json) => VehicleDocument.fromJson(json))
                   .toList();
               _isLoading = false;
+              _error = null;
             });
           }
-        } else {
-          if (mounted) {
-            setState(() {
-              _error = 'Failed to load documents.';
-              _isLoading = false;
-            });
-          }
-        }
-      } else {
-        if (mounted) {
-          setState(() {
-            _error = 'Error connecting to server.';
-            _isLoading = false;
-          });
+          return;
         }
       }
-    } catch (e) {
+
+      // If network fails but we have cached documents or want to show empty page:
       if (mounted) {
         setState(() {
-          _error = 'Network error. Please try again.';
           _isLoading = false;
+          _error = null;
+        });
+      }
+    } catch (e) {
+      debugPrint('[VehicleDocuments] Fetch error: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = null;
         });
       }
     }
@@ -424,36 +451,6 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
                 : const Color(0xFF040A18),
             body: Center(
               child: AppLoadingSpinner(size: 80, primaryColor: AppTheme.primaryBlue),
-            ),
-          );
-        }
-
-        if (_error != null) {
-          return Scaffold(
-            backgroundColor: isLight
-                ? const Color(0xFFF7F9FC)
-                : const Color(0xFF040A18),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    _error!,
-                    style: const TextStyle(color: Colors.red, fontSize: 16),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _fetchDocuments,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryBlue,
-                    ),
-                    child: const Text(
-                      'Retry',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
             ),
           );
         }

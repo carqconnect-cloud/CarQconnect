@@ -34,18 +34,25 @@ class _LogInScreenState extends State<LogInScreen> {
   final _passwordController = TextEditingController();
 
   static const String _googleClientId =
-      '413549874609-55r88a0qrek9on8onsvcntkls9e9624b.apps.googleusercontent.com';
-  static bool _googleInitialized = false;
+      '330567894204-lniefe7bn6vq9nothu4j7bcfsc6gtds4.apps.googleusercontent.com';
+  static Completer<void>? _googleInitCompleter;
 
   static Future<void> _ensureGoogleInitialized() async {
-    if (_googleInitialized) return;
+    if (_googleInitCompleter != null) {
+      return _googleInitCompleter!.future;
+    }
+    _googleInitCompleter = Completer<void>();
     try {
       await GoogleSignIn.instance.initialize(
         clientId: kIsWeb ? _googleClientId : null,
         serverClientId: kIsWeb ? null : _googleClientId,
       );
-      _googleInitialized = true;
-    } catch (_) {}
+      _googleInitCompleter!.complete();
+    } catch (e) {
+      debugPrint('[GoogleSignIn] init notice: $e');
+      _googleInitCompleter!.complete();
+    }
+    return _googleInitCompleter!.future;
   }
 
   @override
@@ -206,6 +213,20 @@ class _LogInScreenState extends State<LogInScreen> {
         account = await GoogleSignIn.instance.authenticate();
       } catch (e) {
         debugPrint('[GoogleSignIn] authenticate failed: $e');
+        if (mounted) {
+          setState(() => _isLoading = false);
+          final errStr = e.toString().toLowerCase();
+          if (!errStr.contains('cancel') && !errStr.contains('interrupted')) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Google Sign-in: $e'),
+                backgroundColor: Colors.redAccent,
+                duration: const Duration(seconds: 4),
+              ),
+            );
+          }
+        }
+        return;
       }
 
       if (account == null) {
