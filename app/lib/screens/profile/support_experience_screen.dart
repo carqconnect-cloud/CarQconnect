@@ -12,7 +12,7 @@ class SupportExperienceScreen extends StatefulWidget {
 }
 
 class _SupportExperienceScreenState extends State<SupportExperienceScreen> {
-  int _rating = 4; // Matching Image 5 where 4 stars are highlighted
+  int _rating = 0;
   final TextEditingController _feedbackController = TextEditingController();
 
   @override
@@ -22,12 +22,20 @@ class _SupportExperienceScreenState extends State<SupportExperienceScreen> {
   }
 
   void _submitFeedback() {
+    if (_rating <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a star rating before submitting.'),
+        ),
+      );
+      return;
+    }
     final isLight = AppTheme.isLightNotifier.value;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: isLight ? Colors.white : const Color(0xFF101726),
         content: Text(
-          'Thank you for your feedback!',
+          'Thank you for your $_rating-star feedback!',
           style: TextStyle(
             color: isLight ? const Color(0xFF0F172A) : Colors.white,
           ),

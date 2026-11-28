@@ -3,6 +3,7 @@ import { StoreOrderStatus } from '@prisma/client';
 import { prisma } from '../../../config/database';
 import { syncUserToCustomer } from '../../../common/utils/customerSync';
 import { getRazorpay } from '../../../config/razorpay';
+import { realTimeService } from '../../../common/services/socket.service';
 
 export const storeService = {
   async getAllProducts() {
@@ -170,6 +171,13 @@ export const storeService = {
         description: `Your order #${order.id.slice(0, 8).toUpperCase()} for ₹${data.totalAmount} has been placed successfully.`,
         type: 'order',
       },
+    }).then((notif) => {
+      realTimeService.broadcastNotification(userId, {
+        id: notif.id,
+        title: notif.title,
+        description: notif.description,
+        type: notif.type,
+      });
     }).catch(() => {});
 
     // Sync order to QR Tag history so it appears in Admin panel Tags section

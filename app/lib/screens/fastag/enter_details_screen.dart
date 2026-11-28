@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import 'fastag_screen.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../../utils/app_validators.dart';
 
 class EnterDetailsScreen extends StatefulWidget {
   final String bankName;
@@ -10,9 +11,9 @@ class EnterDetailsScreen extends StatefulWidget {
 
   const EnterDetailsScreen({
     super.key,
-    this.bankName = 'HDFC Bank',
-    this.assetPath = 'assets/fastagicons/HDFC.png',
-    this.vehicleNumber = 'MP 09 AB 1234',
+    this.bankName = '',
+    this.assetPath,
+    this.vehicleNumber = '',
   });
 
   @override
@@ -36,35 +37,30 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
 
   void _onFindFastag() {
     final reg = _vehicleController.text.trim();
-    if (reg.isEmpty) {
+    final regErr = AppValidators.validateVehicleNumber(reg);
+    if (regErr != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFF2D1214),
+        SnackBar(
+          backgroundColor: const Color(0xFF2D1214),
           content: Text(
-            'Please enter a valid Registration Number',
-            style: TextStyle(color: Color(0xFFFF5252)),
+            regErr,
+            style: const TextStyle(color: Color(0xFFFF5252)),
           ),
         ),
       );
       return;
     }
 
-    final account = FastagAccount(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      bankName: '${widget.bankName} FASTag',
-      vehicleNumber: reg,
-      balance: 200,
-      customerName: 'John Doe',
-      logoAsset: widget.assetPath,
-      statusMessage: 'Available Balance : ₹200',
-      isLowBalance: false,
-    );
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        settings: const RouteSettings(name: 'FastagScreen'),
-        builder: (context) => FastagScreen(newAccount: account),
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Theme.of(context).brightness == Brightness.light
+            ? const Color(0xFF0F172A)
+            : const Color(0xFF101726),
+        content: Text(
+          'Live NPCI NETC FASTag lookup for $reg is not yet active.',
+          style: const TextStyle(color: Colors.white),
+        ),
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
@@ -206,6 +202,7 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
                                       Expanded(
                                         child: TextField(
                                           controller: _vehicleController,
+                                          inputFormatters: AppValidators.vehicleNumberFormatters,
                                           style: TextStyle(
                                             color: isLight ? const Color(0xFF0F172A) : Colors.white,
                                             fontSize: 16,
@@ -213,7 +210,7 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
                                             letterSpacing: 1.0,
                                           ),
                                           decoration: InputDecoration(
-                                            hintText: 'eg. MP 09 AB 1234',
+                                            hintText: 'e.g. DL 01 AB 1234',
                                             hintStyle: TextStyle(
                                               color: isLight ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
                                               fontSize: 15,

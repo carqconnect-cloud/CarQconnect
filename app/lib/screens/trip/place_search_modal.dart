@@ -133,6 +133,18 @@ class _PlaceSearchModalState extends State<PlaceSearchModal> {
   bool get _isMultiMode => widget.onMultiSelected != null;
   bool get _isStopMode => _isMultiMode || widget.title.toLowerCase().contains('stop');
 
+  bool get _hasRoute {
+    final toLoc = widget.toLocation?.trim() ?? '';
+    final hasValidToText = toLoc.isNotEmpty &&
+        toLoc.toLowerCase() != 'select destination' &&
+        toLoc.toLowerCase() != 'destination' &&
+        toLoc.toLowerCase() != 'enter destination';
+    final hasValidToCoord = widget.toLatLng != null &&
+        widget.toLatLng!.latitude != 0.0 &&
+        widget.toLatLng!.longitude != 0.0;
+    return hasValidToText || hasValidToCoord;
+  }
+
   String get _fuelType {
     final veh = widget.vehicle;
     final serverType = (veh?['type'] ?? veh?['fuel'])?.toString().trim();
@@ -240,9 +252,7 @@ class _PlaceSearchModalState extends State<PlaceSearchModal> {
       if (_isElectricVehicle && (cat == 'fuel' || cat == 'cng')) cat = 'ev';
       _selectedCategory = cat;
     } else {
-      if (_isStopMode) {
-        _selectedCategory = _isElectricVehicle ? 'ev' : (_isCNGVehicle ? 'cng' : 'fuel');
-      }
+      _selectedCategory = null; // Auto-select removed - categories start completely unselected
     }
 
     final isPlaceholder = widget.currentQuery == 'Current Location' ||
@@ -288,9 +298,37 @@ class _PlaceSearchModalState extends State<PlaceSearchModal> {
   Future<void> _performSearch(String query) async {
     final cleanQuery = query.trim();
     if (cleanQuery.isEmpty) return;
+
+    if (_isStopMode && !_hasRoute) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Color(0xFFEF4444),
+            content: Text('1st select route (Please choose destination first)'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+      return;
+    }
+
     setState(() => _isLoading = true);
 
-    final results = await TripService.searchPlaces(cleanQuery);
+    List<PlaceSearchResult> results;
+    if (_isStopMode && _hasRoute) {
+      results = await TripService.searchStopsAlongRoute(
+        query: cleanQuery,
+        categoryId: _selectedCategory,
+        fromLocation: widget.fromLocation,
+        toLocation: widget.toLocation,
+        fromLatLng: widget.fromLatLng,
+        toLatLng: widget.toLatLng,
+        routePoints: widget.routePoints,
+      );
+    } else {
+      results = await TripService.searchPlaces(cleanQuery);
+    }
+
     if (mounted) {
       setState(() {
         _results = results;
@@ -554,6 +592,119 @@ class _PlaceSearchModalState extends State<PlaceSearchModal> {
                 const SizedBox(height: 6),
               ],
 
+              // In stop mode: Category Chips are always visible above results
+              if (_isStopMode) ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Choose Stops by Category',
+                      style: TextStyle(
+                        color: isLight ? const Color(0xFF64748B) : const Color(0xFF6B7C91),
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      _isElectricVehicle
+                          ? 'EV, Food, Hotels, Rest'
+                          : (_isCNGVehicle
+                              ? 'CNG, Food, Hotels, Rest'
+                              : (_fuelType.toUpperCase() == 'DIESEL'
+                                  ? 'Diesel, Food, Hotels, Rest'
+                                  : 'Fuel, Food, Hotels, Rest')),
+                      style: TextStyle(
+                        color: primaryColor,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  child: Row(
+                    children: _availableCategories.map((cat) {
+                      final isSelected = _selectedCategory == cat['id'];
+                      final catColor = cat['color'] as Color;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: InkWell(
+                          onTap: () {
+                            if (!_hasRoute) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  backgroundColor: Color(0xFFEF4444),
+                                  content: Text('1st select route (Please choose destination first)'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                              return;
+                            }
+                            final catId = cat['id'] as String;
+                            if (_selectedCategory == catId) {
+                              setState(() {
+                                _selectedCategory = null;
+                                _results = [];
+                              });
+                              _searchController.clear();
+                              return;
+                            }
+                            setState(() {
+                              _selectedCategory = catId;
+                            });
+                            final q = (cat['query'] as String?) ?? (cat['name'] as String);
+                            _searchController.text = q;
+                            _performSearch(q);
+                          },
+                          borderRadius: BorderRadius.circular(20),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? catColor.withValues(alpha: 0.16)
+                                  : (isLight ? const Color(0xFFF1F5F9) : const Color(0xFF131D2A)),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: isSelected
+                                    ? catColor
+                                    : (isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D3E)),
+                                width: isSelected ? 1.5 : 1.0,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  cat['icon'] as IconData,
+                                  size: 15,
+                                  color: isSelected ? catColor : (isLight ? const Color(0xFF64748B) : Colors.white70),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  cat['name'] as String,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? (isLight ? const Color(0xFF0F172A) : Colors.white)
+                                        : (isLight ? const Color(0xFF475569) : Colors.white70),
+                                    fontSize: 12.5,
+                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
+
               // Search results or Category Presets
               if (_isLoading)
                 Expanded(
@@ -564,154 +715,114 @@ class _PlaceSearchModalState extends State<PlaceSearchModal> {
                     ),
                   ),
                 )
-              else if (_results.isEmpty)
+              else if (_isStopMode && !_hasRoute)
                 Expanded(
-                  child: _isStopMode
-                      ? SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Stop Categories Header
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Choose Stops by Category',
-                                    style: TextStyle(
-                                      color: isLight ? const Color(0xFF64748B) : const Color(0xFF6B7C91),
-                                      fontSize: 12.5,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(
-                                    _isElectricVehicle
-                                        ? 'EV, Food, Hotels, Rest'
-                                        : (_isCNGVehicle
-                                            ? 'CNG, Food, Hotels, Rest'
-                                            : (_fuelType.toUpperCase() == 'DIESEL'
-                                                ? 'Diesel, Food, Hotels, Rest'
-                                                : 'Fuel, Food, Hotels, Rest')),
-                                    style: TextStyle(
-                                      color: primaryColor,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-
-                              // Category Chips Horizontal Scroll
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                physics: const BouncingScrollPhysics(),
-                                child: Row(
-                                  children: _availableCategories.map((cat) {
-                                    final isSelected = _selectedCategory == cat['id'];
-                                    final catColor = cat['color'] as Color;
-                                    return Padding(
-                                      padding: const EdgeInsets.only(right: 8),
-                                      child: InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            _selectedCategory = cat['id'] as String;
-                                          });
-                                          final q = (cat['query'] as String?) ?? (cat['name'] as String);
-                                          _searchController.text = q;
-                                          _performSearch(q);
-                                        },
-                                        borderRadius: BorderRadius.circular(20),
-                                        child: AnimatedContainer(
-                                          duration: const Duration(milliseconds: 200),
-                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                                          decoration: BoxDecoration(
-                                            color: isSelected
-                                                ? catColor.withValues(alpha: 0.16)
-                                                : (isLight ? const Color(0xFFF1F5F9) : const Color(0xFF131D2A)),
-                                            borderRadius: BorderRadius.circular(20),
-                                            border: Border.all(
-                                              color: isSelected
-                                                  ? catColor
-                                                  : (isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D3E)),
-                                              width: isSelected ? 1.5 : 1.0,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(
-                                                cat['icon'] as IconData,
-                                                size: 15,
-                                                color: isSelected ? catColor : (isLight ? const Color(0xFF64748B) : Colors.white70),
-                                              ),
-                                              const SizedBox(width: 6),
-                                              Text(
-                                                cat['name'] as String,
-                                                style: TextStyle(
-                                                  color: isSelected
-                                                      ? (isLight ? const Color(0xFF0F172A) : Colors.white)
-                                                      : (isLight ? const Color(0xFF475569) : Colors.white70),
-                                                  fontSize: 12.5,
-                                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                              const SizedBox(height: 14),
-
-                              const SizedBox(height: 16),
-                              Center(
-                                child: Text(
-                                  _searchController.text.trim().isEmpty
-                                      ? 'Choose a category or search for a place.'
-                                      : 'No matching locations found.',
-                                  style: TextStyle(
-                                    color: isLight ? const Color(0xFF64748B) : const Color(0xFF6B7C91),
-                                    fontSize: 13,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  _searchController.text.trim().isEmpty
-                                      ? Icons.search_rounded
-                                      : Icons.location_off_outlined,
-                                  size: 44,
-                                  color: isLight ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  _searchController.text.trim().isEmpty
-                                      ? 'Search for a city, landmark, or address.'
-                                      : 'No matching locations found.',
-                                  style: TextStyle(
-                                    color: isLight ? const Color(0xFF64748B) : const Color(0xFF6B7C91),
-                                    fontSize: 13.5,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
+                  child: Center(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+                        padding: const EdgeInsets.all(22),
+                        decoration: BoxDecoration(
+                          color: isLight ? const Color(0xFFFEF2F2) : const Color(0xFF1E1418),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: isLight ? const Color(0xFFFECACA) : const Color(0xFF831843),
+                            width: 1.2,
                           ),
                         ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 54,
+                              height: 54,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEF4444).withValues(alpha: 0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.alt_route_rounded,
+                                color: Color(0xFFEF4444),
+                                size: 28,
+                              ),
+                            ),
+                            const SizedBox(height: 14),
+                            Text(
+                              '1st Select Route',
+                              style: TextStyle(
+                                color: isLight ? const Color(0xFF0F172A) : Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17.5,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Please select your starting point and destination first.\nStops can only be searched along an active route.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: isLight ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
+                                fontSize: 12.5,
+                                height: 1.45,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton.icon(
+                              icon: const Icon(Icons.arrow_forward_rounded, size: 16),
+                              label: const Text('Set Destination First'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFEF4444),
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              else if (_results.isEmpty)
+                Expanded(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            _searchController.text.trim().isEmpty
+                                ? (_isStopMode ? Icons.touch_app_outlined : Icons.search_rounded)
+                                : Icons.location_off_outlined,
+                            size: 44,
+                            color: isLight ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            _searchController.text.trim().isEmpty
+                                ? (_isStopMode
+                                    ? 'Tap a category above or search to find real stops along your route.'
+                                    : 'Search for a city, landmark, or address.')
+                                : (_isStopMode
+                                    ? 'No matching stops found along this route corridor.'
+                                    : 'No matching locations found.'),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: isLight ? const Color(0xFF64748B) : const Color(0xFF7E8E9F),
+                              fontSize: 13,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 )
               else
                 Expanded(
@@ -726,6 +837,34 @@ class _PlaceSearchModalState extends State<PlaceSearchModal> {
                       final item = _results[index];
                       final isSelected = _isStopSelected(item);
 
+                      // Determine icon & color based on category/name
+                      IconData itemIcon = Icons.location_on_outlined;
+                      Color itemColor = primaryColor;
+                      final cLower = (item.category ?? '').toLowerCase();
+                      final tLower = item.shortTitle.toLowerCase();
+                      if (cLower == 'fuel' || tLower.contains('petrol') || tLower.contains('fuel') || tLower.contains('diesel') || tLower.contains('pump')) {
+                        itemIcon = Icons.local_gas_station_rounded;
+                        itemColor = const Color(0xFF10B981);
+                      } else if (cLower == 'cng' || tLower.contains('cng')) {
+                        itemIcon = Icons.local_gas_station_rounded;
+                        itemColor = const Color(0xFF0EA5E9);
+                      } else if (cLower == 'ev' || tLower.contains('ev') || tLower.contains('charging')) {
+                        itemIcon = Icons.ev_station_rounded;
+                        itemColor = const Color(0xFF0284C7);
+                      } else if (cLower == 'food' || cLower == 'restaurant' || tLower.contains('dhaba') || tLower.contains('restaurant')) {
+                        itemIcon = Icons.restaurant_rounded;
+                        itemColor = const Color(0xFFF59E0B);
+                      } else if (cLower == 'hotel' || tLower.contains('hotel') || tLower.contains('resort')) {
+                        itemIcon = Icons.hotel_rounded;
+                        itemColor = const Color(0xFF8B5CF6);
+                      } else if (cLower == 'atm' || tLower.contains('atm')) {
+                        itemIcon = Icons.atm_rounded;
+                        itemColor = const Color(0xFF6366F1);
+                      } else if (cLower == 'emergency' || tLower.contains('hospital')) {
+                        itemIcon = Icons.emergency_rounded;
+                        itemColor = const Color(0xFFEF4444);
+                      }
+
                       return ListTile(
                         contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                         leading: Container(
@@ -734,12 +873,12 @@ class _PlaceSearchModalState extends State<PlaceSearchModal> {
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? primaryColor.withValues(alpha: 0.2)
-                                : (isLight ? const Color(0xFFEFF6FF) : const Color(0xFF152230)),
+                                : itemColor.withValues(alpha: 0.12),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
-                            isSelected ? Icons.check_circle_rounded : Icons.location_on_outlined,
-                            color: primaryColor,
+                            isSelected ? Icons.check_circle_rounded : itemIcon,
+                            color: isSelected ? primaryColor : itemColor,
                             size: 18,
                           ),
                         ),

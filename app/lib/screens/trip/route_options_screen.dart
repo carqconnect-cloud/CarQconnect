@@ -7,6 +7,7 @@ import '../../theme/app_theme.dart';
 import '../../services/vehicle_type_service.dart';
 import '../../loading.dart';
 import 'trip_overview_screen.dart';
+import 'fuel_rate_service.dart';
 import '../bottom_navigation_screen.dart';
 import 'trip_service.dart';
 import 'interactive_trip_map.dart';
@@ -28,10 +29,10 @@ class RouteOptionsScreen extends StatefulWidget {
 
   const RouteOptionsScreen({
     super.key,
-    this.fromLocation = 'Indore, Madhya Pradesh',
-    this.toLocation = 'Dewas, Madhya Pradesh',
-    this.fromLatLng = const LatLng(22.7196, 75.8577),
-    this.toLatLng = const LatLng(22.9636, 76.0548),
+    this.fromLocation = 'Current Location',
+    this.toLocation = '',
+    this.fromLatLng = const LatLng(20.5937, 78.9629),
+    this.toLatLng = const LatLng(0.0, 0.0),
     this.preference = 'Fastest',
     this.avoidTolls = false,
     this.avoidHighways = false,
@@ -129,22 +130,26 @@ class RouteOptionsScreen extends StatefulWidget {
     return VehicleTypeService.detectFuelType(name);
   }
 
-  /// Current Indian market fuel rates per unit (₹/L, ₹/kg, ₹/kWh)
-  static double getFuelPrice(String fuelType) {
-    switch (fuelType.toLowerCase()) {
-      case 'diesel':
-        return 100.00; // Current diesel rate (₹/L)
-      case 'cng':
-        return 85.00; // Current CNG rate (₹/kg)
-      case 'ev':
-      case 'electric':
-        return 12.00; // Average EV charging rate (₹/kWh)
-      case 'hybrid':
-        return 110.00; // Petrol hybrid rate (₹/L)
-      case 'petrol':
-      default:
-        return 110.00; // Current India / MP standard petrol rate (₹/L)
-    }
+  /// Current Indian market fuel & EV tariff rates per unit (₹/L, ₹/kg, ₹/kWh)
+  /// Updated to state-wise benchmark rates (November 2026)
+  static double getFuelPrice(
+    String fuelType, {
+    String? state,
+    String? location,
+    String? toLocation,
+    String? fromLocation,
+    String? vehicleReg,
+    bool usePublicEv = false,
+  }) {
+    return FuelRateService.getPrice(
+      fuelType,
+      state: state,
+      location: location,
+      toLocation: toLocation,
+      fromLocation: fromLocation,
+      vehicleReg: vehicleReg,
+      usePublicEv: usePublicEv,
+    );
   }
 
   static String getFuelUnit(String fuelType) {
@@ -369,6 +374,16 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
   late LatLng _effectiveTo;
   Map<String, dynamic>? _selectedVehicle;
   List<Map<String, dynamic>> _userVehicles = [];
+  String? _selectedStateOverride;
+
+  String get _effectiveState =>
+      _selectedStateOverride ??
+      FuelRateService.detectState(
+        toLocation: widget.toLocation,
+        fromLocation: widget.fromLocation,
+        vehicleReg: (_selectedVehicle ?? widget.vehicle)?['regNumber'] ?? Globals.vehicleRegistration,
+        coordinates: widget.toLatLng.latitude != 0.0 ? widget.toLatLng : widget.fromLatLng,
+      );
 
   @override
   void initState() {
@@ -379,7 +394,7 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
     _avoidHighways = widget.avoidHighways;
     _effectiveFrom = (widget.fromLatLng.latitude != 0.0 && widget.fromLatLng.longitude != 0.0)
         ? widget.fromLatLng
-        : const LatLng(22.7196, 75.8577);
+        : const LatLng(20.5937, 78.9629);
     _effectiveTo = (widget.toLatLng.latitude != 0.0 && widget.toLatLng.longitude != 0.0)
         ? widget.toLatLng
         : const LatLng(0.0, 0.0);
@@ -500,8 +515,15 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
       vehicleName = RouteOptionsScreen.toTitleCase(vehicleName);
     }
 
+    final stateName = _effectiveState;
     final fuelType = RouteOptionsScreen.resolveFuelType(vehicle, vehicleName);
-    final fuelPrice = RouteOptionsScreen.getFuelPrice(fuelType);
+    final fuelPrice = RouteOptionsScreen.getFuelPrice(
+      fuelType,
+      state: stateName,
+      toLocation: widget.toLocation,
+      fromLocation: widget.fromLocation,
+      vehicleReg: vehicleReg,
+    );
     final fuelUnit = RouteOptionsScreen.getFuelUnit(fuelType);
     final mileageUnit = RouteOptionsScreen.getMileageUnit(fuelType);
     final mileage = RouteOptionsScreen.getVehicleMileage(vehicle, fuelType, twoWheeler);
@@ -551,6 +573,7 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
       tollLow: tollLow,
       tollHigh: tollHigh,
       tollStatusAvailable: twoWheeler ? true : route.tollStatusAvailable,
+      stateName: stateName,
     );
   }
 
@@ -684,6 +707,258 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
     );
   }
 
+  void _showStatePickerModal() {
+    final isLight = AppTheme.isLightNotifier.value;
+    final primaryColor = isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF);
+    final searchController = TextEditingController();
+    final allStates = FuelRateService.allStates;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (modalCtx, setModalState) {
+            final query = searchController.text.trim().toLowerCase();
+            final filtered = query.isEmpty
+                ? allStates
+                : allStates.where((s) =>
+                    s.stateName.toLowerCase().contains(query) ||
+                    s.stateCode.toLowerCase().contains(query)).toList();
+
+            return Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(ctx).size.height * 0.75,
+              ),
+              decoration: BoxDecoration(
+                color: isLight ? Colors.white : const Color(0xFF0C131D),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              padding: const EdgeInsets.fromLTRB(18, 16, 18, 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 38,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 14),
+                      decoration: BoxDecoration(
+                        color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D3E),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'State Fuel & Tariff Rates',
+                            style: TextStyle(
+                              color: isLight ? const Color(0xFF0F172A) : Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Benchmark rates (November 2026)',
+                            style: TextStyle(
+                              color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (_selectedStateOverride != null)
+                        TextButton(
+                          onPressed: () {
+                            setState(() => _selectedStateOverride = null);
+                            Navigator.pop(ctx);
+                          },
+                          child: Text(
+                            'Auto-detect',
+                            style: TextStyle(color: primaryColor, fontSize: 13, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: searchController,
+                    onChanged: (_) => setModalState(() {}),
+                    style: TextStyle(
+                      color: isLight ? const Color(0xFF0F172A) : Colors.white,
+                      fontSize: 14,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Search state or union territory...',
+                      hintStyle: TextStyle(
+                        color: isLight ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                        fontSize: 13.5,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: isLight ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                        size: 20,
+                      ),
+                      suffixIcon: searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear, size: 18),
+                              onPressed: () {
+                                searchController.clear();
+                                setModalState(() {});
+                              },
+                            )
+                          : null,
+                      filled: true,
+                      fillColor: isLight ? const Color(0xFFF1F5F9) : const Color(0xFF141F2D),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1F3045),
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1F3045),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Expanded(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: filtered.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 8),
+                      itemBuilder: (context, idx) {
+                        final item = filtered[idx];
+                        final isCurrent = item.stateName == _effectiveState;
+
+                        return InkWell(
+                          onTap: () {
+                            setState(() => _selectedStateOverride = item.stateName);
+                            Navigator.pop(ctx);
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: isCurrent
+                                  ? primaryColor.withValues(alpha: 0.12)
+                                  : (isLight ? const Color(0xFFF8FAFC) : const Color(0xFF131D2A)),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isCurrent
+                                    ? primaryColor
+                                    : (isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1F2D3E)),
+                                width: isCurrent ? 1.5 : 1.0,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            item.stateName,
+                                            style: TextStyle(
+                                              color: isLight ? const Color(0xFF0F172A) : Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: isCurrent ? FontWeight.bold : FontWeight.w600,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                                            decoration: BoxDecoration(
+                                              color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF223042),
+                                              borderRadius: BorderRadius.circular(4),
+                                            ),
+                                            child: Text(
+                                              item.stateCode,
+                                              style: TextStyle(
+                                                color: isLight ? const Color(0xFF475569) : const Color(0xFF94A3B8),
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    if (isCurrent)
+                                      Icon(Icons.check_circle_rounded, color: primaryColor, size: 18),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    _buildRateBadge('Petrol', '₹${item.petrolRate.toStringAsFixed(2)}/L', isLight),
+                                    _buildRateBadge('Diesel', '₹${item.dieselRate.toStringAsFixed(2)}/L', isLight),
+                                    _buildRateBadge('CNG', '₹${item.cngRate.toStringAsFixed(2)}/kg', isLight),
+                                    _buildRateBadge('EV', '₹${item.evHomeTariff.toStringAsFixed(2)}/u', isLight),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildRateBadge(String label, String value, bool isLight) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      decoration: BoxDecoration(
+        color: isLight ? const Color(0xFFEDF2F7) : const Color(0xFF192534),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
+              fontSize: 9.5,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              color: isLight ? const Color(0xFF0F172A) : Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildRouteCostSummary({
     required OSRMRouteResult route,
     required bool isLight,
@@ -723,13 +998,49 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Estimated trip cost',
-                style: TextStyle(
-                  color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                ),
+              Row(
+                children: [
+                  Text(
+                    'Estimated trip cost',
+                    style: TextStyle(
+                      color: isLight ? const Color(0xFF0F172A) : Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: _showStatePickerModal,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                      decoration: BoxDecoration(
+                        color: primaryColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: primaryColor.withValues(alpha: 0.3),
+                          width: 0.8,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.location_on_rounded, size: 11, color: primaryColor),
+                          const SizedBox(width: 3),
+                          Text(
+                            estimate.stateName,
+                            style: TextStyle(
+                              color: primaryColor,
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 2),
+                          Icon(Icons.arrow_drop_down_rounded, size: 14, color: primaryColor),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
               if (_userVehicles.isNotEmpty)
                 GestureDetector(
@@ -809,7 +1120,7 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '${estimate.fuelType} • Avg: $mileageStr ${estimate.mileageUnit} • Rate: ₹$fuelPriceStr/${estimate.fuelUnit}',
+                        '${estimate.fuelType} • Avg: $mileageStr ${estimate.mileageUnit} • Rate: ₹$fuelPriceStr/${estimate.fuelUnit} (${estimate.stateName})',
                         style: TextStyle(
                           color: subTextColor,
                           fontSize: 11,
@@ -910,7 +1221,7 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
 
           // Detail footnote
           Text(
-            '* Calculated as: ${route.distanceKm.round()} km ÷ ${estimate.mileage.toStringAsFixed(0)} ${estimate.mileageUnit} = ${estimate.fuelNeeded.toStringAsFixed(1)} ${estimate.fuelUnit} × ₹$fuelPriceStr/${estimate.fuelUnit} = ${currency.format(estimate.fuelCost)}${estimate.isTwoWheeler ? " (Toll exempt)" : " + Tolls (${currency.format(estimate.tollBase)})"}. Actual costs vary with traffic and driving conditions.',
+            '* Calculated as: ${route.distanceKm.round()} km ÷ ${estimate.mileage.toStringAsFixed(0)} ${estimate.mileageUnit} = ${estimate.fuelNeeded.toStringAsFixed(1)} ${estimate.fuelUnit} × ₹$fuelPriceStr/${estimate.fuelUnit} (${estimate.stateName} benchmark) = ${currency.format(estimate.fuelCost)}${estimate.isTwoWheeler ? " (Toll exempt)" : " + Tolls (${currency.format(estimate.tollBase)})"}. Actual costs vary with traffic and driving conditions.',
             style: TextStyle(
               color: subTextColor.withValues(alpha: 0.85),
               fontSize: 10.5,
@@ -1729,6 +2040,7 @@ class _RouteCostEstimate {
   final double tollLow;
   final double tollHigh;
   final bool tollStatusAvailable;
+  final String stateName;
 
   const _RouteCostEstimate({
     required this.estimatedTotal,
@@ -1750,5 +2062,6 @@ class _RouteCostEstimate {
     required this.tollLow,
     required this.tollHigh,
     required this.tollStatusAvailable,
+    this.stateName = 'Madhya Pradesh',
   });
 }

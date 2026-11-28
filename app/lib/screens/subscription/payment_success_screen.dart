@@ -199,16 +199,20 @@ class PlanPurchaseSuccessScreen extends StatelessWidget {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: _buildSecondaryActionButton(
-                                    icon: Icons.description_outlined,
-                                    label: 'Download PDF',
+                                    icon: Icons.receipt_long_outlined,
+                                    label: 'Receipt',
                                     isLight: isLight,
                                     onTap: () {
+                                      Clipboard.setData(
+                                        ClipboardData(
+                                          text:
+                                              'CARQCONNECT OFFICIAL RECEIPT\nPlan: $noteText\nTransaction ID: $displayTransactionId\nTotal Amount: ${currencyFormatter.format(totalPrice)}\nStatus: Successful',
+                                        ),
+                                      );
                                       ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Receipt downloaded: Receipt_${displayTransactionId.replaceAll('#', '')}.pdf',
-                                          ),
-                                          duration: const Duration(seconds: 2),
+                                        const SnackBar(
+                                          content: Text('Receipt details copied to clipboard!'),
+                                          duration: Duration(seconds: 2),
                                         ),
                                       );
                                     },

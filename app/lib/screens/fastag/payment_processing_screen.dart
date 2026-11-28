@@ -127,7 +127,9 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'FASTAG RE-SYNC • ${widget.account.vehicleNumber.isNotEmpty ? widget.account.vehicleNumber : 'MH 12 RN 8820'}',
+                            widget.account.vehicleNumber.trim().isNotEmpty
+                                ? 'FASTAG RE-SYNC • ${widget.account.vehicleNumber.trim()}'
+                                : 'FASTAG RE-SYNC',
                             style: TextStyle(
                               color: isLight ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
                               fontSize: 11.5,

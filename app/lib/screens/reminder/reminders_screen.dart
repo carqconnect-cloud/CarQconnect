@@ -24,11 +24,9 @@ class RemindersScreen extends StatefulWidget {
 class _RemindersScreenState extends State<RemindersScreen>
     with RefreshOnRouteReturn<RemindersScreen> {
   String _selectedFilter = 'All'; // 'All', 'Upcoming', 'Overdue', 'Completed'
-  List<ReminderItem> _reminders = List.from(kSampleReminders);
+  List<ReminderItem> _reminders = [];
   bool _isLoading = true;
-  String _vehicleName = Globals.vehicleModel.isNotEmpty
-      ? Globals.vehicleModel
-      : 'My Vehicle';
+  String _vehicleName = Globals.vehicleModel;
   String _vehicleReg = Globals.vehicleRegistration;
   Timer? _autoRefreshTimer;
 

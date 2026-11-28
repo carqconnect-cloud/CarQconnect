@@ -511,14 +511,16 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
                             VehicleSelectorCard(
                               vehicleName: Globals.vehicleModel.isNotEmpty
                                   ? Globals.vehicleModel
-                                  : 'My Vehicle',
+                                  : 'No Vehicle Linked',
                               vehicleNumber: Globals.vehicleRegistration,
                               onSwitch: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     backgroundColor: AppTheme.cardBg,
                                     content: Text(
-                                      'Only 1 vehicle registered currently',
+                                      Globals.vehicleModel.isNotEmpty
+                                          ? 'Showing documents for ${Globals.vehicleModel}'
+                                          : 'Link a vehicle in Profile > My Vehicles',
                                       style: TextStyle(
                                         color: AppTheme.textPrimary,
                                       ),

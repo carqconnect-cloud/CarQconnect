@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'notification_models.dart';
 import 'notifications_screen.dart';
-import 'web_notification_helper.dart';
+import '../../services/app_notification_service.dart';
 import '../../theme/app_theme.dart';
 
 class TurnOnNotificationsScreen extends StatelessWidget {
@@ -90,17 +89,8 @@ class TurnOnNotificationsScreen extends StatelessWidget {
                       height: 54,
                       child: ElevatedButton(
                         onPressed: () async {
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setBool('notifications_enabled', true);
-
-                          // Request native browser permission on mobile/desktop Chrome
-                          final granted = await requestBrowserNotificationPermission();
-                          if (granted) {
-                            showBrowserNotification(
-                              'CarQConnect Notifications',
-                              'You will now receive real-time vehicle alerts and safety updates.',
-                            );
-                          }
+                          await AppNotificationService.instance
+                              .requestPermissionAndEnable(showWelcomeBanner: true);
 
                           if (!context.mounted) return;
                           Navigator.pushReplacement(

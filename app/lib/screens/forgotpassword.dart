@@ -7,6 +7,7 @@ import '../theme/app_theme.dart';
 import '../loading.dart';
 import '../widgets/animated_back_arrow.dart';
 import '../widgets/app_logo.dart';
+import '../utils/app_validators.dart';
 
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -65,24 +66,26 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final isPhone = _isNumeric(input);
 
     if (isEmail) {
-      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(input)) {
+      final emailErr = AppValidators.validateEmail(input);
+      if (emailErr != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
-            content: Text('Please enter a valid email address'),
+            content: Text(emailErr),
           ),
         );
         return;
       }
     } else if (isPhone) {
       final cleanDigits = input.replaceAll(RegExp(r'[^0-9]'), '');
-      if (cleanDigits.length < 10 || cleanDigits.length > 13) {
+      final phoneErr = AppValidators.validatePhone(cleanDigits);
+      if (phoneErr != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
-            content: Text('Please enter a valid 10-digit mobile number'),
+            content: Text(phoneErr),
           ),
         );
         return;

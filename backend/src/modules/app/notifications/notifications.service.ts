@@ -1,5 +1,6 @@
 import { prisma } from '../../../config/database';
 import { ApiError } from '../../../common/utils/apiError';
+import { realTimeService } from '../../../common/services/socket.service';
 import type { CreateNotificationInput, UpdateNotificationInput } from './notifications.schema';
 
 export const notificationsService = {
@@ -66,12 +67,19 @@ export const notificationsService = {
   },
 
   async createNotification(userId: string, data: CreateNotificationInput) {
-    return prisma.notification.create({
+    const created = await prisma.notification.create({
       data: {
         ...data,
         userId,
       },
     });
+    realTimeService.broadcastNotification(userId, {
+      id: created.id,
+      title: created.title,
+      description: created.description,
+      type: created.type,
+    });
+    return created;
   },
 
   async updateNotification(userId: string, id: string, data: UpdateNotificationInput) {

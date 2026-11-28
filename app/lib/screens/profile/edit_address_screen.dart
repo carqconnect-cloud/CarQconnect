@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import '../trip/trip_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/animated_back_arrow.dart';
 import '../../widgets/app_toggle_switch.dart';
+import '../../utils/app_validators.dart';
 
 class AddressModel {
   final String id;
@@ -18,9 +21,9 @@ class AddressModel {
     required this.type,
     required this.address,
     this.landmark = '',
-    this.city = 'Indore',
-    this.state = 'Madhya Pradesh',
-    this.pincode = '452010',
+    this.city = '',
+    this.state = '',
+    this.pincode = '',
     this.isDefault = false,
   });
 
@@ -99,6 +102,20 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
   }
 
   void _onSave() {
+    final pin = _pincodeController.text.trim();
+    if (pin.isNotEmpty) {
+      final pinErr = AppValidators.validatePinCode(pin);
+      if (pinErr != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(pinErr),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+        return;
+      }
+    }
+
     final result = AddressModel(
       id: widget.initialAddress?.id ??
           DateTime.now().millisecondsSinceEpoch.toString(),
@@ -251,57 +268,97 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                                             ),
                                           ),
                                           const SizedBox(width: 6),
-                                          const Text(
-                                            'GPS Auto-Detected',
-                                            style: TextStyle(
-                                              color: Color(0xFF00E676),
-                                              fontSize: 11.5,
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: 0.3,
+                                            const Text(
+                                              'GPS Location Lookup',
+                                              style: TextStyle(
+                                                color: Color(0xFF00E676),
+                                                fontSize: 11.5,
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 0.3,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 3),
-                                      Text(
-                                        'Vijay Nagar, Scheme 78, Indore',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
+                                          ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      _cityController.text = 'Indore';
-                                      _stateController.text = 'Madhya Pradesh';
-                                      _pincodeController.text = '452010';
-                                      if (_addressController.text.isEmpty ||
-                                          _addressController.text.contains('12, Maple Street')) {
-                                        _addressController.text =
-                                            'Flat 402, Sapphire Heights, Scheme 78,\nVijay Nagar';
-                                      }
-                                    });
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: isLight ? Colors.white : const Color(0xFF101726),
-                                        content: Text(
-                                          'GPS location applied',
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          'Tap Use to fill your current GPS address',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             color: isLight ? const Color(0xFF0F172A) : Colors.white,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                        duration: const Duration(seconds: 1),
-                                      ),
-                                    );
-                                  },
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  InkWell(
+                                    onTap: () async {
+                                      try {
+                                        var perm = await Geolocator.checkPermission();
+                                        if (perm == LocationPermission.denied) {
+                                          perm = await Geolocator.requestPermission();
+                                        }
+                                        if (perm == LocationPermission.denied ||
+                                            perm == LocationPermission.deniedForever) {
+                                          if (!context.mounted) return;
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text('Location permission required to detect address.'),
+                                            ),
+                                          );
+                                          return;
+                                        }
+                                        final pos = await Geolocator.getCurrentPosition(
+                                          locationSettings: const LocationSettings(
+                                            accuracy: LocationAccuracy.high,
+                                            timeLimit: Duration(seconds: 6),
+                                          ),
+                                        );
+                                        final resolved = await TripService.reverseGeocode(
+                                          pos.latitude,
+                                          pos.longitude,
+                                        );
+                                        if (!context.mounted) return;
+                                        if (resolved.isNotEmpty && !resolved.startsWith('Location (')) {
+                                          final parts = resolved
+                                              .split(',')
+                                              .map((s) => s.trim())
+                                              .where((s) => s.isNotEmpty)
+                                              .toList();
+                                          setState(() {
+                                            _addressController.text = resolved;
+                                            if (parts.length >= 2) {
+                                              _cityController.text = parts[parts.length - 2];
+                                            }
+                                            if (parts.isNotEmpty) {
+                                              _stateController.text = parts.last;
+                                            }
+                                          });
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text('Current GPS address applied'),
+                                              duration: Duration(seconds: 2),
+                                            ),
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text('Unable to resolve street address from GPS.'),
+                                            ),
+                                          );
+                                        }
+                                      } catch (_) {
+                                        if (!context.mounted) return;
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Could not fetch current GPS location.'),
+                                          ),
+                                        );
+                                      }
+                                    },
                                   borderRadius: BorderRadius.circular(8),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
@@ -596,6 +653,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
                                   child: TextField(
                                     controller: _pincodeController,
                                     keyboardType: TextInputType.number,
+                                    inputFormatters: AppValidators.pinCodeFormatters,
                                     style: TextStyle(
                                       color: isLight ? const Color(0xFF0F172A) : Colors.white,
                                       fontSize: 14.5,

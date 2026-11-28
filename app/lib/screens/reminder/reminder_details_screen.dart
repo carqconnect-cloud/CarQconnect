@@ -174,7 +174,7 @@ class _ReminderDetailsScreenState extends State<ReminderDetailsScreen> {
   Widget build(BuildContext context) {
     final notifsText = _current.notifications.isNotEmpty
         ? _current.notifications.join(', ')
-        : '7 days, 3 days, on due date';
+        : 'No alerts scheduled';
 
     return ValueListenableBuilder<bool>(
       valueListenable: AppTheme.isLightNotifier,
@@ -223,8 +223,8 @@ class _ReminderDetailsScreenState extends State<ReminderDetailsScreen> {
 
                           // Vehicle Selector Card
                           VehicleSelectorCard(
-                            vehicleName: Globals.vehicleModel.isNotEmpty ? Globals.vehicleModel : 'Vehicle Model',
-                            vehicleNumber: Globals.vehicleRegistration.isNotEmpty ? Globals.vehicleRegistration : 'XX 00 XX 0000',
+                            vehicleName: Globals.vehicleModel,
+                            vehicleNumber: Globals.vehicleRegistration,
                           ),
 
                           const SizedBox(height: 18),

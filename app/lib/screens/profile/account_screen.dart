@@ -51,7 +51,7 @@ class _AccountScreenState extends State<AccountScreen>
   String _selectedLanguage = 'English (India)';
   String _membershipTier = Globals.currentPlan;
 
-  int _profileCompletionPercent = 20;
+  int _profileCompletionPercent = 0;
   Timer? _autoRefreshTimer;
 
   @override

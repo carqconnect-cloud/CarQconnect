@@ -98,7 +98,7 @@ const AdminCustomers = () => {
     // Attempt to fetch real customers from backend API
     const fetchCustomers = async () => {
       try {
-        const res: any = await apiClient.get('/admin/users', { page: 1, limit: 100 });
+        const res: any = await apiClient.get('/admin/users', { page: 1, limit: 100, sortBy: 'createdAt', sortOrder: 'desc' });
         const items = Array.isArray(res) ? res : (res?.items || res?.data || []);
         if (items && items.length > 0) {
           const realCustomers = items.map((c: any) => {
@@ -154,8 +154,13 @@ const AdminCustomers = () => {
               totalDistance: meta.totalDistance || (normalizedTrips.length > 0 ? `${normalizedTrips.reduce((acc: number, curr: any) => acc + (parseFloat(curr.distance) || 0), 0)} km` : '0 km'),
             };
           });
-          setCustomers(realCustomers);
-          DB.users = realCustomers;
+          const sortedCustomers = realCustomers.sort((a: any, b: any) => {
+            const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return timeB - timeA;
+          });
+          setCustomers(sortedCustomers);
+          DB.users = sortedCustomers;
         }
       } catch (err) {
         console.warn('Backend API /admin/users fetch error:', err);
@@ -278,17 +283,23 @@ const AdminCustomers = () => {
     reader.readAsBinaryString(selectedFile);
   };
 
-  const filteredCustomers = customers.filter(cust => {
-    const matchesSearch = cust.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cust.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesHealth = filterHealth === 'All' ||
-      (filterHealth === 'Low' && cust.health <= 50);
-    const matchesPlan = filterPlan === 'All' ||
-      (filterPlan === 'Expired' && cust.expiryDays <= 0);
-    const matchesTeam = filterTeam === 'All Teams'; // Mock data doesn't have team field
+  const filteredCustomers = customers
+    .filter(cust => {
+      const matchesSearch = cust.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        cust.email.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesHealth = filterHealth === 'All' ||
+        (filterHealth === 'Low' && cust.health <= 50);
+      const matchesPlan = filterPlan === 'All' ||
+        (filterPlan === 'Expired' && cust.expiryDays <= 0);
+      const matchesTeam = filterTeam === 'All Teams'; // Mock data doesn't have team field
 
-    return matchesSearch && matchesHealth && matchesPlan && matchesTeam;
-  });
+      return matchesSearch && matchesHealth && matchesPlan && matchesTeam;
+    })
+    .sort((a, b) => {
+      const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return timeB - timeA;
+    });
 
   React.useEffect(() => {
     setCurrentPage(1);
@@ -1461,9 +1472,15 @@ export function mapUserFromApi(u: any) {
 export async function syncUsers(query: any = {}) {
   if (!apiClient.getToken()) return DB.users || [];
   try {
-    const res: any = await apiClient.get('/admin/users', { page: 1, limit: 100, ...query });
+    const res: any = await apiClient.get('/admin/users', { page: 1, limit: 100, sortBy: 'createdAt', sortOrder: 'desc', ...query });
     const rawItems = Array.isArray(res) ? res : (res?.items || res?.data || []);
-    DB.users = rawItems.map(mapUserFromApi).filter(Boolean);
+    const mapped = rawItems.map(mapUserFromApi).filter(Boolean);
+    mapped.sort((a: any, b: any) => {
+      const timeA = a.createdAt ? new Date(a.createdAt).getTime() : (a.joined || 0);
+      const timeB = b.createdAt ? new Date(b.createdAt).getTime() : (b.joined || 0);
+      return timeB - timeA;
+    });
+    DB.users = mapped;
     return DB.users;
   } catch (e) {
     return DB.users || [];

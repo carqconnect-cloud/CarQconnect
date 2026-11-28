@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/app_icons.dart';
+import '../../services/app_notification_service.dart';
+import '../track/geofence_screen.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/animated_back_arrow.dart';
 import '../../widgets/app_toggle_switch.dart';
@@ -18,10 +21,35 @@ class _NotificationSettingsScreenState
   bool _serviceReminders = true;
   bool _vehicleAlerts = true;
   bool _offersUpdates = true;
-  bool _membershipUpdates = false;
+  bool _membershipUpdates = true;
 
   TimeOfDay _silentStart = const TimeOfDay(hour: 22, minute: 0); // 10:00 PM
   TimeOfDay _silentEnd = const TimeOfDay(hour: 7, minute: 0); // 7:00 AM
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPrefs();
+  }
+
+  Future<void> _loadPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() {
+      _serviceReminders = prefs.getBool('notif_pref_reminders') ?? true;
+      _vehicleAlerts = prefs.getBool('notif_pref_vehicle') ?? true;
+      _offersUpdates = prefs.getBool('notif_pref_offers') ?? true;
+      _membershipUpdates = prefs.getBool('notif_pref_membership') ?? true;
+    });
+  }
+
+  Future<void> _saveBoolPref(String key, bool val) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(key, val);
+    final anyEnabled = _serviceReminders || _vehicleAlerts || _offersUpdates || _membershipUpdates;
+    await prefs.setBool('notifications_enabled', anyEnabled);
+    await AppNotificationService.instance.pollNow(notifyNew: false);
+  }
 
   String _formatTimeOfDay(TimeOfDay time) {
     final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
@@ -157,29 +185,6 @@ class _NotificationSettingsScreenState
                 ),
                 const SizedBox(height: 20),
                 ListTile(
-                  leading: const Icon(Icons.speed_rounded, color: Color(0xFF0066FF)),
-                  title: Text(
-                    'Speed Threshold Alert',
-                    style: TextStyle(
-                      color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: isLight ? Colors.white : const Color(0xFF101726),
-                        content: Text(
-                          'Speed alert configured',
-                          style: TextStyle(
-                            color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
                   leading: const Icon(Icons.fence_rounded, color: Color(0xFF0066FF)),
                   title: Text(
                     'Geofence Exit Alert',
@@ -187,18 +192,18 @@ class _NotificationSettingsScreenState
                       color: isLight ? const Color(0xFF0F172A) : Colors.white,
                     ),
                   ),
+                  subtitle: Text(
+                    'Configure geofence boundaries and entry/exit alerts',
+                    style: TextStyle(
+                      color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
+                      fontSize: 12,
+                    ),
+                  ),
                   onTap: () {
                     Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: isLight ? Colors.white : const Color(0xFF101726),
-                        content: Text(
-                          'Geofence alert configured',
-                          style: TextStyle(
-                            color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                          ),
-                        ),
-                      ),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const GeofenceScreen()),
                     );
                   },
                 ),
@@ -262,6 +267,7 @@ class _NotificationSettingsScreenState
                       setState(() {
                         _serviceReminders = val;
                       });
+                      _saveBoolPref('notif_pref_reminders', val);
                     },
                   ),
 
@@ -276,6 +282,7 @@ class _NotificationSettingsScreenState
                       setState(() {
                         _vehicleAlerts = val;
                       });
+                      _saveBoolPref('notif_pref_vehicle', val);
                     },
                   ),
 
@@ -290,6 +297,7 @@ class _NotificationSettingsScreenState
                       setState(() {
                         _offersUpdates = val;
                       });
+                      _saveBoolPref('notif_pref_offers', val);
                     },
                   ),
 
@@ -304,6 +312,7 @@ class _NotificationSettingsScreenState
                       setState(() {
                         _membershipUpdates = val;
                       });
+                      _saveBoolPref('notif_pref_membership', val);
                     },
                   ),
 

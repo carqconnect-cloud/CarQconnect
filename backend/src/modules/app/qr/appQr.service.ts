@@ -3,6 +3,7 @@ import { prisma } from '../../../config/database';
 import { ApiError } from '../../../common/utils/apiError';
 import { syncUserToCustomer } from '../../../common/utils/customerSync';
 import { vehicleImageService } from './vehicleImage.service';
+import { realTimeService } from '../../../common/services/socket.service';
 
 /**
  * Mobile App service for QR tag assignment, vehicle linking, and public scan interactions.
@@ -85,13 +86,19 @@ export const appQrService = {
     });
 
     // Create a notification
-    await prisma.notification.create({
+    const createdNotif = await prisma.notification.create({
       data: {
         userId,
         title: 'Vehicle Added',
         description: `Your vehicle ${data.name} (${data.regNumber}) has been added successfully.`,
         type: 'general',
       }
+    });
+    realTimeService.broadcastNotification(userId, {
+      id: createdNotif.id,
+      title: createdNotif.title,
+      description: createdNotif.description,
+      type: createdNotif.type,
     });
 
     syncUserToCustomer(userId).catch(console.error);
@@ -397,6 +404,12 @@ export const appQrService = {
         }
       });
       notificationId = notification.id;
+      realTimeService.broadcastNotification(tag.userId, {
+        id: notification.id,
+        title: notification.title,
+        description: notification.description,
+        type: notification.type,
+      });
     }
 
     return { sent: true, notificationId };

@@ -1,6 +1,5 @@
 import '../../services/vehicle_type_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'dart:async';
 import 'dart:convert';
@@ -9,6 +8,7 @@ import 'package:http/http.dart' as http;
 
 import '../../globals.dart';
 import '../../utils/api_config.dart';
+import '../../utils/app_validators.dart';
 import '../../services/screen_refresh_service.dart';
 import '../../services/auth_storage_service.dart';
 import '../trip/trip_service.dart';
@@ -16,7 +16,6 @@ import '../../theme/app_theme.dart';
 import '../../loading.dart';
 import '../../utils/app_icons.dart';
 import '../../widgets/animated_back_arrow.dart';
-import '../garage/vehicle_tabs.dart';
 
 class VehicleProfileItem {
   final String id;
@@ -175,7 +174,7 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                         id: v['id'] ?? '',
                         name: vName,
                         regNumber: reg,
-                        fuelAndYear: '$finalFuel • 2024',
+                        fuelAndYear: finalFuel,
                         imagePath: v['imagePath'] ?? '',
                         isSelected: isCurrentActive,
                       );
@@ -201,7 +200,7 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
             regNumber: Globals.vehicleRegistration.isNotEmpty
                 ? Globals.vehicleRegistration
                 : 'REGISTERED',
-            fuelAndYear: '$detected • 2024',
+            fuelAndYear: detected,
             imagePath: '',
             isSelected: true,
           ),
@@ -390,10 +389,7 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                     const SizedBox(height: 12),
                     TextField(
                       controller: regController,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\s\-]')),
-                        LengthLimitingTextInputFormatter(13),
-                      ],
+                      inputFormatters: AppValidators.vehicleNumberFormatters,
                       style: TextStyle(
                         color: isLight ? const Color(0xFF0F172A) : Colors.white,
                       ),
@@ -422,7 +418,7 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                         }
                       },
                       decoration: InputDecoration(
-                        hintText: "Registration Number (e.g. MP 09 AB 1234)",
+                        hintText: "Registration Number (e.g. DL 01 AB 1234)",
                         hintStyle: TextStyle(
                           color: isLight
                               ? const Color(0xFF94A3B8)
@@ -554,37 +550,22 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                                     .trim()
                                     .toUpperCase();
 
-                                if (newName.length < 2) {
+                                final nameErr = AppValidators.validateVehicleName(newName, label: 'Vehicle model/name');
+                                if (nameErr != null) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Please enter a valid vehicle model/name (min 2 characters)'),
+                                    SnackBar(
+                                      content: Text(nameErr),
                                       backgroundColor: Colors.red,
                                     ),
                                   );
                                   return;
                                 }
 
-                                final cleanReg = newReg.replaceAll(RegExp(r'[\s\-]'), '');
-                                final regExp = RegExp(
-                                  r'^([A-Z]{2}[0-9]{1,2}[A-Z]{0,3}[0-9]{4}|[0-9]{2}BH[0-9]{4}[A-Z]{1,2})$',
-                                );
-
-                                if (cleanReg.isEmpty) {
+                                final regErr = AppValidators.validateVehicleNumber(newReg);
+                                if (regErr != null) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Please enter vehicle registration number'),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
-                                  return;
-                                }
-
-                                if (!regExp.hasMatch(cleanReg)) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Please enter a valid registration number (e.g. MP 09 AB 1234 or 22 BH 1234 AA)',
-                                      ),
+                                    SnackBar(
+                                      content: Text(regErr),
                                       backgroundColor: Colors.red,
                                     ),
                                   );
@@ -633,36 +614,14 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                                       return;
                                     }
                                   } else {
-                                    final mockId =
-                                        'v_${DateTime.now().millisecondsSinceEpoch}';
-                                    Globals.vehicleModel = newName;
-                                    Globals.vehicleRegistration = formattedReg;
-
-                                    final newItem = VehicleProfileItem(
-                                      id: mockId,
-                                      name: newName,
-                                      regNumber: formattedReg,
-                                      fuelAndYear: '$selectedFuel • 2024',
-                                      imagePath: '',
-                                      isSelected: true,
-                                    );
                                     if (mounted) {
-                                      setState(() {
-                                        _vehicles.insert(0, newItem);
-                                      });
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Please log in to add a vehicle.'),
+                                          duration: Duration(seconds: 2),
+                                        ),
+                                      );
                                     }
-
-                                    if (ctx.mounted) {
-                                      Navigator.pop(ctx);
-                                    }
-                                    if (!mounted) return;
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Vehicle added successfully'),
-                                        duration: Duration(seconds: 2),
-                                      ),
-                                    );
                                     return;
                                   }
                                 } catch (e) {
@@ -895,15 +854,18 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
             setState(() {
               Globals.vehicleModel = vehicle.name;
               Globals.vehicleRegistration = vehicle.regNumber;
-              _vehicles = _vehicles.map((v) => v.copyWith(isSelected: v.id == vehicle.id)).toList();
+              _vehicles = _vehicles
+                  .map((v) => v.copyWith(isSelected: v.id == vehicle.id))
+                  .toList();
             });
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => VehicleTabsScreen(
-                  vehicleName: vehicle.name,
-                  vehiclePlate: vehicle.regNumber,
-                ),
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('${vehicle.name} set as active vehicle'),
+                duration: const Duration(seconds: 2),
+                backgroundColor: isLight
+                    ? const Color(0xFF0F172A)
+                    : const Color(0xFF1E293B),
               ),
             );
           },
@@ -1047,12 +1009,6 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(width: 8),
-                Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 14,
-                  color: isLight ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
                 ),
               ],
             ),

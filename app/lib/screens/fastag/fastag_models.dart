@@ -19,7 +19,7 @@ class FastagAccount {
     required this.bankName,
     required this.vehicleNumber,
     required this.balance,
-    this.customerName = 'John Doe',
+    this.customerName = '',
     this.logoAsset,
     this.statusMessage,
     this.isLowBalance = false,
@@ -60,88 +60,7 @@ class FastagTransaction {
   });
 }
 
-final List<FastagTransaction> kSampleFastagTransactions = [
-  const FastagTransaction(
-    id: '1',
-    title: 'Toll Payment',
-    subtitle: '12 Sep, 10:24 AM • Devas Bypass',
-    amount: 85.00,
-    isDebit: true,
-    timestamp: '12 Sep 2026, 10:24 AM',
-    tollPlaza: 'Dewas Bypass',
-    vehicleNumber: 'MP 09 CZ 1111',
-    transactionId: 'FFTG728374',
-    paymentMethod: 'FASTag Balance',
-    status: 'Successful',
-    iconColor: Color(0xFFB388FF),
-    iconBgColor: Color(0xFF231C38),
-    isToll: true,
-  ),
-  const FastagTransaction(
-    id: '2',
-    title: 'Recharge',
-    subtitle: '10 Sep, 06:12 PM • UPI',
-    amount: 500.00,
-    isDebit: false,
-    timestamp: '10 Sep 2026, 06:12 PM',
-    tollPlaza: 'N/A',
-    vehicleNumber: 'MP 09 CZ 1111',
-    transactionId: 'FTG728374',
-    paymentMethod: 'UPI',
-    status: 'Successful',
-    iconColor: Color(0xFF00E676),
-    iconBgColor: Color(0xFF132D24),
-    isToll: false,
-  ),
-  const FastagTransaction(
-    id: '3',
-    title: 'Toll Payment',
-    subtitle: '08 Sep, 09:15 AM • Indore Bypass',
-    amount: 60.00,
-    isDebit: true,
-    timestamp: '08 Sep 2026, 09:15 AM',
-    tollPlaza: 'Indore Bypass',
-    vehicleNumber: 'MP 09 CZ 1111',
-    transactionId: 'FFTG582103',
-    paymentMethod: 'FASTag Balance',
-    status: 'Successful',
-    iconColor: Color(0xFFFF5252),
-    iconBgColor: Color(0xFF2D1822),
-    isToll: true,
-  ),
-  const FastagTransaction(
-    id: '4',
-    title: 'Toll Payment',
-    subtitle: '05 Sep, 11:20 AM • Ujjain Road',
-    amount: 110.00,
-    isDebit: true,
-    timestamp: '05 Sep 2026, 11:20 AM',
-    tollPlaza: 'Ujjain Road',
-    vehicleNumber: 'MP 09 CZ 1111',
-    transactionId: 'FFTG391845',
-    paymentMethod: 'FASTag Balance',
-    status: 'Successful',
-    iconColor: Color(0xFF448AFF),
-    iconBgColor: Color(0xFF14243B),
-    isToll: true,
-  ),
-  const FastagTransaction(
-    id: '5',
-    title: 'Recharge',
-    subtitle: '01 Sep, 04:30 PM • Net Banking',
-    amount: 1000.00,
-    isDebit: false,
-    timestamp: '01 Sep 2026, 04:30 PM',
-    tollPlaza: 'N/A',
-    vehicleNumber: 'MP 09 CZ 1111',
-    transactionId: 'FTG104829',
-    paymentMethod: 'Net Banking',
-    status: 'Successful',
-    iconColor: Color(0xFF00E676),
-    iconBgColor: Color(0xFF132D24),
-    isToll: false,
-  ),
-];
+final List<FastagTransaction> kSampleFastagTransactions = const [];
 
 class BankInfo {
   final String id;
@@ -501,7 +420,7 @@ class _TollPlazaPainter extends CustomPainter {
 
     final plateText = TextPainter(
       text: const TextSpan(
-        text: 'MP 09 AB 1234',
+        text: 'CARQ TAG',
         style: TextStyle(
           color: Colors.black,
           fontSize: 4.5,

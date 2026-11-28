@@ -10,12 +10,14 @@ import '../../widgets/animated_back_arrow.dart';
 class CarScanAnimationScreen extends StatefulWidget {
   final String vehicleName;
   final String vehiclePlate;
+  final bool hasObdConnection;
   final VoidCallback? onScanComplete;
 
   const CarScanAnimationScreen({
     super.key,
-    this.vehicleName = 'Hyundai Creta',
-    this.vehiclePlate = 'MP 09 AB 1234',
+    this.vehicleName = '',
+    this.vehiclePlate = '',
+    this.hasObdConnection = false,
     this.onScanComplete,
   });
 
@@ -300,13 +302,76 @@ class _CarScanAnimationScreenState extends State<CarScanAnimationScreen>
 
   // Bottom action buttons when scan reaches 100%
   Widget _buildScanFinishedContent(bool isLight) {
+    if (!widget.hasObdConnection) {
+      return Column(
+        key: const ValueKey('finished_no_obd'),
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.bluetooth_disabled_rounded,
+                color: Color(0xFFF59E0B),
+                size: 18,
+              ),
+              SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  'OBD-II Hardware Not Connected',
+                  style: TextStyle(
+                    color: Color(0xFFF59E0B),
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Connect your CarQConnect OBD Pro dongle to read real-time engine health.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isLight ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
+              fontSize: 12.5,
+            ),
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: OutlinedButton(
+              onPressed: () => Navigator.pop(context),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(
+                  color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF334155),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+              ),
+              child: Text(
+                'Back',
+                style: TextStyle(
+                  color: isLight ? const Color(0xFF0F172A) : Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return Column(
       key: const ValueKey('finished_state'),
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Icon(
               Icons.check_circle_rounded,
               color: Color(0xFF10B981),
@@ -314,7 +379,7 @@ class _CarScanAnimationScreenState extends State<CarScanAnimationScreen>
             ),
             SizedBox(width: 8),
             Text(
-              'Vehicle Health: 100% Optimal',
+              'Diagnostic Check Complete',
               style: TextStyle(
                 color: Color(0xFF10B981),
                 fontSize: 14.5,
@@ -338,6 +403,7 @@ class _CarScanAnimationScreenState extends State<CarScanAnimationScreen>
                           vehicleName: widget.vehicleName,
                           vehiclePlate: widget.vehiclePlate,
                           initialTabIndex: 2,
+                          isObdConnected: widget.hasObdConnection,
                         ),
                       ),
                     );

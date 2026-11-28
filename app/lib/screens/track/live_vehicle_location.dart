@@ -1,12 +1,15 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mappls_gl/mappls_gl.dart' as mappls;
 
 import '../../globals.dart';
 import '../../utils/map_config.dart';
 import '../../widgets/mappls_native_map.dart';
+import '../trip/active_trip_screen.dart';
 import '../trip/trip_service.dart';
 import 'track_models.dart';
 import 'track_service.dart';
@@ -44,8 +47,10 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
   String _address = 'Loading location...';
   String _lastUpdated = 'Just now';
   int _speed = 0;
-  final String _direction = 'N';
-  String _status = 'Parked & Secured';
+  String _direction = '—';
+  String _status = 'Parked';
+  Map<String, dynamic>? _activeTrip;
+  bool _hasActiveTrip = false;
   bool _isRefreshing = false;
   bool _isLoading = true;
 
@@ -53,7 +58,7 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
   void initState() {
     super.initState();
     _mapController = MapController();
-    _currentPos = widget.initialPosition ?? const LatLng(22.7196, 75.8577);
+    _currentPos = widget.initialPosition ?? const LatLng(20.5937, 78.9629);
 
     _pulseController = AnimationController(
       vsync: this,
@@ -90,18 +95,64 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
     }
   }
 
+  String _headingToCompass(double heading) {
+    if (heading.isNaN || heading < 0) return '—';
+    const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+    return dirs[((heading + 22.5) % 360) ~/ 45];
+  }
+
+  Map<String, dynamic>? _findActiveTrip(List<Map<String, dynamic>> trips) {
+    for (final trip in trips) {
+      final status = (trip['status'] ?? '').toString().trim().toUpperCase();
+      if (status == 'ACTIVE' || status == 'IN_PROGRESS' || status == 'STARTED') {
+        return trip;
+      }
+    }
+    return null;
+  }
+
+  Future<(int, String, String)> _readGpsTelemetry() async {
+    try {
+      final perm = await Geolocator.checkPermission();
+      if (perm == LocationPermission.always || perm == LocationPermission.whileInUse) {
+        final pos = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            timeLimit: Duration(seconds: 4),
+          ),
+        );
+        final speedKmh = pos.speed.isFinite && pos.speed > 0 ? (pos.speed * 3.6).round() : 0;
+        final compass = _headingToCompass(pos.heading);
+        final status = speedKmh >= 3 ? 'Moving' : 'Parked';
+        return (speedKmh, compass, status);
+      }
+    } catch (_) {}
+    return (0, '—', 'Parked');
+  }
+
   Future<void> _loadRealLocation() async {
     setState(() => _isLoading = true);
     try {
-      final pos = await TrackService.getLivePosition();
+      final results = await Future.wait([
+        TrackService.getLivePosition(),
+        TripService.fetchUserTrips(),
+        _readGpsTelemetry(),
+      ]);
+      final pos = results[0] as LatLng;
+      final trips = results[1] as List<Map<String, dynamic>>;
+      final telemetry = results[2] as (int, String, String);
       final addr = await TrackService.getLiveAddress(pos);
+      final activeTrip = _findActiveTrip(trips);
 
       if (mounted) {
         setState(() {
           _currentPos = pos;
           _address = addr;
-          _status = 'Stationary • Protected';
-          _speed = 0;
+          _speed = telemetry.$1;
+          _direction = telemetry.$2;
+          _status = telemetry.$3;
+          _activeTrip = activeTrip;
+          _hasActiveTrip = activeTrip != null;
           _lastUpdated = 'Just now';
           _isLoading = false;
         });
@@ -121,14 +172,27 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
   Future<void> _refreshTelemetry() async {
     setState(() => _isRefreshing = true);
     try {
-      final pos = await TrackService.getLivePosition();
+      final results = await Future.wait([
+        TrackService.getLivePosition(),
+        TripService.fetchUserTrips(),
+        _readGpsTelemetry(),
+      ]);
+      final pos = results[0] as LatLng;
+      final trips = results[1] as List<Map<String, dynamic>>;
+      final telemetry = results[2] as (int, String, String);
       final addr = await TrackService.getLiveAddress(pos);
+      final activeTrip = _findActiveTrip(trips);
 
       if (mounted) {
         final isLight = AppTheme.isLightNotifier.value;
         setState(() {
           _currentPos = pos;
           _address = addr;
+          _speed = telemetry.$1;
+          _direction = telemetry.$2;
+          _status = telemetry.$3;
+          _activeTrip = activeTrip;
+          _hasActiveTrip = activeTrip != null;
           _lastUpdated = 'Just now';
           _isRefreshing = false;
         });
@@ -161,49 +225,67 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
     }
   }
 
-  Future<void> _navigateToVehicle() async {
-    _animateMapTo(_currentPos, 17.0);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Row(
-          children: [
-            SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(width: 12),
-            Text('Opening turn-by-turn navigation...'),
-          ],
-        ),
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+  List<LatLng> _parseTripRoutePoints(dynamic rawGeometry, LatLng fromLatLng, LatLng toLatLng) {
+    final List<LatLng> pts = [];
+    try {
+      dynamic decoded = rawGeometry;
+      if (decoded is String && decoded.trim().isNotEmpty) {
+        decoded = jsonDecode(decoded);
+      }
+      final rawCoords = decoded is Map
+          ? decoded['coordinates']
+          : (decoded is List ? decoded : null);
+      if (rawCoords is List) {
+        for (final pair in rawCoords) {
+          if (pair is List && pair.length >= 2) {
+            final lng = double.tryParse(pair[0].toString());
+            final lat = double.tryParse(pair[1].toString());
+            if (lat != null && lng != null && lat != 0.0 && lng != 0.0) {
+              pts.add(LatLng(lat, lng));
+            }
+          }
+        }
+      }
+    } catch (_) {}
+    if (pts.length >= 2) return pts;
+    if (fromLatLng.latitude != 0.0 && toLatLng.latitude != 0.0) {
+      return [fromLatLng, toLatLng];
+    }
+    return const [];
+  }
+
+  Future<void> _openActiveTripNavigation() async {
+    final trip = _activeTrip;
+    if (!_hasActiveTrip || trip == null) return;
+
+    final fromLat = double.tryParse(trip['fromLat']?.toString() ?? '') ?? _currentPos.latitude;
+    final fromLng = double.tryParse(trip['fromLng']?.toString() ?? '') ?? _currentPos.longitude;
+    final toLat = double.tryParse(trip['toLat']?.toString() ?? '') ?? _currentPos.latitude;
+    final toLng = double.tryParse(trip['toLng']?.toString() ?? '') ?? _currentPos.longitude;
+    final fromLatLng = LatLng(fromLat, fromLng);
+    final toLatLng = LatLng(toLat, toLng);
+    final routePoints = _parseTripRoutePoints(trip['geometry'], fromLatLng, toLatLng);
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ActiveTripScreen(
+          isNavigating: true,
+          tripId: trip['id']?.toString(),
+          startedAt: trip['startedAt']?.toString(),
+          fromLocation: (trip['fromName'] ?? 'Current Location').toString(),
+          toLocation: (trip['toName'] ?? 'Destination').toString(),
+          fromLatLng: fromLatLng,
+          toLatLng: toLatLng,
+          duration: (trip['duration'] ?? '--').toString(),
+          distance: (trip['distance'] ?? '--').toString(),
+          viaRoute: (trip['viaRoute'] ?? 'via Mappls Route').toString(),
+          routePoints: routePoints,
+          vehicle: widget.vehicle,
         ),
       ),
     );
-    final launched = await TripService.launchMapplsNavigation(
-      toLat: _currentPos.latitude,
-      toLng: _currentPos.longitude,
-      destinationName: widget.vehicle?['regNumber'] ?? 'Vehicle Location',
-    );
-    if (!mounted) return;
-    if (!launched) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Could not open map navigation application.'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
-    }
+    await _refreshTelemetry();
   }
 
   @override
@@ -357,8 +439,8 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
                                             ),
                                           )
                                         : const TopViewCarWidget(
-                                            width: 26,
-                                            height: 46,
+                                            width: 24,
+                                            height: 44,
                                             showGlow: true,
                                           ),
                                   ],
@@ -776,38 +858,65 @@ class _LiveVehicleLocationScreenState extends State<LiveVehicleLocationScreen>
                                 Expanded(
                                   child: SizedBox(
                                     height: 50,
-                                    child: ElevatedButton.icon(
-                                      onPressed: _navigateToVehicle,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: isLight
-                                            ? const Color(0xFF0066FF)
-                                            : const Color(0xFF00C2FF),
-                                        foregroundColor: isLight
-                                            ? Colors.white
-                                            : Colors.black,
-                                        elevation: 0,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            25,
+                                    child: Tooltip(
+                                      message: _hasActiveTrip
+                                          ? 'Open active trip navigation'
+                                          : 'Navigation activates when an active trip is started',
+                                      child: ElevatedButton.icon(
+                                        onPressed: _hasActiveTrip
+                                            ? _openActiveTripNavigation
+                                            : null,
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: _hasActiveTrip
+                                              ? (isLight
+                                                  ? const Color(0xFF0066FF)
+                                                  : const Color(0xFF00C2FF))
+                                              : (isLight
+                                                  ? const Color(0xFFE2E8F0)
+                                                  : const Color(0xFF1A2337)),
+                                          disabledBackgroundColor: isLight
+                                              ? const Color(0xFFE2E8F0)
+                                              : const Color(0xFF1A2337),
+                                          foregroundColor: _hasActiveTrip
+                                              ? (isLight ? Colors.white : Colors.black)
+                                              : (isLight
+                                                  ? const Color(0xFF94A3B8)
+                                                  : const Color(0xFF64748B)),
+                                          disabledForegroundColor: isLight
+                                              ? const Color(0xFF94A3B8)
+                                              : const Color(0xFF64748B),
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              25,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      icon: AppIcons.svg(
-                                        AppIcons.navigation,
-                                        color: isLight
-                                            ? Colors.white
-                                            : Colors.black,
-                                        width: 17,
-                                        height: 17,
-                                      ),
-                                      label: Text(
-                                        'Navigate',
-                                        style: TextStyle(
-                                          color: isLight
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
+                                        icon: AppIcons.svg(
+                                          AppIcons.navigation,
+                                          color: _hasActiveTrip
+                                              ? (isLight
+                                                  ? Colors.white
+                                                  : Colors.black)
+                                              : (isLight
+                                                  ? const Color(0xFF94A3B8)
+                                                  : const Color(0xFF64748B)),
+                                          width: 17,
+                                          height: 17,
+                                        ),
+                                        label: Text(
+                                          'Navigate',
+                                          style: TextStyle(
+                                            color: _hasActiveTrip
+                                                ? (isLight
+                                                    ? Colors.white
+                                                    : Colors.black)
+                                                : (isLight
+                                                    ? const Color(0xFF94A3B8)
+                                                    : const Color(0xFF64748B)),
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ),

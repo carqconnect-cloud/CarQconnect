@@ -5,11 +5,17 @@ import '../../widgets/animated_back_arrow.dart';
 class VehicleDetailsScreen extends StatefulWidget {
   final Function(int index)? onNavigateTab;
   final bool isStandalone;
+  final String vehicleName;
+  final String vehiclePlate;
+  final Map<String, dynamic>? vehicleData;
 
   const VehicleDetailsScreen({
     super.key,
     this.onNavigateTab,
     this.isStandalone = false,
+    this.vehicleName = '',
+    this.vehiclePlate = '',
+    this.vehicleData,
   });
 
   @override
@@ -17,13 +23,46 @@ class VehicleDetailsScreen extends StatefulWidget {
 }
 
 class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
-  String _brand = 'Hyundai';
-  String _model = 'Creta';
-  String _year = '2024';
-  String _color = 'Black';
-  String _registrationNumber = 'MP 09 AB 1234';
-  String _chassisNumber = 'MA3NB81S7RK123456';
-  String _engineNumber = 'G4FGKU123456';
+  late String _brand;
+  late String _model;
+  late String _year;
+  late String _color;
+  late String _registrationNumber;
+  late String _chassisNumber;
+  late String _engineNumber;
+
+  @override
+  void initState() {
+    super.initState();
+    final data = widget.vehicleData ?? {};
+    final fullName = (widget.vehicleName.isNotEmpty
+            ? widget.vehicleName
+            : (data['name'] ?? '').toString())
+        .trim();
+    final parts = fullName.isEmpty
+        ? const <String>[]
+        : fullName.split(RegExp(r'\s+'));
+    final storedBrand = (data['brand'] ?? '').toString().trim();
+    final storedModel = (data['model'] ?? '').toString().trim();
+    _brand = storedBrand.isNotEmpty
+        ? storedBrand
+        : (parts.isNotEmpty ? parts.first : '—');
+    _model = storedModel.isNotEmpty
+        ? storedModel
+        : (parts.length > 1 ? parts.sublist(1).join(' ') : (fullName.isNotEmpty ? fullName : '—'));
+    final storedYear = (data['year'] ?? '').toString().trim();
+    _year = storedYear.isNotEmpty ? storedYear : '—';
+    final storedColor = (data['color'] ?? '').toString().trim();
+    _color = storedColor.isNotEmpty ? storedColor : '—';
+    final reg = widget.vehiclePlate.isNotEmpty
+        ? widget.vehiclePlate
+        : (data['plate'] ?? data['regNumber'] ?? '').toString().trim();
+    _registrationNumber = reg.isNotEmpty ? reg : '—';
+    final chassis = (data['chassisNumber'] ?? '').toString().trim();
+    _chassisNumber = chassis.isNotEmpty ? chassis : '—';
+    final engine = (data['engineNumber'] ?? '').toString().trim();
+    _engineNumber = engine.isNotEmpty ? engine : '—';
+  }
 
   void _editField(String title, String currentValue, Function(String) onSave) {
     final isLight = AppTheme.isLightNotifier.value;
@@ -175,10 +214,27 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Image.asset(
-                      'assets/homescreensicons/carimage.png',
-                      height: 170,
-                      fit: BoxFit.contain,
+                    Builder(
+                      builder: (_) {
+                        final img = (widget.vehicleData?['image'] ?? '').toString().trim();
+                        if (img.startsWith('http')) {
+                          return Image.network(
+                            img,
+                            height: 170,
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => Image.asset(
+                              'assets/homescreensicons/carimage.png',
+                              height: 170,
+                              fit: BoxFit.contain,
+                            ),
+                          );
+                        }
+                        return Image.asset(
+                          img.isNotEmpty ? img : 'assets/homescreensicons/carimage.png',
+                          height: 170,
+                          fit: BoxFit.contain,
+                        );
+                      },
                     ),
                   ],
                 ),

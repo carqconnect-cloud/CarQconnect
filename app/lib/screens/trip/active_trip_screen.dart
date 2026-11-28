@@ -40,9 +40,9 @@ class ActiveTripScreen extends StatefulWidget {
     this.isNavigating = true,
     this.tripId,
     this.startedAt,
-    this.fromLocation = 'Indore',
+    this.fromLocation = 'Current Location',
     this.toLocation = '',
-    this.fromLatLng = const LatLng(22.7196, 75.8577),
+    this.fromLatLng = const LatLng(20.5937, 78.9629),
     this.toLatLng = const LatLng(0.0, 0.0),
     this.duration = '--',
     this.distance = '--',
@@ -115,7 +115,7 @@ class _ActiveTripScreenState extends State<ActiveTripScreen> {
     final wTo = widget.toLatLng;
     _effectiveFromLatLng = (wFrom.latitude != 0.0 && wFrom.longitude != 0.0)
         ? wFrom
-        : (_routePoints.isNotEmpty ? _routePoints.first : const LatLng(22.7196, 75.8577));
+        : (_routePoints.isNotEmpty ? _routePoints.first : const LatLng(20.5937, 78.9629));
     _effectiveToLatLng = (wTo.latitude != 0.0 && wTo.longitude != 0.0)
         ? wTo
         : (_routePoints.isNotEmpty ? _routePoints.last : const LatLng(23.1765, 75.7885));

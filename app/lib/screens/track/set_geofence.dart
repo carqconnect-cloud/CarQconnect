@@ -48,7 +48,7 @@ class _SetGeofenceScreenState extends State<SetGeofenceScreen> {
     _name = widget.initialName;
     _address = widget.initialAddress;
     _radiusMeters = widget.initialRadius;
-    _centerPos = widget.initialPosition ?? const LatLng(22.7196, 75.8577);
+    _centerPos = widget.initialPosition ?? const LatLng(20.5937, 78.9629);
   }
 
   double _zoomForRadius(double radiusMeters) {

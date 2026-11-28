@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../globals.dart';
 import '../utils/api_config.dart';
+import 'app_notification_service.dart';
 
 /// Central Persistent Auth Storage Service
 /// Persists sensitive authentication tokens in hardware-backed encrypted storage
@@ -141,6 +142,7 @@ class AuthStorageService {
 
       // Sync background data
       syncProfileDataInBackground(accessToken);
+      AppNotificationService.instance.onSessionReady(accessToken: accessToken);
     } catch (e) {
       debugPrint('Error saving auth session: $e');
     }
@@ -210,7 +212,7 @@ class AuthStorageService {
 
       // Populate in-memory Globals immediately so the app can render instantly
       Globals.accessToken = token;
-      Globals.firstName = prefs.getString(_keyFirstName) ?? 'User';
+      Globals.firstName = prefs.getString(_keyFirstName) ?? '';
       Globals.lastName = prefs.getString(_keyLastName) ?? '';
       Globals.email = prefs.getString(_keyEmail) ?? '';
       Globals.phone = prefs.getString(_keyPhone) ?? '';
@@ -274,6 +276,37 @@ class AuthStorageService {
       response = await ApiConfig.get(
         path,
         headers: {'Authorization': 'Bearer ${Globals.accessToken}'},
+        timeout: timeout,
+      );
+    }
+    return response;
+  }
+
+  /// Post authenticated data and retry once after refreshing an expired access token.
+  static Future<http.Response> authenticatedPost(
+    String path,
+    Map<String, dynamic> body, {
+    Duration timeout = const Duration(seconds: 25),
+  }) async {
+    var response = await ApiConfig.post(
+      path,
+      headers: {
+        'Content-Type': 'application/json',
+        if (Globals.accessToken.isNotEmpty)
+          'Authorization': 'Bearer ${Globals.accessToken}',
+      },
+      body: jsonEncode(body),
+      timeout: timeout,
+    );
+    if (response.statusCode == 401 && await refreshSession()) {
+      response = await ApiConfig.post(
+        path,
+        headers: {
+          'Content-Type': 'application/json',
+          if (Globals.accessToken.isNotEmpty)
+            'Authorization': 'Bearer ${Globals.accessToken}',
+        },
+        body: jsonEncode(body),
         timeout: timeout,
       );
     }
@@ -474,6 +507,7 @@ class AuthStorageService {
       Globals.vehicleRegistration = '';
       Globals.savedAddresses = [];
       Globals.emergencyContacts = [];
+      await AppNotificationService.instance.onSessionCleared();
     } catch (e) {
       debugPrint('Error clearing auth session: $e');
     }

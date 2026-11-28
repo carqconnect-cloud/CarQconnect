@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'emergency_contacts_screen.dart';
-import '../../utils/app_icons.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/animated_back_arrow.dart';
 import '../../widgets/app_toggle_switch.dart';
+import '../../utils/app_validators.dart';
 
 /// Screen 2: Edit / Add Contact Screen
 class EditContactScreen extends StatefulWidget {
@@ -105,31 +107,50 @@ class _EditContactScreenState extends State<EditContactScreen> {
   void _saveContact() {
     final name = _nameController.text.trim();
     String phone = _phoneController.text.trim();
+    final email = _emailController.text.trim();
 
-    if (name.isEmpty) {
+    final nameErr = AppValidators.validateName(name, label: 'Contact name');
+    if (nameErr != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFF2A1215),
+        SnackBar(
+          backgroundColor: const Color(0xFF2A1215),
           content: Text(
-            'Please enter contact name',
-            style: TextStyle(color: Color(0xFFFF5252)),
+            nameErr,
+            style: const TextStyle(color: Color(0xFFFF5252)),
           ),
         ),
       );
       return;
     }
 
-    if (phone.isEmpty) {
+    final phoneErr = AppValidators.validatePhone(phone);
+    if (phoneErr != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFF2A1215),
+        SnackBar(
+          backgroundColor: const Color(0xFF2A1215),
           content: Text(
-            'Please enter phone number',
-            style: TextStyle(color: Color(0xFFFF5252)),
+            phoneErr,
+            style: const TextStyle(color: Color(0xFFFF5252)),
           ),
         ),
       );
       return;
+    }
+
+    if (email.isNotEmpty) {
+      final emailErr = AppValidators.validateEmail(email);
+      if (emailErr != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFF2A1215),
+            content: Text(
+              emailErr,
+              style: const TextStyle(color: Color(0xFFFF5252)),
+            ),
+          ),
+        );
+        return;
+      }
     }
 
     // Clean phone number: remove any redundant +91
@@ -335,18 +356,12 @@ class _EditContactScreenState extends State<EditContactScreen> {
                                 ),
                                 const SizedBox(height: 10),
                                 InkWell(
-                                  onTap: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: isLight ? Colors.white : const Color(0xFF101726),
-                                        content: Text(
-                                          'Photo picker opened',
-                                          style: TextStyle(
-                                            color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    );
+                                  onTap: () async {
+                                    try {
+                                      await ImagePicker().pickImage(
+                                        source: ImageSource.gallery,
+                                      );
+                                    } catch (_) {}
                                   },
                                   child: Text(
                                     'Change Photo',
@@ -368,6 +383,7 @@ class _EditContactScreenState extends State<EditContactScreen> {
                           _buildInputField(
                             controller: _nameController,
                             hintText: 'Enter full name',
+                            inputFormatters: AppValidators.nameFormatters,
                             isLight: isLight,
                           ),
                           const SizedBox(height: 18),
@@ -414,52 +430,13 @@ class _EditContactScreenState extends State<EditContactScreen> {
                               Expanded(
                                 child: _buildInputField(
                                   controller: _phoneController,
-                                  hintText: '98765 43210',
+                                  hintText: '9876543210',
                                   keyboardType: TextInputType.phone,
+                                  inputFormatters: AppValidators.phoneFormatters,
                                   isLight: isLight,
                                 ),
                               ),
                             ],
-                          ),
-                          const SizedBox(height: 6),
-                          // Verify new number action
-                          InkWell(
-                            onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: isLight ? Colors.white : const Color(0xFF101726),
-                                  content: Text(
-                                    'OTP sent for verification',
-                                    style: TextStyle(
-                                      color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  AppIcons.svg(
-                                    AppIcons.refresh,
-                                    color: AppTheme.primaryColor,
-                                    width: 14,
-                                    height: 14,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    'Verify new number',
-                                    style: TextStyle(
-                                      color: AppTheme.primaryColor,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
                           ),
                           const SizedBox(height: 18),
 
@@ -470,6 +447,7 @@ class _EditContactScreenState extends State<EditContactScreen> {
                             controller: _emailController,
                             hintText: 'name@example.com',
                             keyboardType: TextInputType.emailAddress,
+                            inputFormatters: AppValidators.emailFormatters,
                             isLight: isLight,
                           ),
                           const SizedBox(height: 18),
@@ -668,6 +646,7 @@ class _EditContactScreenState extends State<EditContactScreen> {
     required String hintText,
     required bool isLight,
     TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Container(
       height: 50,
@@ -683,6 +662,7 @@ class _EditContactScreenState extends State<EditContactScreen> {
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         style: TextStyle(
           color: isLight ? const Color(0xFF0F172A) : Colors.white,
           fontSize: 15,

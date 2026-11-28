@@ -12,6 +12,7 @@ import '../../theme/app_theme.dart';
 import 'review_details_screen.dart';
 import 'payment_failed_screen.dart';
 import '../../services/screen_refresh_service.dart';
+import '../../services/auth_storage_service.dart';
 import '../../widgets/animated_back_arrow.dart';
 import '../../widgets/app_logo.dart';
 
@@ -141,11 +142,11 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
       _plans = _plans.map((e) {
         final pName = (e['name'] ?? '').toString();
         final pId = (e['id'] ?? '').toString();
-        final isCurrent = (activePlanId != null &&
-                activePlanId.isNotEmpty &&
-                pId == activePlanId) ||
-            (pName.toLowerCase() == curPlan) ||
-            (activePlanId == null && curPlan.isEmpty && pName == 'Free');
+        final isCurrent = (activePlanId != null && activePlanId.isNotEmpty)
+            ? (pId == activePlanId || pName.toLowerCase() == activePlanId.toLowerCase())
+            : (curPlan.isNotEmpty
+                ? (pName.toLowerCase() == curPlan || (Globals.currentPlanId.isNotEmpty && pId == Globals.currentPlanId))
+                : (pName.toLowerCase() == 'free'));
         return {
           ...e,
           'buttonText': isCurrent ? 'Current Plan' : 'Get Started',
@@ -164,17 +165,14 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
                 'Authorization': 'Bearer ${Globals.accessToken}',
             },
           )
-          .timeout(const Duration(seconds: 4));
+          .timeout(const Duration(seconds: 5));
 
       String? activePlanId;
       if (Globals.accessToken.isNotEmpty) {
         try {
-          final mySubRes = await http
-              .get(
-                ApiConfig.uri('/subscriptions/my'),
-                headers: {'Authorization': 'Bearer ${Globals.accessToken}'},
-              )
-              .timeout(const Duration(seconds: 4));
+          final mySubRes = await AuthStorageService.authenticatedGet(
+            '/subscriptions/my',
+          ).timeout(const Duration(seconds: 5));
 
           if (mySubRes.statusCode == 200) {
             final mySubData = jsonDecode(mySubRes.body);
@@ -199,11 +197,11 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
               _plans = list.map((e) {
                 final pName = (e['name'] ?? 'Plan').toString();
                 final pId = (e['id'] ?? '').toString();
-                final isCurrent = (activePlanId != null &&
-                        activePlanId.isNotEmpty &&
-                        pId == activePlanId) ||
-                    (pName.toLowerCase() == curPlan) ||
-                    (activePlanId == null && curPlan.isEmpty && pName == 'Free');
+                final isCurrent = (activePlanId != null && activePlanId.isNotEmpty)
+                    ? (pId == activePlanId || pName.toLowerCase() == activePlanId.toLowerCase())
+                    : (curPlan.isNotEmpty
+                        ? (pName.toLowerCase() == curPlan || (Globals.currentPlanId.isNotEmpty && pId == Globals.currentPlanId))
+                        : (pName.toLowerCase() == 'free'));
                 final isPrem = pName == 'Premium';
                 final isBasic = pName == 'Basic';
 
@@ -766,19 +764,13 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
     if (price == 0) {
       await Globals.saveCurrentPlan(planName, planId);
       _syncPlansWithCurrentPlan(planId);
+      ScreenRefreshService.notifyRefreshed();
 
       try {
-        final response = await http
-            .post(
-              ApiConfig.uri('/subscriptions/activate'),
-              headers: {
-                if (Globals.accessToken.isNotEmpty)
-                  'Authorization': 'Bearer ${Globals.accessToken}',
-                'Content-Type': 'application/json',
-              },
-              body: jsonEncode({'planId': planId, 'planName': planName}),
-            )
-            .timeout(const Duration(seconds: 5));
+        final response = await AuthStorageService.authenticatedPost(
+          '/subscriptions/activate',
+          {'planId': planId, 'planName': planName},
+        ).timeout(const Duration(seconds: 8));
 
         if (response.statusCode == 200) {
           if (!mounted) return;
@@ -798,21 +790,14 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
 
     String? orderId;
     try {
-      final response = await http
-          .post(
-            ApiConfig.uri('/subscriptions/create-order'),
-            headers: {
-              if (Globals.accessToken.isNotEmpty)
-                'Authorization': 'Bearer ${Globals.accessToken}',
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode({
-              'amount': price,
-              'planId': planId,
-              'tenure': tenure,
-            }),
-          )
-          .timeout(const Duration(seconds: 8));
+      final response = await AuthStorageService.authenticatedPost(
+        '/subscriptions/create-order',
+        {
+          'amount': price,
+          'planId': planId,
+          'tenure': tenure,
+        },
+      ).timeout(const Duration(seconds: 8));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -830,20 +815,23 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
         final cleanPhone = Globals.phone.replaceAll(RegExp(r'[^0-9]'), '');
         final prefillPhone = cleanPhone.length >= 10
             ? cleanPhone.substring(cleanPhone.length - 10)
-            : '9513886363';
+            : '';
         final prefillEmail = Globals.email.contains('@')
             ? Globals.email
-            : 'customer@carqconnect.com';
+            : '';
 
         final options = <String, dynamic>{
           'key': 'rzp_test_Tm9BKNGeBE7GAx',
           'amount': (price * 100).round(),
+          'currency': 'INR',
           'name': 'CarQConnect',
           'description': '$planName Subscription ($tenure)',
-          'prefill': {
-            'contact': prefillPhone,
-            'email': prefillEmail,
-          },
+          'theme': {'color': '#16393F'},
+          if (prefillPhone.isNotEmpty || prefillEmail.isNotEmpty)
+            'prefill': {
+              if (prefillPhone.isNotEmpty) 'contact': prefillPhone,
+              if (prefillEmail.isNotEmpty) 'email': prefillEmail,
+            },
           'external': {
             'wallets': ['paytm']
           }
@@ -862,29 +850,13 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
       }
     }
 
-    // Direct fallback simulation for testing without active Razorpay keys
-    await Globals.saveCurrentPlan(planName, planId);
-    _syncPlansWithCurrentPlan(planId);
-
-    try {
-      await http.post(
-        ApiConfig.uri('/subscriptions/activate'),
-        headers: {
-          if (Globals.accessToken.isNotEmpty)
-            'Authorization': 'Bearer ${Globals.accessToken}',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'planId': planId,
-          'planName': planName,
-          'tenure': tenure,
-        }),
-      ).timeout(const Duration(seconds: 5));
-    } catch (_) {}
-
     if (!mounted) return;
-    _showSuccessSnackBar('CarQConnect $planName ($tenure) activated successfully!');
-    _fetchPlans();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Payment gateway is currently unavailable. Please try again.'),
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
@@ -894,37 +866,25 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
 
     await Globals.saveCurrentPlan(planName, planId);
     _syncPlansWithCurrentPlan(planId);
+    ScreenRefreshService.notifyRefreshed();
 
     try {
-      final res = await http.post(
-        ApiConfig.uri('/subscriptions/verify-payment'),
-        headers: {
-          if (Globals.accessToken.isNotEmpty)
-            'Authorization': 'Bearer ${Globals.accessToken}',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
+      await AuthStorageService.authenticatedPost(
+        '/subscriptions/verify-payment',
+        {
           'razorpay_order_id': response.orderId ?? '',
           'razorpay_payment_id': response.paymentId ?? '',
           'razorpay_signature': response.signature ?? '',
           'planId': planId,
           'planName': planName,
-        }),
+        },
       ).timeout(const Duration(seconds: 8));
 
-      if (res.statusCode == 200) {
-        if (!mounted) return;
-        _showSuccessSnackBar(
-          'CarQConnect $planName activated successfully!',
-        );
-        _fetchPlans();
-      } else {
-        if (!mounted) return;
-        _showSuccessSnackBar(
-          'CarQConnect $planName activated successfully!',
-        );
-        _fetchPlans();
-      }
+      if (!mounted) return;
+      _showSuccessSnackBar(
+        'CarQConnect $planName activated successfully!',
+      );
+      _fetchPlans();
     } catch (e) {
       debugPrint('Payment verification error: $e');
     }

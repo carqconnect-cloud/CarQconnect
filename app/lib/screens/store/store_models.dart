@@ -154,13 +154,7 @@ class CartManager extends ChangeNotifier {
       }
     }
 
-    final code = _appliedCoupon!.toUpperCase();
-    if (code.contains('50')) {
-      return subtotal > 50 ? 50 : subtotal;
-    } else {
-      final calculated = (subtotal * 0.10).round();
-      return calculated > 250 ? 250 : calculated;
-    }
+    return 0;
   }
 
   int get totalPayable {

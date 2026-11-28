@@ -71,8 +71,8 @@ class _SosCallingScreenState extends State<SosCallingScreen>
     );
   }
 
-  double get _lat => widget.latitude ?? 22.7196;
-  double get _lng => widget.longitude ?? 75.8577;
+  double get _lat => widget.latitude ?? 20.5937;
+  double get _lng => widget.longitude ?? 78.9629;
   String get _mapsUrl =>
       'https://mappls.com/navigation?places=${_lat.toStringAsFixed(6)},${_lng.toStringAsFixed(6)}&isNav=true&mode=driving';
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/api_config.dart';
 import 'active_qr_tag_screen.dart';
+import 'qr_code_widget.dart';
 import '../../widgets/animated_back_arrow.dart';
 
 /// Screen: QR Activated Successfully! matching Image 2
@@ -13,9 +15,9 @@ class QrActivatedScreen extends StatelessWidget {
   const QrActivatedScreen({
     super.key,
     required this.vehicleId,
-    this.tagId = 'FN78451236',
-    this.vehicleName = 'Tata Nexon',
-    this.vehicleReg = 'MH 12 AB 4521',
+    this.tagId = '',
+    this.vehicleName = '',
+    this.vehicleReg = '',
   });
 
   void _onViewQrTag(BuildContext context) {
@@ -224,81 +226,25 @@ class QrActivatedScreen extends StatelessWidget {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.shield_outlined,
-                                          size: 15,
-                                          color: isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF),
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          'SMART SAFETY TAG',
-                                          style: TextStyle(
-                                            color: isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF),
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 1.5,
-                                          ),
-                                        ),
-                                      ],
+                                    // Title matching Image 1: SMART SAFETY
+                                    Text(
+                                      'SMART SAFETY',
+                                      style: TextStyle(
+                                        color: isLight
+                                            ? const Color(0xFF64748B)
+                                            : const Color(0xFF8FA2B7),
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 1.5,
+                                      ),
                                     ),
                                     const SizedBox(height: 18),
-                                    Container(
-                                      width: double.infinity,
-                                      constraints: const BoxConstraints(maxWidth: 240),
-                                      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 18),
-                                      decoration: BoxDecoration(
-                                        color: isLight ? const Color(0xFFF8FAFC) : const Color(0xFF0F1726),
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                          color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D42),
-                                          width: 1.5,
-                                        ),
-                                      ),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            width: 58,
-                                            height: 58,
-                                            decoration: BoxDecoration(
-                                              color: (isLight ? AppTheme.primaryBlue : const Color(0xFF00C2FF))
-                                                  .withValues(alpha: 0.12),
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Center(
-                                              child: Icon(
-                                                Icons.verified_user_rounded,
-                                                color: isLight ? AppTheme.primaryBlue : const Color(0xFF00C2FF),
-                                                size: 30,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 12),
-                                          Text(
-                                            'Tag Activated',
-                                            style: TextStyle(
-                                              color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                                              fontSize: 15.5,
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: 0.2,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            'Paste physical sticker on\nvehicle windshield',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
-                                              fontSize: 12,
-                                              height: 1.35,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                    // Blurred QR Code matching Image 1
+                                    QrCodeWidget(
+                                      size: 215,
+                                      data: ApiConfig.getQrScanUrl(tagId),
+                                      isEncrypted: true,
+                                      lockMessage: 'Purchase the physical\nQR tag to view your code',
                                     ),
                                     const SizedBox(height: 18),
                                     Row(

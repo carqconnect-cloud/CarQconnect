@@ -8,6 +8,7 @@ import '../../utils/api_config.dart';
 import '../../theme/app_theme.dart';
 import '../../loading.dart';
 import '../../services/screen_refresh_service.dart';
+import '../../utils/app_validators.dart';
 
 import 'package:flutter/material.dart';
 
@@ -463,27 +464,21 @@ class _AddDocumentsScreenState extends State<AddDocumentsScreen>
 
                     // Dashed Box: Upload from Gallery
                     InkWell(
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: isLight
-                                ? const Color(0xFF0F172A)
-                                : const Color(0xFF101726),
-                            content: const Text(
-                              'Opening file picker for PDF, JPG, PNG...',
-                              style: TextStyle(color: Colors.white),
+                      onTap: () async {
+                        try {
+                          final picked = await ImagePicker().pickImage(
+                            source: ImageSource.gallery,
+                          );
+                          if (!mounted || picked == null) return;
+                          _navigateToForm('Registration Certificate (RC)');
+                        } catch (_) {
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Unable to open file/gallery picker.'),
                             ),
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        );
-                        Future.delayed(const Duration(milliseconds: 600), () {
-                          if (mounted) {
-                            _navigateToForm('Registration Certificate (RC)');
-                          }
-                        });
+                          );
+                        }
                       },
                       borderRadius: BorderRadius.circular(16),
                       child: CustomPaint(
@@ -764,13 +759,14 @@ class _AddRCScreenState extends State<AddRCScreen> {
   }
 
   Future<void> _saveDocument() async {
-    if (_regNumberController.text.trim().isEmpty) {
+    final regErr = AppValidators.validateVehicleNumber(_regNumberController.text);
+    if (regErr != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: const Color(0xFF2D1214),
-          content: const Text(
-            'Please enter a valid Registration Number',
-            style: TextStyle(color: Color(0xFFFF5252)),
+          content: Text(
+            regErr,
+            style: const TextStyle(color: Color(0xFFFF5252)),
           ),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -1113,6 +1109,7 @@ class _AddRCScreenState extends State<AddRCScreen> {
                             ),
                             child: TextField(
                               controller: _regNumberController,
+                              inputFormatters: AppValidators.vehicleNumberFormatters,
                               style: TextStyle(
                                 color: isLight
                                     ? const Color(0xFF0F172A)
@@ -1135,24 +1132,8 @@ class _AddRCScreenState extends State<AddRCScreen> {
                                         : const Color(0xFF00C2FF),
                                     size: 22,
                                   ),
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: isLight
-                                            ? const Color(0xFF0F172A)
-                                            : const Color(0xFF101726),
-                                        content: const Text(
-                                          'Scanning registration card...',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                        behavior: SnackBarBehavior.floating,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                      ),
-                                    );
+                                  onPressed: () async {
+                                    await _pickAndUploadImage(true);
                                   },
                                 ),
                               ),
@@ -1223,7 +1204,7 @@ class _AddRCScreenState extends State<AddRCScreen> {
                           GestureDetector(
                             onTap: () => _pickDate(
                               _issueDateController,
-                              DateTime(2020, 1, 12),
+                              DateTime.now(),
                             ),
                             child: Container(
                               height: 50,
@@ -1285,7 +1266,7 @@ class _AddRCScreenState extends State<AddRCScreen> {
                           GestureDetector(
                             onTap: () => _pickDate(
                               _expiryDateController,
-                              DateTime(2030, 1, 12),
+                              DateTime.now().add(const Duration(days: 365)),
                             ),
                             child: Container(
                               height: 50,

@@ -2,18 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import '../screens/trip/trip_service.dart';
 
-/// Centralized Map & Tiles Configuration for CarQConnect
-/// Powers all FlutterMap instances across the app with official Mappls (MapmyIndia) map tiles
+/// Centralized Mappls (MapmyIndia) Tile Configuration for CarQConnect
 class MapConfig {
   /// Primary Mappls (MapmyIndia) Raster Map Tile URL Template
   static String get mapplsTileUrl =>
       'https://apis.mappls.com/advancedmaps/v1/${TripService.mapplsApiKey}/map/{z}/{x}/{y}.png';
 
-  /// Fallback tile URL (Official OpenStreetMap Standard - 100% Free, No Watermark, No API Key Required)
-  static const String fallbackOpenTileUrl =
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-
-  /// Subdomains for tile server fallback
+  /// Subdomains for tile server
   static const List<String> tileSubdomains = ['a', 'b', 'c'];
 
   /// High-contrast ColorFilter matrix for Dark Theme Maps
@@ -36,22 +31,22 @@ class MapConfig {
     );
   }
 
-  /// Reusable TileLayer using Mappls (MapmyIndia) primary tiles
+  /// Reusable TileLayer strictly using Mappls (MapmyIndia) tiles (no OpenStreetMap fallback)
   static TileLayer buildTileLayer({
     String userAgentPackageName = 'com.carqconnect.app',
     double maxZoom = 20.0,
     int maxNativeZoom = 19,
     bool isDark = false,
-    bool enableFallback = true,
+    bool enableFallback = false,
     TileBuilder? tileBuilder,
   }) {
     return TileLayer(
       urlTemplate: mapplsTileUrl,
-      fallbackUrl: enableFallback ? fallbackOpenTileUrl : null,
       subdomains: tileSubdomains,
       userAgentPackageName: userAgentPackageName,
       maxZoom: maxZoom,
       maxNativeZoom: maxNativeZoom,
+      errorTileCallback: (tile, error, stackTrace) {},
       tileBuilder: tileBuilder ??
           (isDark
               ? (context, tileWidget, tile) => ColorFiltered(

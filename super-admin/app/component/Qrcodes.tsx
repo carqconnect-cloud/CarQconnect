@@ -375,7 +375,7 @@ export function qrColumns() {
 ========================================================================= */
 export function printSingleQr(code: string, vehicleReg?: string, ownerName?: string) {
   const QR_API = 'https://api.qrserver.com/v1/create-qr-code';
-  const url = encodeURIComponent(`https://fioner.in/scan/${code}`);
+  const url = encodeURIComponent(`https://car-qconnect.vercel.app/scan/${code}`);
   const printHtml = `<!DOCTYPE html><html><head><title>Print QR Tag — ${escapeHtml(code)}</title>
   <style>
     @media print{@page{size:3in 4in;margin:5mm;}body{margin:0;}}
@@ -421,7 +421,7 @@ export function printOwnerQrs(ownerKey: string) {
   const QR_API = 'https://api.qrserver.com/v1/create-qr-code';
   const cards = g.qrs
     .map((q: any) => {
-      const url = encodeURIComponent(`https://fioner.in/scan/${q.code}`);
+      const url = encodeURIComponent(`https://car-qconnect.vercel.app/scan/${q.code}`);
       return `
       <div style="display:inline-block;border:2px solid #000;border-radius:10px;padding:12px;margin:8px;text-align:center;width:150px;vertical-align:top;page-break-inside:avoid;">
         <div style="font-weight:bold;font-size:11px;letter-spacing:0.5px;margin-bottom:6px;">FIONER QR RAKSHAK</div>
@@ -467,7 +467,7 @@ export function openPrintQrModal() {
   const QR_API = 'https://api.qrserver.com/v1/create-qr-code';
   const cards = codes
     .map((q: any) => {
-      const url = encodeURIComponent(`https://fioner.in/scan/${q.code}`);
+      const url = encodeURIComponent(`https://car-qconnect.vercel.app/scan/${q.code}`);
       return `
       <div style="display:inline-block;border:1px solid #ddd;border-radius:8px;padding:10px;margin:6px;text-align:center;width:130px;vertical-align:top;page-break-inside:avoid;">
         <img src="${QR_API}/?size=110x110&data=${url}&color=1a1a2e&bgcolor=ffffff" width="110" height="110" alt="${escapeHtml(

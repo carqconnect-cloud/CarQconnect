@@ -4,132 +4,98 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:latlong2/latlong.dart' as ll;
 import 'package:mappls_gl/mappls_gl.dart' as mappls;
 import 'navigation_intro_controller.dart';
 
 /// Marker Icon Utility to render sharp hardware bitmaps for Mappls Native Vector Map
 class MapplsMarkerHelper {
+  static Uint8List? _cachedCarBytes;
+
   static Future<Uint8List> createCarMarkerBytes({
-    double size = 56.0,
+    double size = 96.0,
     Color carColor = const Color(0xFF0091FF),
   }) async {
-    final recorder = ui.PictureRecorder();
-    final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, size, size));
-    final center = Offset(size / 2, size / 2);
+    if (_cachedCarBytes != null) return _cachedCarBytes!;
 
-    // 1. Forward Headlight Beams Glow
-    final beamPaint = Paint()
-      ..shader = ui.Gradient.radial(
-        Offset(center.dx, center.dy - 12),
-        size * 0.45,
-        [
-          const Color(0xFFFFF9C4).withValues(alpha: 0.5),
-          const Color(0xFFFFF9C4).withValues(alpha: 0.0),
-        ],
+    try {
+      final raw = await rootBundle.load('assets/images/car_scan_frame_0.png');
+      final codec = await ui.instantiateImageCodec(
+        raw.buffer.asUint8List(),
+        targetHeight: (size * 0.78).round(),
       );
-    final beamPath = Path()
-      ..moveTo(center.dx - 8, center.dy - 12)
-      ..lineTo(center.dx - 18, 2)
-      ..lineTo(center.dx + 18, 2)
-      ..lineTo(center.dx + 8, center.dy - 12)
-      ..close();
-    canvas.drawPath(beamPath, beamPaint);
+      final frame = await codec.getNextFrame();
+      final carImg = frame.image;
 
-    // 2. Drop Shadow
-    final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.35)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5.0);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(center: center + const Offset(0, 3), width: 22, height: 42),
-        const Radius.circular(8),
-      ),
-      shadowPaint,
-    );
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, size, size));
+      final center = Offset(size / 2, size / 2);
 
-    // 3. Car Body Chassis (Sporty Blue Sedan)
-    final bodyPaint = Paint()..color = carColor;
-    final bodyRect = Rect.fromCenter(center: center, width: 22, height: 42);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(bodyRect, const Radius.circular(7)),
-      bodyPaint,
-    );
+      // Soft forward LED headlight glow cone
+      final beamPaint = Paint()
+        ..shader = ui.Gradient.radial(
+          Offset(center.dx, center.dy - size * 0.16),
+          size * 0.44,
+          [
+            const Color(0xFF38BDF8).withValues(alpha: 0.42),
+            const Color(0xFF38BDF8).withValues(alpha: 0.0),
+          ],
+        );
+      canvas.drawCircle(Offset(center.dx, center.dy - size * 0.14), size * 0.36, beamPaint);
 
-    // 4. White accent border around car
-    final borderPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(bodyRect, const Radius.circular(7)),
-      borderPaint,
-    );
+      // Subtle ground contact oval under vehicle
+      final shadowPaint = Paint()
+        ..color = Colors.black.withValues(alpha: 0.35)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5.0);
+      canvas.drawOval(
+        Rect.fromCenter(
+          center: Offset(center.dx, center.dy + 2),
+          width: carImg.width * 0.92,
+          height: carImg.height * 0.95,
+        ),
+        shadowPaint,
+      );
 
-    // 5. Front Windshield (Dark Tinted Glass)
-    final glassPaint = Paint()..color = const Color(0xFF0F172A);
-    final windshield = Path()
-      ..moveTo(center.dx - 8, center.dy - 7)
-      ..lineTo(center.dx + 8, center.dy - 7)
-      ..lineTo(center.dx + 6.5, center.dy - 1)
-      ..lineTo(center.dx - 6.5, center.dy - 1)
-      ..close();
-    canvas.drawPath(windshield, glassPaint);
+      final dstRect = Rect.fromCenter(
+        center: center,
+        width: carImg.width.toDouble(),
+        height: carImg.height.toDouble(),
+      );
+      canvas.drawImageRect(
+        carImg,
+        Rect.fromLTWH(0, 0, carImg.width.toDouble(), carImg.height.toDouble()),
+        dstRect,
+        Paint()..filterQuality = FilterQuality.high,
+      );
 
-    // 6. Rear Windshield
-    final rearWindow = Path()
-      ..moveTo(center.dx - 6.5, center.dy + 8)
-      ..lineTo(center.dx + 6.5, center.dy + 8)
-      ..lineTo(center.dx + 8, center.dy + 14)
-      ..lineTo(center.dx - 8, center.dy + 14)
-      ..close();
-    canvas.drawPath(rearWindow, glassPaint);
-
-    // 7. Roof panel
-    final roofPaint = Paint()..color = carColor.withValues(alpha: 0.85);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(center: center + const Offset(0, 3.5), width: 14, height: 10),
-        const Radius.circular(2),
-      ),
-      roofPaint,
-    );
-
-    // 8. Front Headlights (Bright White/Yellow)
-    final lightPaint = Paint()..color = const Color(0xFFFFF9C4);
-    canvas.drawCircle(Offset(center.dx - 7.5, center.dy - 19), 2.2, lightPaint);
-    canvas.drawCircle(Offset(center.dx + 7.5, center.dy - 19), 2.2, lightPaint);
-
-    // 9. Rear Tail Lights (Bright Red)
-    final tailPaint = Paint()..color = const Color(0xFFEF4444);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(center.dx - 7.5, center.dy + 20), width: 4, height: 2),
-        const Radius.circular(1),
-      ),
-      tailPaint,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(center.dx + 7.5, center.dy + 20), width: 4, height: 2),
-        const Radius.circular(1),
-      ),
-      tailPaint,
-    );
-
-    // 10. Front Direction Pointer Triangle (Arrow)
-    final arrowPaint = Paint()..color = Colors.white;
-    final arrowPath = Path()
-      ..moveTo(center.dx, center.dy - 23)
-      ..lineTo(center.dx - 4, center.dy - 19)
-      ..lineTo(center.dx + 4, center.dy - 19)
-      ..close();
-    canvas.drawPath(arrowPath, arrowPaint);
-
-    final picture = recorder.endRecording();
-    final img = await picture.toImage(size.toInt(), size.toInt());
-    final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
-    return byteData!.buffer.asUint8List();
+      final picture = recorder.endRecording();
+      final img = await picture.toImage(size.toInt(), size.toInt());
+      final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+      _cachedCarBytes = byteData!.buffer.asUint8List();
+      return _cachedCarBytes!;
+    } catch (_) {
+      // Vector fallback if bundle asset cannot be decoded
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, size, size));
+      final center = Offset(size / 2, size / 2);
+      final bodyRect = Rect.fromCenter(center: center, width: 22, height: 42);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(bodyRect, const Radius.circular(8)),
+        Paint()..color = carColor,
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(bodyRect, const Radius.circular(8)),
+        Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.6,
+      );
+      final picture = recorder.endRecording();
+      final img = await picture.toImage(size.toInt(), size.toInt());
+      final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+      return byteData!.buffer.asUint8List();
+    }
   }
 
   static Future<Uint8List> createBikeMarkerBytes({
@@ -399,10 +365,18 @@ class _MapplsNativeMapState extends State<MapplsNativeMap> {
     super.dispose();
   }
 
+  Future<void> _applyMapplsThemeStyle() async {
+    // Theme style is bound via mapplsStyle on MapplsMap initialization
+  }
+
   @override
   void didUpdateWidget(covariant MapplsNativeMap oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!_styleLoaded || _controller == null) return;
+
+    if (oldWidget.isDark != widget.isDark) {
+      _applyMapplsThemeStyle();
+    }
 
     final routeChanged = !listEquals(oldWidget.routePoints, widget.routePoints) ||
         oldWidget.startLocation != widget.startLocation ||
@@ -421,6 +395,17 @@ class _MapplsNativeMapState extends State<MapplsNativeMap> {
       } else {
         _updateVehiclePosition();
       }
+    } else if (!widget.interactive &&
+        oldWidget.initialCenter != widget.initialCenter &&
+        widget.initialCenter.latitude != 0.0) {
+      try {
+        _controller!.animateCamera(
+          mappls.CameraUpdate.newLatLngZoom(
+            mappls.LatLng(widget.initialCenter.latitude, widget.initialCenter.longitude),
+            widget.initialZoom,
+          ),
+        );
+      } catch (_) {}
     }
     if (widget.isNavigationMode && oldWidget.isTwoWheeler != widget.isTwoWheeler) {
       final pos = widget.currentLocation ?? widget.startLocation ?? widget.initialCenter;
@@ -720,6 +705,7 @@ class _MapplsNativeMapState extends State<MapplsNativeMap> {
               right: 0,
               bottom: -56, // Offsets native Mappls logo watermark & (i) attribution off-screen below the viewport
               child: mappls.MapplsMap(
+                mapplsStyle: widget.isDark ? 'standard_night' : 'standard_day',
                 initialCameraPosition: mappls.CameraPosition(
                   target: mappls.LatLng(
                     widget.initialCenter.latitude,
@@ -734,8 +720,12 @@ class _MapplsNativeMapState extends State<MapplsNativeMap> {
                   }
                   widget.onMapCreated?.call(controller);
                 },
+                onMapError: (code, message) {
+                  debugPrint('[MapplsNativeMap] Map error ($code): $message');
+                },
                 onStyleLoadedCallback: () {
                   _styleLoaded = true;
+                  _applyMapplsThemeStyle();
                   _syncLayers();
                   if (widget.isNavigationMode) {
                     final start = widget.currentLocation ??

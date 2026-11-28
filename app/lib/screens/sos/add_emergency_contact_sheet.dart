@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_toggle_switch.dart';
+import '../../utils/app_validators.dart';
 
 class SosContactModel {
   final String id;
@@ -91,26 +92,28 @@ class _AddEmergencyContactSheetState extends State<AddEmergencyContactSheet> {
     final name = _nameController.text.trim();
     final phone = _phoneController.text.trim();
 
-    if (name.isEmpty) {
+    final nameErr = AppValidators.validateName(name, label: 'Contact name');
+    if (nameErr != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFF2A1215),
+        SnackBar(
+          backgroundColor: const Color(0xFF2A1215),
           content: Text(
-            'Please enter contact name',
-            style: TextStyle(color: Color(0xFFFF5252)),
+            nameErr,
+            style: const TextStyle(color: Color(0xFFFF5252)),
           ),
         ),
       );
       return;
     }
 
-    if (phone.isEmpty) {
+    final phoneErr = AppValidators.validatePhone(phone);
+    if (phoneErr != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFF2A1215),
+        SnackBar(
+          backgroundColor: const Color(0xFF2A1215),
           content: Text(
-            'Please enter phone number',
-            style: TextStyle(color: Color(0xFFFF5252)),
+            phoneErr,
+            style: const TextStyle(color: Color(0xFFFF5252)),
           ),
         ),
       );
@@ -206,6 +209,7 @@ class _AddEmergencyContactSheetState extends State<AddEmergencyContactSheet> {
                 padding: const EdgeInsets.symmetric(horizontal: 14),
                 child: TextField(
                   controller: _nameController,
+                  inputFormatters: AppValidators.nameFormatters,
                   style: TextStyle(
                     color: isLight ? const Color(0xFF0F172A) : Colors.white,
                     fontSize: 14.5,
@@ -248,6 +252,7 @@ class _AddEmergencyContactSheetState extends State<AddEmergencyContactSheet> {
                 child: TextField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
+                  inputFormatters: AppValidators.phoneFormatters,
                   style: TextStyle(
                     color: isLight ? const Color(0xFF0F172A) : Colors.white,
                     fontSize: 14.5,

@@ -17,7 +17,7 @@ class ReminderAddedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final alertsText = reminder.notifications.isNotEmpty
         ? reminder.notifications.join(', ')
-        : '7 days, 3 days, on due date';
+        : 'On due date';
 
     return ValueListenableBuilder<bool>(
       valueListenable: AppTheme.isLightNotifier,

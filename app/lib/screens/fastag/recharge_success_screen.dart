@@ -16,9 +16,10 @@ class RechargeSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double newBalance = account.balance + amount + 360.75;
-    const String transactionId = '#FTG728374';
-    const String dateTimeStr = '12 Sep 2026, 10:42 AM';
+    final double newBalance = account.balance + amount;
+    final String transactionId = '#FTG${DateTime.now().millisecondsSinceEpoch % 1000000}';
+    final now = DateTime.now();
+    final String dateTimeStr = '${now.day}/${now.month}/${now.year}';
 
     return ValueListenableBuilder<bool>(
       valueListenable: AppTheme.isLightNotifier,
@@ -214,14 +215,12 @@ class RechargeSuccessScreen extends StatelessWidget {
                                 final tx = FastagTransaction(
                                   id: 'tx_new',
                                   title: 'Recharge',
-                                  subtitle: '12 Sep, 10:42 AM • UPI',
+                                  subtitle: 'Recharge • UPI',
                                   amount: amount.toDouble(),
                                   isDebit: false,
                                   timestamp: dateTimeStr,
                                   tollPlaza: 'N/A',
-                                  vehicleNumber: account.vehicleNumber.isNotEmpty
-                                      ? account.vehicleNumber
-                                      : 'MP 09 CZ 1111',
+                                  vehicleNumber: account.vehicleNumber,
                                   transactionId: transactionId.replaceFirst('#', ''),
                                   paymentMethod: 'UPI',
                                   status: 'Successful',

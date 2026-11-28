@@ -3,8 +3,13 @@ import '../../theme/app_theme.dart';
 
 class VehicleLiveDataScreen extends StatelessWidget {
   final Function(int index)? onNavigateTab;
+  final bool isObdConnected;
 
-  const VehicleLiveDataScreen({super.key, this.onNavigateTab});
+  const VehicleLiveDataScreen({
+    super.key,
+    this.onNavigateTab,
+    this.isObdConnected = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +29,7 @@ class VehicleLiveDataScreen extends StatelessWidget {
                     child: _buildSensorCard(
                       isLight: isLight,
                       icon: Icons.tune_rounded,
-                      value: '850',
+                      value: '—',
                       unit: 'RPM',
                     ),
                   ),
@@ -33,7 +38,7 @@ class VehicleLiveDataScreen extends StatelessWidget {
                     child: _buildSensorCard(
                       isLight: isLight,
                       icon: Icons.speed_rounded,
-                      value: '0',
+                      value: '—',
                       unit: 'Speed',
                     ),
                   ),
@@ -42,7 +47,7 @@ class VehicleLiveDataScreen extends StatelessWidget {
                     child: _buildSensorCard(
                       isLight: isLight,
                       icon: Icons.thermostat_outlined,
-                      value: '92°C',
+                      value: '—',
                       unit: 'Engine Temp',
                     ),
                   ),
@@ -55,7 +60,7 @@ class VehicleLiveDataScreen extends StatelessWidget {
                     child: _buildSensorCard(
                       isLight: isLight,
                       icon: Icons.battery_charging_full_rounded,
-                      value: '12.4 V',
+                      value: '—',
                       unit: 'Battery Voltage',
                     ),
                   ),
@@ -64,7 +69,7 @@ class VehicleLiveDataScreen extends StatelessWidget {
                     child: _buildSensorCard(
                       isLight: isLight,
                       icon: Icons.science_outlined,
-                      value: '36%',
+                      value: '—',
                       unit: 'Fuel Level',
                     ),
                   ),
@@ -73,7 +78,7 @@ class VehicleLiveDataScreen extends StatelessWidget {
                     child: _buildSensorCard(
                       isLight: isLight,
                       icon: Icons.bolt_rounded,
-                      value: '6.8',
+                      value: '—',
                       unit: 'L/100km\nFuel Economy',
                     ),
                   ),
@@ -86,12 +91,8 @@ class VehicleLiveDataScreen extends StatelessWidget {
                 isLight: isLight,
                 title: 'Engine RPM',
                 yLabels: const ['6K', '4K', '2K', '0'],
-                xLabels: const ['09:36', '09:37', '09:38', '09:39', '09:40'],
-                dataPoints: const [
-                  0.35, 0.55, 0.42, 0.70, 0.65, 0.40, 0.47, 0.28, 0.42, 0.25,
-                  0.50, 0.32, 0.20, 0.35, 0.27, 0.52, 0.54, 0.38, 0.44, 0.30,
-                  0.45, 0.38,
-                ],
+                xLabels: const [],
+                dataPoints: const [],
                 lineColor: const Color(0xFFFFA000),
                 fillColor: const Color(0xFFFFA000),
               ),
@@ -102,11 +103,8 @@ class VehicleLiveDataScreen extends StatelessWidget {
                 isLight: isLight,
                 title: 'Coolant Temperature',
                 yLabels: const ['120°', '90°', '60°', '30°'],
-                xLabels: const ['09:36', '09:37', '09:38', '09:39', '09:40'],
-                dataPoints: const [
-                  0.33, 0.45, 0.48, 0.68, 0.70, 0.55, 0.48, 0.40, 0.46, 0.49,
-                  0.44, 0.53, 0.52, 0.58, 0.69, 0.62,
-                ],
+                xLabels: const [],
+                dataPoints: const [],
                 lineColor: const Color(0xFF0066FF),
                 fillColor: const Color(0xFF0066FF),
               ),
@@ -208,90 +206,104 @@ class VehicleLiveDataScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Row(
-                children: [
-                  Text(
-                    'Last 5 minutes',
-                    style: TextStyle(
-                      color: isLight ? const Color(0xFF64748B) : const Color(0xFF64748B),
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: isLight ? const Color(0xFF64748B) : const Color(0xFF64748B),
-                    size: 16,
-                  ),
-                ],
+              Text(
+                dataPoints.isEmpty ? 'No OBD stream' : 'Live',
+                style: const TextStyle(
+                  color: Color(0xFF64748B),
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 16),
 
-          // Chart with Y-axis + canvas + X-axis
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Y-Axis Labels
-              SizedBox(
-                width: 32,
-                height: 120,
-                child: Column(
+          if (dataPoints.isEmpty)
+            Container(
+              height: 120,
+              width: double.infinity,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: isLight ? const Color(0xFFF8FAFC) : const Color(0xFF070B18),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D4A),
+                ),
+              ),
+              child: Text(
+                'Connect an OBD-II device to view live $title telemetry',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: isLight ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
+                  fontSize: 12.5,
+                ),
+              ),
+            )
+          else ...[
+            // Chart with Y-axis + canvas + X-axis
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Y-Axis Labels
+                SizedBox(
+                  width: 32,
+                  height: 120,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: yLabels
+                        .map(
+                          (l) => Text(
+                            l,
+                            style: const TextStyle(
+                              color: Color(0xFF64748B),
+                              fontSize: 11,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+                const SizedBox(width: 8),
+
+                // Chart Area
+                Expanded(
+                  child: SizedBox(
+                    height: 120,
+                    child: CustomPaint(
+                      painter: _SmoothSplineChartPainter(
+                        data: dataPoints,
+                        lineColor: lineColor,
+                        fillColor: fillColor,
+                        gridCount: yLabels.length - 1,
+                        isLight: isLight,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            // X-Axis Labels
+            if (xLabels.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(left: 40),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: yLabels
+                  children: xLabels
                       .map(
-                        (l) => Text(
-                          l,
-                          style: TextStyle(
-                            color: isLight ? const Color(0xFF64748B) : const Color(0xFF64748B),
-                            fontSize: 11,
+                        (t) => Text(
+                          t,
+                          style: const TextStyle(
+                            color: Color(0xFF64748B),
+                            fontSize: 10.5,
                           ),
                         ),
                       )
                       .toList(),
                 ),
               ),
-              const SizedBox(width: 8),
-
-              // Chart Area
-              Expanded(
-                child: SizedBox(
-                  height: 120,
-                  child: CustomPaint(
-                    painter: _SmoothSplineChartPainter(
-                      data: dataPoints,
-                      lineColor: lineColor,
-                      fillColor: fillColor,
-                      gridCount: yLabels.length - 1,
-                      isLight: isLight,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // X-Axis Labels
-          Padding(
-            padding: const EdgeInsets.only(left: 40),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: xLabels
-                  .map(
-                    (t) => Text(
-                      t,
-                      style: TextStyle(
-                        color: isLight ? const Color(0xFF64748B) : const Color(0xFF64748B),
-                        fontSize: 10.5,
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
+          ],
         ],
       ),
     );

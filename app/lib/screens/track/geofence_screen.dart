@@ -44,7 +44,7 @@ class _GeofenceScreenState extends State<GeofenceScreen>
     super.initState();
     _mapController = MapController();
     _currentPos =
-        widget.initialPosition ?? const LatLng(22.7533, 75.8937); // Vijay Nagar
+        widget.initialPosition ?? const LatLng(20.5937, 78.9629);
     _loadGeofences();
   }
 

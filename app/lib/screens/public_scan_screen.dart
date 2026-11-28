@@ -7,6 +7,7 @@ import '../utils/url_launcher.dart' as launcher;
 import '../utils/api_config.dart';
 import '../theme/app_theme.dart';
 import '../loading.dart';
+import '../globals.dart';
 import '../services/screen_refresh_service.dart';
 
 class PublicScanScreen extends StatefulWidget {
@@ -666,7 +667,7 @@ class _PublicScanScreenState extends State<PublicScanScreen>
   }
 
   Future<void> _showSupportDialog() async {
-    final supportPhone = _data?['supportPhone'] ?? '09513886363';
+    final supportPhone = _data?['supportPhone'] ?? (Globals.phone.isNotEmpty ? Globals.phone : '');
     final isLight = AppTheme.isLight;
     final primaryBlue = isLight
         ? AppTheme.primaryBlue

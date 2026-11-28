@@ -743,16 +743,16 @@ class _SosScreenState extends State<SosScreen>
       }
     } catch (_) {}
 
-    // Method 4: Dynamic Realistic Calculation fallback
+    // Unable to locate real nearby hospital from live lookup
     if (mounted) {
       setState(() {
-        _hospitalName = 'Emergency Medical Center';
-        _hospitalDistance = '1.8 km';
-        _hospitalTravelTime = '5 mins';
-        _hospitalAddress = 'City Trauma Care & Emergency Dept';
+        _hospitalName = 'Hospital lookup unavailable';
+        _hospitalDistance = '—';
+        _hospitalTravelTime = '—';
+        _hospitalAddress = 'Tap Call 108 for emergency ambulance assistance';
         _hospitalPhone = '108';
-        _hospitalLat = lat + 0.012;
-        _hospitalLng = lng + 0.012;
+        _hospitalLat = null;
+        _hospitalLng = null;
         _isLoadingHospital = false;
       });
     }
@@ -949,9 +949,10 @@ class _SosScreenState extends State<SosScreen>
     }
 
     final phoneToDial = contactToCall?.phone ?? '112';
-    final targetName = contactToCall?.name ?? 'Primary Contact';
-    final mapsUrl =
-        'https://maps.google.com/?q=${(_latitude ?? 22.7196).toStringAsFixed(6)},${(_longitude ?? 75.8577).toStringAsFixed(6)}';
+    final targetName = contactToCall?.name ?? 'Emergency Helpline';
+    final mapsUrl = (_latitude != null && _longitude != null)
+        ? 'https://mappls.com/?q=${_latitude!.toStringAsFixed(6)},${_longitude!.toStringAsFixed(6)}'
+        : '';
 
     setState(() {
       _isHolding = false;
@@ -1803,7 +1804,7 @@ class _SosScreenState extends State<SosScreen>
                       _hospitalName.isNotEmpty &&
                               !_hospitalName.startsWith('Searching')
                           ? _hospitalName
-                          : 'HealthCare Hospital, Indore',
+                          : 'Nearby Medical Center',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 15,
@@ -1830,7 +1831,7 @@ class _SosScreenState extends State<SosScreen>
                             _hospitalAddress.isNotEmpty &&
                                     !_hospitalAddress.startsWith('Locating')
                                 ? _hospitalAddress
-                                : 'Scheme No. 54, Vijay Nagar, Indore, MP 452010',
+                                : 'Tap Call 108 or retry GPS location',
                             style: const TextStyle(
                               color: Colors.white70,
                               fontSize: 11.5,

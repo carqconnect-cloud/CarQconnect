@@ -54,8 +54,8 @@ class _SelectReminderTypeScreenState extends State<SelectReminderTypeScreen> {
 
                     // Vehicle Selector Card
                     VehicleSelectorCard(
-                      vehicleName: Globals.vehicleModel.isNotEmpty ? Globals.vehicleModel : 'Vehicle Model',
-                      vehicleNumber: Globals.vehicleRegistration.isNotEmpty ? Globals.vehicleRegistration : 'XX 00 XX 0000',
+                      vehicleName: Globals.vehicleModel,
+                      vehicleNumber: Globals.vehicleRegistration,
                     ),
 
                     const SizedBox(height: 22),

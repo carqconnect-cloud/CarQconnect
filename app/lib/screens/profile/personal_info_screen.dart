@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../globals.dart';
 import '../../utils/api_config.dart';
-import '../../utils/app_icons.dart';
+import '../../utils/app_validators.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/animated_back_arrow.dart';
 
@@ -175,7 +175,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
-      initialDate: DateTime(1995, 6, 15),
+      initialDate: DateTime(now.year - 25, now.month, now.day),
       firstDate: DateTime(1950),
       lastDate: now,
       builder: (context, child) {
@@ -488,6 +488,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           _buildTextField(
                             controller: _nameController,
                             hintText: 'Enter your full name',
+                            inputFormatters: AppValidators.nameFormatters,
                             isLight: isLight,
                           ),
 
@@ -511,6 +512,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                             child: TextField(
                               controller: _phoneController,
                               keyboardType: TextInputType.phone,
+                              inputFormatters: AppValidators.phoneFormatters,
                               style: TextStyle(
                                 color: isLight ? const Color(0xFF0F172A) : Colors.white,
                                 fontSize: 15,
@@ -561,30 +563,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          InkWell(
-                            onTap: () {},
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                AppIcons.svg(
-                                  AppIcons.refresh,
-                                  color: AppTheme.primaryColor,
-                                  width: 14,
-                                  height: 14,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  'Verify new number',
-                                  style: TextStyle(
-                                    color: AppTheme.primaryColor,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
 
                           const SizedBox(height: 20),
 
@@ -595,6 +573,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                             controller: _emailController,
                             hintText: 'Enter your email address',
                             keyboardType: TextInputType.emailAddress,
+                            inputFormatters: AppValidators.emailFormatters,
                             isLight: isLight,
                           ),
 
@@ -665,7 +644,37 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                       height: 52,
                       child: ElevatedButton(
                         onPressed: () async {
-                          final names = _nameController.text.trim().split(' ');
+                          final name = _nameController.text.trim();
+                          final phone = _phoneController.text.trim();
+                          final email = _emailController.text.trim();
+
+                          final nameErr = AppValidators.validateName(name, label: 'Full name');
+                          if (nameErr != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(nameErr), backgroundColor: Colors.redAccent),
+                            );
+                            return;
+                          }
+
+                          final phoneErr = AppValidators.validatePhone(phone);
+                          if (phoneErr != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(phoneErr), backgroundColor: Colors.redAccent),
+                            );
+                            return;
+                          }
+
+                          if (email.isNotEmpty) {
+                            final emailErr = AppValidators.validateEmail(email);
+                            if (emailErr != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(emailErr), backgroundColor: Colors.redAccent),
+                              );
+                              return;
+                            }
+                          }
+
+                          final names = name.split(' ');
                           Globals.firstName = names.isNotEmpty ? names.first : '';
                           Globals.lastName = names.length > 1 ? names.sublist(1).join(' ') : '';
                           Globals.phone = _phoneController.text.trim().startsWith('+91')
@@ -761,6 +770,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     required String hintText,
     required bool isLight,
     TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Container(
       height: 52,
@@ -777,6 +787,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         style: TextStyle(
           color: isLight ? const Color(0xFF0F172A) : Colors.white,
           fontSize: 15,

@@ -45,49 +45,6 @@ class _VehicleHistoryScreenState extends State<VehicleHistoryScreen>
       history[0]['location'] = widget.currentAddress!;
     }
 
-    if (history.isEmpty) {
-      history.addAll([
-        {
-          'title': 'Home',
-          'location': Globals.savedAddresses.isNotEmpty
-              ? (Globals.savedAddresses.first['address'] ??
-                    'Vijay Nagar, Indore')
-              : 'Vijay Nagar, Indore',
-          'time': '22 Sep 2024 • 10:30 PM',
-          'duration': '8h 12m',
-          'status': 'Currently Parked',
-        },
-        {
-          'title': 'Phoenix Citadel Mall',
-          'location': 'MR 10 Road, Indore, MP',
-          'time': '21 Sep 2024 • 02:15 PM',
-          'duration': '3h 48m',
-          'status': 'Completed',
-        },
-        {
-          'title': 'Office',
-          'location': 'MR-9, Scheme 54, Indore',
-          'time': '20 Sep 2024 • 09:05 AM',
-          'duration': '8h 20m',
-          'status': 'Completed',
-        },
-        {
-          'title': 'Rajwada Market',
-          'location': 'Rajwada, Indore, MP',
-          'time': '19 Sep 2024 • 04:20 PM',
-          'duration': '2h 12m',
-          'status': 'Completed',
-        },
-        {
-          'title': 'Airport',
-          'location': 'Devi Ahilyabai Holkar Airport, Indore',
-          'time': '18 Sep 2024 • 11:40 AM',
-          'duration': '4h 15m',
-          'status': 'Completed',
-        },
-      ]);
-    }
-
     if (mounted) {
       setState(() {
         _parkingHistory = history;

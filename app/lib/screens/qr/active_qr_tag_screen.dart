@@ -11,6 +11,9 @@ import 'dart:async';
 
 import 'set_contact_privacy_screen.dart';
 import 'select_vehicle_screen.dart';
+import 'qr_code_widget.dart';
+import 'my_qr_screen.dart';
+import '../profile/order_history_screen.dart';
 
 import 'dart:convert';
 
@@ -182,12 +185,8 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
             'order_id': orderData['id'],
             'description': 'Order E-tag for $displayName ($displayReg)',
             'prefill': {
-              'contact': Globals.phone.isNotEmpty
-                  ? Globals.phone
-                  : '9513886363',
-              'email': Globals.email.isNotEmpty
-                  ? Globals.email
-                  : 'customer@carqconnect.com',
+              'contact': Globals.phone,
+              'email': Globals.email,
             },
             'theme': {'color': '#0066FF'},
           };
@@ -200,15 +199,25 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
       } finally {
         if (mounted) setState(() => _isOrdering = false);
       }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not initiate Razorpay payment. Please try again.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+      return;
     }
 
-    // 2. Web & Fallback Checkout: Directly place order and show Order Confirmation
-    try {
-      await _simulateOrConfirmOrder(
-        paymentId: 'PAY_${DateTime.now().millisecondsSinceEpoch}',
+    // Web checkout not available for E-Tag direct native Razorpay
+    if (mounted) {
+      setState(() => _isOrdering = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please complete E-Tag payment on the mobile app.'),
+        ),
       );
-    } finally {
-      if (mounted) setState(() => _isOrdering = false);
     }
   }
 
@@ -232,9 +241,19 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
         amount: 199,
       );
 
-      final orderId = order?['id'] != null
-          ? '#${order!['id'].toString().substring(0, 8).toUpperCase()}'
-          : '#FN${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
+      if (order == null || order['id'] == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Payment verification failed. Please contact support.'),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+        return;
+      }
+
+      final orderId = '#${order['id'].toString().substring(0, 8).toUpperCase()}';
 
       if (mounted) {
         Navigator.push(
@@ -242,7 +261,7 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
           MaterialPageRoute(
             builder: (context) => OrderConfirmationScreen(
               orderId: orderId,
-              estimatedDelivery: 'Dispatched within 24-48 hours',
+              estimatedDelivery: 'Order placed',
             ),
           ),
         );
@@ -273,51 +292,42 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
     );
   }
 
-  Future<void> _simulateOrConfirmOrder({required String paymentId}) async {
-    try {
-      final displayTagId = _currentTagId.isNotEmpty
-          ? _currentTagId
-          : widget.tagId;
-      final displayReg = widget.vehicleReg.isNotEmpty
-          ? widget.vehicleReg
-          : Globals.vehicleRegistration;
-      final order = await StoreService.createDirectETagOrder(
-        tagId: displayTagId,
-        vehicleReg: displayReg,
-        amount: 199,
-      );
-      final orderId = order?['id'] != null
-          ? '#${order!['id'].toString().substring(0, 8).toUpperCase()}'
-          : '#FN${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
 
-      if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => OrderConfirmationScreen(
-              orderId: orderId,
-              estimatedDelivery: 'Dispatched within 24-48 hours',
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      debugPrint('Direct order fallback error: $e');
-    }
-  }
+  void _onEditDetails() async {
+    final vId = widget.vehicleId.isNotEmpty
+        ? widget.vehicleId
+        : (MyQrScreen.cachedActiveTag?['vehicleId'] ?? '');
+    final vName = widget.vehicleName.isNotEmpty
+        ? widget.vehicleName
+        : (Globals.vehicleModel.isNotEmpty
+            ? Globals.vehicleModel
+            : (MyQrScreen.cachedActiveTag?['vehicle']?['name'] ?? ''));
+    final vReg = widget.vehicleReg.isNotEmpty
+        ? widget.vehicleReg
+        : (Globals.vehicleRegistration.isNotEmpty
+            ? Globals.vehicleRegistration
+            : (MyQrScreen.cachedActiveTag?['vehicle']?['regNumber'] ?? ''));
+    final tagId = _currentTagId.isNotEmpty ? _currentTagId : widget.tagId;
 
-
-  void _onEditDetails() {
-    Navigator.push(
+    final updated = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
         builder: (context) => SetContactPrivacyScreen(
-          vehicleId: widget.vehicleId,
-          vehicleName: widget.vehicleName,
-          vehicleReg: widget.vehicleReg,
+          vehicleId: vId,
+          vehicleName: vName,
+          vehicleReg: vReg,
+          isEdit: true,
+          existingTagId: tagId,
+          initialBloodGroup: Globals.bloodGroup,
+          initialMedicalNotes: Globals.medicalNotes,
         ),
       ),
     );
+
+    if (updated == true || mounted) {
+      _fetchTagDetails();
+      setState(() {});
+    }
   }
 
   void _onReissue() {
@@ -532,6 +542,8 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                             validationError = null;
                           });
 
+                          bool submitted = false;
+
                           // Submit ticket to backend support-tickets API
                           try {
                             final payload = {
@@ -551,7 +563,7 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                                         .trim()
                                   : (Globals.email.isNotEmpty
                                         ? Globals.email
-                                        : 'App User'),
+                                        : Globals.phone),
                               'priority': 'HIGH',
                             };
 
@@ -575,6 +587,7 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
 
                                 if (res.statusCode == 200 ||
                                     res.statusCode == 201) {
+                                  submitted = true;
                                   break;
                                 }
                               } catch (_) {}
@@ -585,10 +598,12 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                           Navigator.pop(dialogCtx);
 
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              backgroundColor: Color(0xFF101C2B),
+                            SnackBar(
+                              backgroundColor: const Color(0xFF101C2B),
                               content: Text(
-                                'Support ticket submitted. Our team will review and resolve it.',
+                                submitted
+                                    ? 'Support ticket submitted. Our team will review and resolve it.'
+                                    : 'Could not submit support ticket. Please try again later.',
                               ),
                             ),
                           );
@@ -781,83 +796,26 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.shield_outlined,
-                                        size: 15,
-                                        color: isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        'SMART SAFETY TAG',
-                                        style: TextStyle(
-                                          color: isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: 1.5,
-                                        ),
-                                      ),
-                                    ],
+                                  // Title matching Image 1: SMART SAFETY
+                                  Text(
+                                    'SMART SAFETY',
+                                    style: TextStyle(
+                                      color: isLight
+                                          ? const Color(0xFF64748B)
+                                          : const Color(0xFF8FA2B7),
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 1.5,
+                                    ),
                                   ),
                                   const SizedBox(height: 20),
 
-                                  // Physical Tag Sticker Visual (No QR code image)
-                                  Container(
-                                    width: double.infinity,
-                                    constraints: const BoxConstraints(maxWidth: 240),
-                                    padding: const EdgeInsets.symmetric(vertical: 26, horizontal: 18),
-                                    decoration: BoxDecoration(
-                                      color: isLight ? const Color(0xFFF8FAFC) : const Color(0xFF0F1726),
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                        color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2D42),
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Container(
-                                          width: 60,
-                                          height: 60,
-                                          decoration: BoxDecoration(
-                                            color: (isLight ? AppTheme.primaryBlue : const Color(0xFF00C2FF))
-                                                .withValues(alpha: 0.12),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Center(
-                                            child: Icon(
-                                              Icons.verified_user_rounded,
-                                              color: isLight ? AppTheme.primaryBlue : const Color(0xFF00C2FF),
-                                              size: 32,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 14),
-                                        Text(
-                                          'Vehicle Safety Tag',
-                                          style: TextStyle(
-                                            color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                                            fontSize: 15.5,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 0.2,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Text(
-                                          'Paste physical sticker on\nvehicle windshield',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
-                                            fontSize: 12,
-                                            height: 1.35,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                  // Blurred QR Code matching Image 1
+                                  QrCodeWidget(
+                                    size: 215,
+                                    data: ApiConfig.getQrScanUrl(_currentTagId.isNotEmpty ? _currentTagId : widget.tagId),
+                                    isEncrypted: true,
+                                    lockMessage: 'Purchase the physical\nQR tag to view your code',
                                   ),
                                   const SizedBox(height: 20),
 
@@ -1006,12 +964,68 @@ class _ActiveQrTagScreenState extends State<ActiveQrTagScreen>
                               ),
                             ),
 
+                            const SizedBox(height: 12),
+
+                            // Secondary Action Button: Track Order (Added per request)
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const OrderHistoryScreen(),
+                                    ),
+                                  );
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  side: BorderSide(
+                                    color: isLight
+                                        ? AppTheme.primaryBlue
+                                        : const Color(0xFF00C2FF),
+                                    width: 1.5,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
+                                  backgroundColor: isLight
+                                      ? Colors.white
+                                      : const Color(0xFF0C141F),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.local_shipping_outlined,
+                                      color: isLight
+                                          ? AppTheme.primaryBlue
+                                          : const Color(0xFF00C2FF),
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Track Order',
+                                      style: TextStyle(
+                                        color: isLight
+                                            ? AppTheme.primaryBlue
+                                            : const Color(0xFF00C2FF),
+                                        fontSize: 15.5,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+
                             const SizedBox(height: 20),
 
                             // Section 1: Edit Details Card
-                            InkWell(
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
                               onTap: _onEditDetails,
-                              borderRadius: BorderRadius.circular(16),
                               child: Container(
                                 padding: const EdgeInsets.all(14),
                                 decoration: BoxDecoration(

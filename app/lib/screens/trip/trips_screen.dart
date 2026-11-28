@@ -937,9 +937,8 @@ class _TripsScreenState extends State<TripsScreen>
                                           _isDoubleRoute = false;
                                           _routeType = 'Single routes';
                                           _showRouteBuilder = false;
-                                          if (_fromLocation.isEmpty) {
-                                            _fromLocation = 'Indore, Madhya Pradesh, India';
-                                            _fromLatLng = const LatLng(22.7196, 75.8577);
+                                          if (_fromLocation.isEmpty && _fromLatLng != null && _fromLatLng!.latitude != 0.0) {
+                                            _fromLocation = 'Current Location';
                                           }
                                           if (_toLocation.isEmpty) {
                                             _toLocation = 'Ujjain, Madhya Pradesh, India';
@@ -2248,7 +2247,7 @@ class _TripsScreenState extends State<TripsScreen>
                                 if (localFrom != null && localFrom.latitude != 0.0 && localFrom.longitude != 0.0) {
                                   return localFrom;
                                 }
-                                return const LatLng(22.7196, 75.8577);
+                                return const LatLng(20.5937, 78.9629);
                               }(),
                               toLatLng: () {
                                 final lat =

@@ -13,6 +13,7 @@ import 'set_contact_privacy_screen.dart';
 import 'active_qr_tag_screen.dart';
 import 'link_qr_tag_screen.dart';
 import '../bottom_navigation_screen.dart';
+import '../../utils/app_validators.dart';
 import '../../utils/api_config.dart';
 import '../../services/screen_refresh_service.dart';
 import '../../services/auth_storage_service.dart';
@@ -165,20 +166,7 @@ class _SelectVehicleScreenState extends State<SelectVehicleScreen>
     } catch (e) {
       debugPrint('Error fetching vehicles: $e');
     } finally {
-      if (_vehicles.isEmpty && mounted && Globals.vehicleModel.isNotEmpty) {
-        setState(() {
-          _vehicles = [
-            VehicleModel(
-              id: 'v_default_1',
-              name: Globals.vehicleModel,
-              regNumber: Globals.vehicleRegistration,
-            ),
-          ];
-        });
-      }
       if (mounted) setState(() => _isLoading = false);
-
-      // All categories (Creta, Activa, Classic, Pulsar, etc.) resolve instantly to transparent local cutouts
     }
   }
 
@@ -499,12 +487,13 @@ class _SelectVehicleScreenState extends State<SelectVehicleScreen>
                     const SizedBox(height: 12),
                     TextField(
                       controller: regController,
+                      inputFormatters: AppValidators.vehicleNumberFormatters,
                       style: TextStyle(
                         color: isLight ? const Color(0xFF0F172A) : Colors.white,
                       ),
                       textCapitalization: TextCapitalization.characters,
                       decoration: InputDecoration(
-                        hintText: 'Registration Number (e.g. MP 09 AB 1234)',
+                        hintText: 'Registration Number (e.g. DL 01 AB 1234)',
                         hintStyle: TextStyle(
                           color: isLight
                               ? const Color(0xFF94A3B8)
@@ -635,7 +624,28 @@ class _SelectVehicleScreenState extends State<SelectVehicleScreen>
                                 final newReg = regController.text
                                     .trim()
                                     .toUpperCase();
-                                if (newName.isEmpty || newReg.isEmpty) return;
+
+                                final nameErr = AppValidators.validateVehicleName(newName);
+                                if (nameErr != null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(nameErr),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                final regErr = AppValidators.validateVehicleNumber(newReg);
+                                if (regErr != null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(regErr),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                  return;
+                                }
 
                                 setModalState(() => isAdding = true);
 
@@ -675,27 +685,24 @@ class _SelectVehicleScreenState extends State<SelectVehicleScreen>
                                       return;
                                     }
                                   } else {
-                                    final mockId =
-                                        'v_${DateTime.now().millisecondsSinceEpoch}';
-                                    Globals.vehicleModel = newName;
-                                    Globals.vehicleRegistration = newReg;
-
-                                    final newModel = VehicleModel(
-                                      id: mockId,
-                                      name: newName,
-                                      regNumber: newReg,
-                                    );
-                                    setState(() {
-                                      _vehicles.insert(0, newModel);
-                                    });
-
-                                    if (ctx.mounted) {
-                                      Navigator.pop(ctx);
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Please sign in to add a vehicle.'),
+                                        ),
+                                      );
                                     }
                                     return;
                                   }
                                 } catch (e) {
                                   debugPrint('Error adding vehicle: $e');
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Could not add vehicle: $e'),
+                                      ),
+                                    );
+                                  }
                                 } finally {
                                   if (ctx.mounted) {
                                     setModalState(() => isAdding = false);

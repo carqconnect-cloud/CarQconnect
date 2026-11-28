@@ -73,3 +73,12 @@ mixin RefreshOnRouteReturn<T extends StatefulWidget> on State<T>
     super.dispose();
   }
 }
+
+/// Global screen refresh notifier used across services
+class ScreenRefreshService {
+  static final ValueNotifier<int> refreshNotifier = ValueNotifier<int>(0);
+
+  static void notifyRefreshed() {
+    refreshNotifier.value++;
+  }
+}

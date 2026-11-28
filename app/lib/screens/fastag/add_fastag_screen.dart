@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../globals.dart';
 import '../../theme/app_theme.dart';
 import 'fastag_models.dart';
 import 'select_bank_screen.dart';
 import 'enter_details_screen.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../../utils/app_validators.dart';
 
 class AddFastagScreen extends StatefulWidget {
   const AddFastagScreen({super.key});
@@ -13,8 +15,9 @@ class AddFastagScreen extends StatefulWidget {
 }
 
 class _AddFastagScreenState extends State<AddFastagScreen> {
-  final TextEditingController _vehicleNumberController =
-      TextEditingController(text: 'MP 09 AB 1234');
+  final TextEditingController _vehicleNumberController = TextEditingController(
+    text: Globals.vehicleRegistration,
+  );
 
   final List<Map<String, dynamic>> _popularBanks = [
     {
@@ -91,12 +94,13 @@ class _AddFastagScreenState extends State<AddFastagScreen> {
 
   void _findFastag() {
     final reg = _vehicleNumberController.text.trim();
-    if (reg.isEmpty) {
+    final regErr = AppValidators.validateVehicleNumber(reg);
+    if (regErr != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: AppTheme.isLight ? const Color(0xFFFEE2E2) : const Color(0xFF2D1214),
           content: Text(
-            'Please enter a valid Vehicle Registration Number',
+            regErr,
             style: TextStyle(color: AppTheme.isLight ? const Color(0xFFDC2626) : const Color(0xFFFF5252)),
           ),
         ),
@@ -214,6 +218,7 @@ class _AddFastagScreenState extends State<AddFastagScreen> {
                           Expanded(
                             child: TextField(
                               controller: _vehicleNumberController,
+                              inputFormatters: AppValidators.vehicleNumberFormatters,
                               style: TextStyle(
                                 color: AppTheme.textPrimary,
                                 fontSize: 16,
@@ -221,7 +226,7 @@ class _AddFastagScreenState extends State<AddFastagScreen> {
                                 letterSpacing: 1.0,
                               ),
                               decoration: InputDecoration(
-                                hintText: 'eg. MP 09 AB 1234',
+                                hintText: 'e.g. DL 01 AB 1234',
                                 hintStyle: TextStyle(
                                   color: AppTheme.textSecondary.withValues(alpha: 0.7),
                                   fontSize: 15,

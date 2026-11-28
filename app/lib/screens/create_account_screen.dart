@@ -12,6 +12,7 @@ import '../utils/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../loading.dart';
 import '../widgets/app_logo.dart';
+import '../utils/app_validators.dart';
 
 
 class CreateAccountScreen extends StatefulWidget {
@@ -269,187 +270,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     );
   }
 
-  static String? _validateMobile(String? v) {
-    final val = v?.trim() ?? '';
-    if (val.isEmpty) {
-      return 'Mobile number is required';
-    }
-    if (!RegExp(r'^[0-9]+$').hasMatch(val)) {
-      return 'Only numbers are allowed';
-    }
-    if (val.length != 10) {
-      return 'Mobile number must be exactly 10 digits';
-    }
-    if (!RegExp(r'^[6-9]').hasMatch(val)) {
-      return 'Mobile number must start with 6, 7, 8, or 9';
-    }
-    // Reject all identical repeating digits like 0000000000, 9999999999
-    if (RegExp(r'^(\d)\1{9}$').hasMatch(val)) {
-      return 'Please enter a valid 10-digit mobile number';
-    }
-    // Reject common dummy / sequential sequences
-    const dummyPhones = {
-      '1234567890',
-      '0123456789',
-      '9876543210',
-      '9898989898',
-      '6789012345',
-      '7890123456',
-      '8901234567',
-    };
-    if (dummyPhones.contains(val)) {
-      return 'Please enter a valid 10-digit mobile number';
-    }
-    return null;
-  }
-
-  static String? _validateEmail(String? v) {
-    final val = v?.trim().toLowerCase() ?? '';
-    if (val.isEmpty) {
-      return 'Email is required';
-    }
-
-    // Standard RFC-compliant format regex
-    final emailRegex = RegExp(
-      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$',
-    );
-    if (!emailRegex.hasMatch(val)) {
-      return 'Please enter a valid email address';
-    }
-
-    final parts = val.split('@');
-    if (parts.length != 2) {
-      return 'Please enter a valid email address';
-    }
-
-    final local = parts[0];
-    final domain = parts[1];
-
-    if (local.length < 2) {
-      return 'Email prefix is too short';
-    }
-    if (local.startsWith('.') ||
-        local.endsWith('.') ||
-        local.contains('..')) {
-      return 'Please enter a valid email address';
-    }
-    if (domain.startsWith('.') ||
-        domain.endsWith('.') ||
-        domain.contains('..') ||
-        domain.startsWith('-') ||
-        domain.endsWith('-')) {
-      return 'Please enter a valid email domain';
-    }
-
-    final domainParts = domain.split('.');
-    if (domainParts.length < 2) {
-      return 'Please enter a valid email domain';
-    }
-
-    final domainName = domainParts[0];
-    if (domainName.length < 2) {
-      return 'Please enter a valid email domain';
-    }
-
-    final tld = domainParts.last;
-    if (tld.length < 2 || RegExp(r'[0-9]').hasMatch(tld)) {
-      return 'Please enter a valid email domain';
-    }
-
-    // Common typo domains
-    const gmailTypos = {
-      'gm.cm',
-      'gm.co',
-      'gm.in',
-      'gmai.com',
-      'gamil.com',
-      'gmaill.com',
-      'gmil.com',
-      'gmaik.com',
-      'gmai.in',
-      'gmaill.co',
-      'gmail.cm',
-      'gmal.com',
-      'g.com',
-      'gm.com',
-      'gma.com',
-      'gmeil.com',
-      'gmail.co'
-    };
-    if (gmailTypos.contains(domain)) {
-      return 'Invalid email domain. Did you mean @gmail.com?';
-    }
-
-    const yahooTypos = {
-      'yaho.com',
-      'yaho.co',
-      'yaho.in',
-      'yahooo.com',
-      'yaho.cm',
-      'yahoo.cm',
-      'ymail.cm',
-      'yaho.co.in'
-    };
-    if (yahooTypos.contains(domain)) {
-      return 'Invalid email domain. Did you mean @yahoo.com?';
-    }
-
-    const hotmailTypos = {
-      'hotmial.com',
-      'hotmai.com',
-      'hotmaill.com',
-      'hotm.com',
-      'hotm.cm'
-    };
-    if (hotmailTypos.contains(domain)) {
-      return 'Invalid email domain. Did you mean @hotmail.com?';
-    }
-
-    const outlookTypos = {
-      'outlok.com',
-      'outloo.com',
-      'outluk.com',
-      'outlook.cm'
-    };
-    if (outlookTypos.contains(domain)) {
-      return 'Invalid email domain. Did you mean @outlook.com?';
-    }
-
-    // Obvious dummy / test domains
-    const dummyDomains = {
-      'test.com',
-      'example.com',
-      'sample.com',
-      'fake.com',
-      'xyz.com',
-      'abc.com',
-      'temp.com',
-      'tempmail.com',
-      'mailinator.com',
-      '123.com',
-      'demo.com',
-      'domain.com'
-    };
-    if (dummyDomains.contains(domain)) {
-      return 'Please use a real personal or work email';
-    }
-
-    // Valid common TLDs
-    const validTlds = {
-      'com', 'in', 'org', 'net', 'co', 'io', 'ai', 'me', 'app', 'dev',
-      'tech', 'edu', 'gov', 'mil', 'biz', 'info', 'uk', 'us', 'ca',
-      'au', 'de', 'fr', 'jp', 'cn', 'ru', 'br', 'nl', 'se', 'no',
-      'es', 'it', 'ch', 'at', 'dk', 'fi', 'ie', 'nz', 'sg', 'hk',
-      'za', 'mx', 'kr', 'tw', 'club', 'site', 'online', 'store',
-      'live', 'space', 'website', 'agency', 'digital', 'cloud', 'pro'
-    };
-    if (!validTlds.contains(tld)) {
-      return 'Please enter a valid email domain (e.g. .com, .in, .org)';
-    }
-
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
@@ -490,25 +310,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       _buildTextField(
                         isLight: isLight,
                         label: 'First Name',
-                        hint: 'John',
+                        hint: 'Enter first name',
                         icon: Icons.person_outline,
                         controller: _firstNameController,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s'-]")),
-                        ],
-                        validator: (v) {
-                          final val = v?.trim() ?? '';
-                          if (val.isEmpty) {
-                            return 'First name is required';
-                          }
-                          if (RegExp(r'[0-9]').hasMatch(val)) {
-                            return 'First name cannot contain numbers';
-                          }
-                          if (!RegExp(r"^[a-zA-Z\s'-]+$").hasMatch(val)) {
-                            return 'Enter a valid first name';
-                          }
-                          return null;
-                        },
+                        inputFormatters: AppValidators.nameFormatters,
+                        validator: (v) => AppValidators.validateName(v, label: 'First name'),
                       ),
                       const SizedBox(height: 16),
                       _buildTextField(
@@ -517,22 +323,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         hint: 'Doe',
                         icon: Icons.person_outline,
                         controller: _lastNameController,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s'-]")),
-                        ],
-                        validator: (v) {
-                          final val = v?.trim() ?? '';
-                          if (val.isEmpty) {
-                            return 'Last name is required';
-                          }
-                          if (RegExp(r'[0-9]').hasMatch(val)) {
-                            return 'Last name cannot contain numbers';
-                          }
-                          if (!RegExp(r"^[a-zA-Z\s'-]+$").hasMatch(val)) {
-                            return 'Enter a valid last name';
-                          }
-                          return null;
-                        },
+                        inputFormatters: AppValidators.nameFormatters,
+                        validator: (v) => AppValidators.validateName(v, label: 'Last name'),
                       ),
                       const SizedBox(height: 16),
                       _buildTextField(
@@ -542,21 +334,19 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         icon: Icons.phone_android,
                         keyboardType: TextInputType.phone,
                         controller: _mobileController,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ],
-                        validator: _validateMobile,
+                        inputFormatters: AppValidators.phoneFormatters,
+                        validator: AppValidators.validatePhone,
                       ),
                       const SizedBox(height: 16),
                       _buildTextField(
                         isLight: isLight,
                         label: 'Email',
-                        hint: 'jamesbond123@gmail.com',
+                        hint: 'you@example.com',
                         icon: Icons.email_outlined,
                         keyboardType: TextInputType.emailAddress,
                         controller: _emailController,
-                        validator: _validateEmail,
+                        inputFormatters: AppValidators.emailFormatters,
+                        validator: AppValidators.validateEmail,
                       ),
                       const SizedBox(height: 16),
                       _buildTextField(

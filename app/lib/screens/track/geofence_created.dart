@@ -17,7 +17,7 @@ class GeofenceCreatedScreen extends StatelessWidget {
     final item = geofence ??
         GeofenceItem(
           id: '1',
-          name: 'My Zone',
+          name: 'Geofence Zone',
           address: Globals.savedAddresses.isNotEmpty
               ? (Globals.savedAddresses.first['address'] ?? '')
               : '',

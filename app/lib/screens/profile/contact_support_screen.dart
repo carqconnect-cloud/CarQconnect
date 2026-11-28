@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../utils/app_icons.dart';
 import '../../theme/app_theme.dart';
 import 'chat_support_screen.dart';
@@ -57,94 +58,34 @@ class ContactSupportScreen extends StatelessWidget {
                     },
                   ),
 
-                  // Option 2: Call Us
-                  _buildContactCard(
-                    context: context,
-                    icon: Icons.phone_rounded,
-                    title: 'Call Us',
-                    subtitle: '+91 98765 43210',
-                    isLight: isLight,
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          backgroundColor: isLight ? Colors.white : const Color(0xFF0F1728),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(
-                              color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1E2A44),
-                            ),
-                          ),
-                          title: Text(
-                            'Call Support Helpline',
-                            style: TextStyle(
-                              color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                              fontSize: 17,
-                            ),
-                          ),
-                          content: Text(
-                            'Would you like to place a call to our 24/7 priority customer helpline at +91 98765 43210?',
-                            style: TextStyle(
-                              color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
-                              fontSize: 13.5,
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(ctx),
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(
-                                  color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
-                                ),
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(ctx);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: isLight ? Colors.white : const Color(0xFF101726),
-                                    content: Text(
-                                      'Dialing +91 98765 43210...',
-                                      style: TextStyle(color: isLight ? const Color(0xFF0F172A) : Colors.white),
-                                    ),
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF0066FF),
-                                foregroundColor: Colors.white,
-                              ),
-                              child: const Text('Call Now'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-
-                  // Option 3: Email Us
+                  // Option 2: Email Support
                   _buildContactCard(
                     context: context,
                     icon: Icons.mail_outline_rounded,
                     title: 'Email Us',
                     subtitle: 'support@carqconnect.com',
                     isLight: isLight,
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: isLight ? Colors.white : const Color(0xFF101726),
-                          content: Text(
-                            'Opening email to support@carqconnect.com...',
-                            style: TextStyle(color: isLight ? const Color(0xFF0F172A) : Colors.white),
-                          ),
-                        ),
+                    onTap: () async {
+                      final mailUri = Uri(
+                        scheme: 'mailto',
+                        path: 'support@carqconnect.com',
+                        queryParameters: {'subject': 'CarQConnect Support Request'},
                       );
+                      final ok = await launchUrl(
+                        mailUri,
+                        mode: LaunchMode.externalApplication,
+                      );
+                      if (!ok && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please email support@carqconnect.com'),
+                          ),
+                        );
+                      }
                     },
                   ),
 
-                  // Option 4: Raise a Ticket
+                  // Option 3: Raise a Ticket
                   _buildContactCard(
                     context: context,
                     svgAsset: AppIcons.invoice,

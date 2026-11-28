@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen>
   static const Duration _vehicleAnimDuration = Duration(milliseconds: 1077);
 
   int _currentBannerIndex = 0;
-  bool _isGpsConnected = true;
+  bool _isGpsConnected = false;
   bool _isQrActivated = false;
   bool _hasUploadedDocument = false;
   final PageController _bannerPageController = PageController();
@@ -1428,16 +1428,6 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  void _showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: const Color(0xFF161B22),
-        duration: const Duration(seconds: 1),
-      ),
-    );
-  }
-
   Widget _buildStatusPill(Color color, String text, {VoidCallback? onTap}) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -1799,7 +1789,12 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _buildBanner4([double scale = 1.0]) {
     return GestureDetector(
       onTap: () {
-        _showSnackbar('30% OFF offer claimed with ABC Bank Card!');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const SubscriptionPlanScreen(),
+          ),
+        );
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -1872,7 +1867,7 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        'On devices, accessories & CarQConnect\nPlus membership using ABC Bank\nCard.',
+                        'On devices, accessories & CarQConnect\nPlus membership with exclusive card offers.',
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.85),
                           fontSize: 10.5,

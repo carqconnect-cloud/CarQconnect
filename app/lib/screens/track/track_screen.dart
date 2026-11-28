@@ -14,6 +14,7 @@ import '../../widgets/mappls_native_map.dart';
 import '../../theme/app_theme.dart';
 import '../../loading.dart';
 import '../trip/plan_trip_screen.dart';
+import '../notifications/notifications_screen.dart';
 import 'no_gps_screen.dart';
 import 'track_models.dart';
 import 'track_service.dart';
@@ -45,7 +46,7 @@ class _TrackScreenState extends State<TrackScreen>
     with RefreshOnRouteReturn<TrackScreen>, WidgetsBindingObserver {
   List<Map<String, dynamic>> _vehicles = [];
   Map<String, dynamic>? _selectedVehicle;
-  LatLng _currentPos = const LatLng(22.7196, 75.8577);
+  LatLng _currentPos = const LatLng(20.5937, 78.9629);
   String _currentAddress = 'Fetching live location...';
   List<Map<String, String>> _locationHistory = [];
   bool _isLoading = true;
@@ -1169,19 +1170,19 @@ class _TrackScreenState extends State<TrackScreen>
         _selectedVehicle?['name'] ??
         (Globals.vehicleModel.isNotEmpty
             ? Globals.vehicleModel
-            : 'Hyundai Creta');
+            : 'No Vehicle Linked');
     final vehicleReg =
         _selectedVehicle?['regNumber'] ??
         (Globals.vehicleRegistration.isNotEmpty
             ? Globals.vehicleRegistration
-            : 'MP 09 AB 1234');
+            : '');
 
     // If user's GPS is not connected, display the NoGpsScreen matching design
     if (!_isGpsConnected && !_isLoading) {
       return NoGpsScreen(
         vehicleName: vehicleName,
         vehicleRegNumber: vehicleReg,
-        lastSyncedText: 'Last synced 2 min ago',
+        lastSyncedText: 'GPS signal unavailable',
         onBack: () {
           if (Navigator.canPop(context)) {
             Navigator.pop(context);
@@ -1240,13 +1241,10 @@ class _TrackScreenState extends State<TrackScreen>
                 ],
               ),
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: AppTheme.cardBg,
-                    content: Text(
-                      'All vehicle motion & geofence alerts are active',
-                      style: TextStyle(color: AppTheme.textPrimary),
-                    ),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const NotificationsScreen(),
                   ),
                 );
               },
@@ -1452,15 +1450,28 @@ class _TrackScreenState extends State<TrackScreen>
                                             interactive: false,
                                             isDark: !AppTheme.isLight,
                                           )
-                                        : FlutterMap(
-                                            options: MapOptions(
-                                              initialCenter: _currentPos,
-                                              initialZoom: 15.5,
-                                            ),
+                                        : Stack(
+                                            fit: StackFit.expand,
                                             children: [
-                                              MapConfig.buildTileLayer(
-                                                userAgentPackageName: 'com.carqconnect.app',
-                                                maxZoom: 20,
+                                              CustomPaint(
+                                                painter: DarkMapPainter(
+                                                  isLight: AppTheme.isLight,
+                                                ),
+                                              ),
+                                              FlutterMap(
+                                                options: MapOptions(
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  initialCenter: _currentPos,
+                                                  initialZoom: 15.5,
+                                                ),
+                                                children: [
+                                                  MapConfig.buildTileLayer(
+                                                    userAgentPackageName:
+                                                        'com.carqconnect.app',
+                                                    maxZoom: 20,
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
@@ -1534,8 +1545,8 @@ class _TrackScreenState extends State<TrackScreen>
                                               ),
                                             )
                                           : const TopViewCarWidget(
-                                              width: 20,
-                                              height: 36,
+                                              width: 24,
+                                              height: 46,
                                               showGlow: true,
                                             ),
                                     ],

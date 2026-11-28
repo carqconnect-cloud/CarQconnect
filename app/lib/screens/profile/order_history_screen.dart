@@ -100,56 +100,18 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
         OrderItemModel(
           id: o['id'].toString().substring(0, 8), // Short ID
           title: title,
-          deliveryInfo: 'Expected delivery soon',
+          deliveryInfo: o['status'] == 'DELIVERED'
+              ? 'Delivered on $dateStr'
+              : (o['status'] == 'SHIPPED'
+                  ? 'Dispatched on $dateStr'
+                  : 'Order placed on $dateStr'),
           date: dateStr,
           status: status,
           isProcessing: isProcessing,
-          codPayAmount: isProcessing ? o['totalAmount'].toDouble() : null,
+          codPayAmount: isProcessing ? (o['totalAmount'] as num?)?.toDouble() : null,
           icon: Icons.local_shipping_rounded,
         ),
       );
-    }
-
-    if (mappedOrders.isEmpty) {
-      mappedOrders.addAll([
-        const OrderItemModel(
-          id: 'FN123458',
-          title: 'CarQConnect OBD-II 4G GPS Tracker',
-          deliveryInfo: 'Delivery between 08:00 AM - 07:55 PM\non Sep 27, 2026',
-          date: 'Sep 27, 2026',
-          status: 'Processing',
-          isProcessing: true,
-          codPayAmount: 1219,
-          icon: Icons.developer_board_rounded,
-        ),
-        const OrderItemModel(
-          id: 'FN123455',
-          title: 'Smart Emergency QR Sticker (Pack of 2)',
-          deliveryInfo: 'Delivered on Sep 03, 2026',
-          date: 'Sep 03, 2026',
-          status: 'Delivered',
-          isProcessing: false,
-          icon: Icons.qr_code_2_rounded,
-        ),
-        const OrderItemModel(
-          id: 'FN123452',
-          title: 'Magnetic Car Phone Holder',
-          deliveryInfo: 'Delivered on Sep 04, 2026',
-          date: 'Sep 04, 2026',
-          status: 'Delivered',
-          isProcessing: false,
-          icon: Icons.phone_android_rounded,
-        ),
-        const OrderItemModel(
-          id: 'FN123450',
-          title: 'CarQConnect Fast Car Charger',
-          deliveryInfo: 'Delivered on Aug 28, 2026',
-          date: 'Aug 28, 2026',
-          status: 'Delivered',
-          isProcessing: false,
-          icon: Icons.electrical_services_rounded,
-        ),
-      ]);
     }
 
     if (mounted) {
@@ -651,6 +613,9 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
                 builder: (context) => OrderDetailsScreen(
                   orderId: order.id,
                   orderTitle: order.title,
+                  orderStatus: order.status,
+                  orderDate: order.date,
+                  totalAmount: order.codPayAmount,
                 ),
               ),
             );
@@ -812,51 +777,29 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen>
                 ),
                 const SizedBox(height: 12),
 
-                // Bottom row: COD Pay button OR Rate & Review stars
+                // Bottom row: COD Payable Amount OR Rate & Review stars
                 if (order.isProcessing && order.codPayAmount != null)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Pay right now and save the COD fee',
+                        'Cash on Delivery Amount',
                         style: TextStyle(
                           color: isLight
                               ? const Color(0xFF64748B)
                               : const Color(0xFF8E9BAE),
-                          fontSize: 11.5,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor: const Color(0xFF101726),
-                              content: Text(
-                                'Processing payment of ₹${order.codPayAmount!.toInt()}...',
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0066FF),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: Text(
-                          'Pay ₹${order.codPayAmount!.toInt()}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      Text(
+                        '₹${order.codPayAmount!.toInt()}',
+                        style: TextStyle(
+                          color: isLight
+                              ? const Color(0xFF0F172A)
+                              : Colors.white,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],

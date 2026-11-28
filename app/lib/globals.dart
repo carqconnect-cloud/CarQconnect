@@ -11,6 +11,8 @@ class Globals {
   static String phone = '';
   static String accessToken = '';
   static String userAddress = '';
+  static String bloodGroup = 'B+';
+  static String medicalNotes = '';
   static String get userPhone => phone;
   static set userPhone(String val) => phone = val;
   static String get userEmail => email;

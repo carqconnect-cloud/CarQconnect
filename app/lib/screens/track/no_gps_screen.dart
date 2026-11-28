@@ -22,9 +22,9 @@ class NoGpsScreen extends StatelessWidget {
     this.onSwitchVehicle,
     this.onConnectGps,
     this.onNotificationTap,
-    this.vehicleName = 'Hyundai Creta',
-    this.vehicleRegNumber = 'MP 09 AB 1234',
-    this.lastSyncedText = 'Last synced 2 min ago',
+    this.vehicleName = '',
+    this.vehicleRegNumber = '',
+    this.lastSyncedText = 'GPS signal unavailable',
     this.vehicleImageUrl,
   });
 

@@ -338,7 +338,7 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
         }
       }
       if (_fromLatLng.latitude == 0.0) {
-        _fromLatLng = const LatLng(22.7196, 75.8577);
+        _fromLatLng = const LatLng(20.5937, 78.9629);
       }
     }
 
@@ -777,7 +777,7 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
       if (resolved.latitude == 0.0) {
         resolved = _fromLatLng.latitude != 0.0
             ? _fromLatLng
-            : const LatLng(22.7196, 75.8577);
+            : const LatLng(20.5937, 78.9629);
       }
 
       String locName = result.displayName;
@@ -889,9 +889,7 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
       'Hotels' => ('hotel', 'Hotel Highway Lodge'),
       _ => ('', category),
     };
-    final query = _toLocation.trim().isEmpty
-        ? categoryData.$2
-        : '${categoryData.$2} near ${_toLocation.trim()}';
+    final query = categoryData.$2;
     final result = await PlaceSearchModal.show(
       context,
       title: 'Find $category',
@@ -1182,10 +1180,9 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                                                   _isDoubleRoute = false;
                                                   _routeType = 'Single routes';
                                                     _showRouteBuilder = false;
-                                                    if (_fromLocation.isEmpty) {
-                                                    _fromLocation = 'Indore, Madhya Pradesh, India';
-                                                    _fromLatLng = const LatLng(22.7196, 75.8577);
-                                                  }
+                                                    if (_fromLocation.isEmpty && _fromLatLng.latitude != 0.0) {
+                                                      _fromLocation = 'Current Location';
+                                                    }
                                                   if (_toLocation.isEmpty) {
                                                     _toLocation = 'Ujjain, Madhya Pradesh, India';
                                                     _toLatLng = const LatLng(23.1765, 75.7885);
@@ -2329,7 +2326,7 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                                       ? const Color(0xFF059669)
                                       : const Color(0xFF00E676),
                                   title: 'Fuel Pump',
-                                  subtitle: '14 stations',
+                                  subtitle: '26 stations',
                                   category: 'Fuel Pump',
                                   isLight: isLight,
                                   primaryColor: primaryColor,
@@ -2343,7 +2340,7 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                                       ? const Color(0xFF0284C7)
                                       : const Color(0xFF00C2FF),
                                   title: 'EV Charging',
-                                  subtitle: '6 stations',
+                                  subtitle: '13 stations',
                                   category: 'EV Charging',
                                   isLight: isLight,
                                   primaryColor: primaryColor,
@@ -2361,7 +2358,7 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                                       ? const Color(0xFFD97706)
                                       : const Color(0xFFFFD600),
                                   title: 'Restaurants',
-                                  subtitle: '22 spots',
+                                  subtitle: '15 spots',
                                   category: 'Restaurants',
                                   isLight: isLight,
                                   primaryColor: primaryColor,
@@ -2375,7 +2372,7 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                                       ? const Color(0xFF7C3AED)
                                       : const Color(0xFFB388FF),
                                   title: 'Hotels',
-                                  subtitle: '9 stays',
+                                  subtitle: '10 stays',
                                   category: 'Hotels',
                                   isLight: isLight,
                                   primaryColor: primaryColor,

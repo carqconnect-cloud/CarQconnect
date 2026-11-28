@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../theme/app_theme.dart';
 import '../../widgets/animated_back_arrow.dart';
+import '../public_scan_screen.dart';
 
 /// Full-screen camera QR Code Scanner with real-time detection,
 /// glowing laser overlay, torch toggle, camera switch, and gallery upload.
@@ -41,6 +42,28 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
     super.dispose();
   }
 
+  String? _extractTagId(String raw) {
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty) return null;
+
+    final scanMatch = RegExp(r'/(?:scan|qr)/([A-Za-z0-9_-]+)', caseSensitive: false).firstMatch(trimmed);
+    if (scanMatch != null && scanMatch.group(1) != null) {
+      return scanMatch.group(1);
+    }
+
+    final queryMatch = RegExp(r'[?&](?:tagId|tag|code)=([A-Za-z0-9_-]+)', caseSensitive: false).firstMatch(trimmed);
+    if (queryMatch != null && queryMatch.group(1) != null) {
+      return queryMatch.group(1);
+    }
+
+    if (RegExp(r'^(?:FN|QC|TAG|CARQ)?[A-Za-z0-9_-]{4,24}$', caseSensitive: false).hasMatch(trimmed) &&
+        !trimmed.contains('/') && !trimmed.contains('.')) {
+      return trimmed;
+    }
+
+    return null;
+  }
+
   void _onDetect(BarcodeCapture capture) {
     if (_isProcessing) return;
 
@@ -56,9 +79,19 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
 
     HapticFeedback.mediumImpact();
 
+    final tagId = _extractTagId(rawValue);
+
     if (widget.onScanResult != null) {
-      widget.onScanResult!(rawValue);
-      Navigator.pop(context, rawValue);
+      final result = tagId ?? rawValue;
+      widget.onScanResult!(result);
+      Navigator.pop(context, result);
+    } else if (tagId != null && tagId.isNotEmpty) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PublicScanScreen(tagId: tagId),
+        ),
+      );
     } else {
       _showScanResultSheet(rawValue);
     }
@@ -238,6 +271,40 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
               const SizedBox(height: 18),
 
               // Action Buttons
+              if (_extractTagId(scannedValue) != null) ...[
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      final tId = _extractTagId(scannedValue)!;
+                      Navigator.pop(ctx);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PublicScanScreen(tagId: tId),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.shield_outlined, size: 18),
+                    label: const Text(
+                      'Open Vehicle Contact Screen',
+                      style: TextStyle(
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF00C2FF),
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
               if (isUrl) ...[
                 SizedBox(
                   width: double.infinity,

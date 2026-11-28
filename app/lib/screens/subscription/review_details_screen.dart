@@ -2,15 +2,15 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import '../../utils/api_config.dart';
 import '../../globals.dart';
 import '../../theme/app_theme.dart';
 import '../../loading.dart';
 import 'payment_success_screen.dart';
 import 'payment_failed_screen.dart';
+import '../../services/auth_storage_service.dart';
+import '../../services/screen_refresh_service.dart';
 import '../../widgets/animated_back_arrow.dart';
 import '../../widgets/app_toggle_switch.dart';
 
@@ -105,18 +105,13 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
 
     String? orderId;
     try {
-      final response = await http.post(
-        ApiConfig.uri('/subscriptions/create-order'),
-        headers: {
-          if (Globals.accessToken.isNotEmpty)
-            'Authorization': 'Bearer ${Globals.accessToken}',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
+      final response = await AuthStorageService.authenticatedPost(
+        '/subscriptions/create-order',
+        {
           'amount': widget.totalPrice,
           'planId': widget.plan['id'],
           'tenure': widget.tenure,
-        }),
+        },
       ).timeout(const Duration(seconds: 8));
 
       if (response.statusCode == 200) {
@@ -136,20 +131,23 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
         final cleanPhone = Globals.phone.replaceAll(RegExp(r'[^0-9]'), '');
         final prefillPhone = cleanPhone.length >= 10
             ? cleanPhone.substring(cleanPhone.length - 10)
-            : '9513886363';
+            : '';
         final prefillEmail = Globals.email.contains('@')
             ? Globals.email
-            : 'customer@carqconnect.com';
+            : '';
 
         final options = <String, dynamic>{
           'key': 'rzp_test_Tm9BKNGeBE7GAx',
           'amount': (widget.totalPrice * 100).round(),
+          'currency': 'INR',
           'name': 'CarQConnect',
           'description': '${widget.planName} Plan (${_getTenureDisplay()})',
-          'prefill': {
-            'contact': prefillPhone,
-            'email': prefillEmail,
-          },
+          'theme': {'color': '#16393F'},
+          if (prefillPhone.isNotEmpty || prefillEmail.isNotEmpty)
+            'prefill': {
+              if (prefillPhone.isNotEmpty) 'contact': prefillPhone,
+              if (prefillEmail.isNotEmpty) 'email': prefillEmail,
+            },
           'external': {
             'wallets': ['paytm']
           }
@@ -170,12 +168,15 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
       }
     }
 
-    if (mounted) setState(() => _isProcessing = false);
-
-    // Direct fallback for testing/simulation when Razorpay native SDK is unavailable
-    await _handleSuccessfulUpgrade(
-      paymentId: '#${400000000 + Random().nextInt(999999)}',
-    );
+    if (mounted) {
+      setState(() => _isProcessing = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Payment gateway is currently unavailable. Please try again.'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   Future<void> _handleSuccessfulUpgrade({
@@ -185,38 +186,29 @@ class _ReviewDetailsScreenState extends State<ReviewDetailsScreen> {
   }) async {
     // 1. Immediately persist locally
     await Globals.saveCurrentPlan(widget.planName, widget.plan['id']?.toString() ?? '');
+    ScreenRefreshService.notifyRefreshed();
 
     // 2. Synchronize with backend in background
     try {
       if (signature != null && signature.isNotEmpty) {
-        await http.post(
-          ApiConfig.uri('/subscriptions/verify-payment'),
-          headers: {
-            if (Globals.accessToken.isNotEmpty)
-              'Authorization': 'Bearer ${Globals.accessToken}',
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
+        await AuthStorageService.authenticatedPost(
+          '/subscriptions/verify-payment',
+          {
             'razorpay_order_id': orderId ?? '',
             'razorpay_payment_id': paymentId,
             'razorpay_signature': signature,
             'planId': widget.plan['id'],
             'planName': widget.planName,
-          }),
+          },
         ).timeout(const Duration(seconds: 8));
       } else {
-        await http.post(
-          ApiConfig.uri('/subscriptions/activate'),
-          headers: {
-            if (Globals.accessToken.isNotEmpty)
-              'Authorization': 'Bearer ${Globals.accessToken}',
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
+        await AuthStorageService.authenticatedPost(
+          '/subscriptions/activate',
+          {
             'planId': widget.plan['id'],
             'planName': widget.planName,
             'tenure': widget.tenure,
-          }),
+          },
         ).timeout(const Duration(seconds: 8));
       }
     } catch (e) {

@@ -273,4 +273,30 @@ class ApiConfig {
     }
     throw lastError ?? Exception('API request failed.');
   }
+
+  /// POST to an API endpoint with one bounded retry for transient network failures.
+  static Future<http.Response> post(
+    String path, {
+    Map<String, String>? headers,
+    Object? body,
+    Duration timeout = const Duration(seconds: 25),
+  }) async {
+    Object? lastError;
+    for (var attempt = 0; attempt < 2; attempt++) {
+      try {
+        final response = await http
+            .post(uri(path), headers: headers, body: body)
+            .timeout(timeout);
+        final isTransient = response.statusCode == 502 ||
+            response.statusCode == 503 ||
+            response.statusCode == 504;
+        if (!isTransient || attempt == 1) return response;
+      } catch (error) {
+        lastError = error;
+        if (attempt == 1) rethrow;
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 400));
+    }
+    throw lastError ?? Exception('API request failed.');
+  }
 }

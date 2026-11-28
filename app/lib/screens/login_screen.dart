@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'dart:async';
 import 'dart:convert';
@@ -16,6 +17,7 @@ import '../theme/app_theme.dart';
 import '../loading.dart';
 import '../services/auth_storage_service.dart';
 import '../widgets/app_logo.dart';
+import '../utils/app_validators.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -393,23 +395,12 @@ class _LogInScreenState extends State<LogInScreen> {
                       // Email Field
                       _buildTextField(
                         label: 'Email',
-                        hint: 'jamesbond123@gmail.com',
+                        hint: 'you@example.com',
                         icon: Icons.email_outlined,
                         keyboardType: TextInputType.emailAddress,
                         controller: _emailController,
-                        validator: (v) {
-                          final val = v?.trim() ?? '';
-                          if (val.isEmpty) {
-                            return 'Email is required';
-                          }
-                          final emailRegex = RegExp(
-                            r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                          );
-                          if (!emailRegex.hasMatch(val)) {
-                            return 'Please enter a valid email address';
-                          }
-                          return null;
-                        },
+                        inputFormatters: AppValidators.emailFormatters,
+                        validator: AppValidators.validateEmail,
                       ),
                       const SizedBox(height: 16),
 
@@ -618,12 +609,14 @@ class _LogInScreenState extends State<LogInScreen> {
     VoidCallback? onToggleVisibility,
     TextInputType? keyboardType,
     TextEditingController? controller,
+    List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
       obscureText: isPassword ? obscureText : false,
       keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
       validator: validator,
       style: TextStyle(color: AppTheme.textPrimary),
       decoration: InputDecoration(

@@ -1067,8 +1067,8 @@ class _CartScreenState extends State<CartScreen> {
           'order_id': orderData['id'],
           'description': 'Store Purchase',
           'prefill': {
-            'contact': sanitizedPhone.isNotEmpty ? sanitizedPhone : '9513886363',
-            'email': Globals.email.isNotEmpty ? Globals.email : 'customer@carqconnect.com',
+            'contact': sanitizedPhone,
+            'email': Globals.email,
           },
           'theme': {
             'color': '#0066FF',
@@ -1079,34 +1079,13 @@ class _CartScreenState extends State<CartScreen> {
           if (!kIsWeb && _razorpay != null) {
             _razorpay!.open(options);
           } else {
-            // Web fallback checkout handling
-            final success = await StoreService.verifyPayment(
-              razorpayOrderId: orderData['id'],
-              razorpayPaymentId: 'pay_web_${DateTime.now().millisecondsSinceEpoch}',
-              razorpaySignature: 'sig_web_valid',
-              items: _cartManager.items,
-              totalAmount: amount,
-              addressId: _selectedAddressId.isNotEmpty ? _selectedAddressId : 'default',
-            );
             if (mounted) {
               setState(() => _isPlacingOrder = false);
-            }
-            if (success) {
-              _cartManager.clearCart();
-              if (mounted) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      final rawId = (orderData['id'] ?? '').toString();
-                      final cleanId = rawId.length >= 8 ? rawId.substring(0, 8) : rawId;
-                      return OrderConfirmationScreen(
-                        orderId: '#ORD-$cleanId',
-                      );
-                    },
-                  ),
-                );
-              }
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Online payment requires the mobile app. Please use Cash on Delivery on web.'),
+                ),
+              );
             }
           }
         } catch (e) {

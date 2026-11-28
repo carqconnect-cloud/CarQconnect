@@ -12,7 +12,7 @@ import '../../utils/api_config.dart';
 import '../../services/auth_storage_service.dart';
 import '../../utils/app_icons.dart';
 import '../../services/screen_refresh_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../services/app_notification_service.dart';
 import '../../widgets/animated_back_arrow.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -77,39 +77,8 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         }
       }
 
-      // If no notifications returned from API (or offline), pull local trips
-      if (fetched.isEmpty) {
-        try {
-          final prefs = await SharedPreferences.getInstance();
-          final key = Globals.email.isNotEmpty
-              ? 'carq_saved_trips_${Globals.email}'
-              : 'carq_saved_trips';
-          final localTrips = prefs.getStringList(key) ?? [];
-          for (final raw in localTrips) {
-            try {
-              final item = jsonDecode(raw);
-              final status = (item['status'] ?? 'COMPLETED').toString().toUpperCase();
-              final toName = item['toName'] ?? 'Destination';
-              final fromName = item['fromName'] ?? 'Start';
-              final distance = item['distance'] ?? '';
-              final duration = item['duration'] ?? '';
-              final time = item['completedAt'] ?? item['startedAt'] ?? item['createdAt'] ?? DateTime.now().toIso8601String();
-
-              fetched.add(AppNotification.fromJson({
-                'id': 'local_notif_${item['id'] ?? DateTime.now().millisecondsSinceEpoch}',
-                'title': status == 'COMPLETED'
-                    ? 'Trip Completed: $toName'
-                    : (status == 'ACTIVE' ? 'Trip Started: $toName' : 'Trip Planned: $fromName → $toName'),
-                'description': status == 'COMPLETED'
-                    ? 'You arrived at $toName! Total distance: $distance, duration: $duration.'
-                    : 'Route to $toName ($distance). Drive safely!',
-                'type': 'trip',
-                'isUnread': false,
-                'createdAt': time,
-              }));
-            } catch (_) {}
-          }
-        } catch (_) {}
+      if (fetched.isNotEmpty) {
+        AppNotificationService.instance.markIdsSeen(fetched.map((e) => e.id));
       }
 
       if (mounted) {

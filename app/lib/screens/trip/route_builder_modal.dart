@@ -98,7 +98,7 @@ class _RouteBuilderInlineWidgetState extends State<RouteBuilderInlineWidget> {
     if (!mounted) return;
     setState(() => _isCalculating = true);
 
-    final start = widget.fromLatLng ?? const LatLng(22.7196, 75.8577);
+    final start = widget.fromLatLng ?? const LatLng(20.5937, 78.9629);
     final LatLng end;
     final List<LatLng> waypoints;
 

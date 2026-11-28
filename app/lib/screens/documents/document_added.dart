@@ -362,9 +362,17 @@ class DocumentAddedScreen extends StatelessWidget {
                                   ),
                                 ),
                                 child: Text(
-                                  'Valid',
+                                  doc.status == DocumentStatus.valid
+                                      ? 'Valid'
+                                      : (doc.status == DocumentStatus.expiringSoon
+                                          ? 'Expiring Soon'
+                                          : 'Expired'),
                                   style: TextStyle(
-                                    color: isLight ? const Color(0xFF10B981) : const Color(0xFF00E676),
+                                    color: doc.status == DocumentStatus.valid
+                                        ? (isLight ? const Color(0xFF10B981) : const Color(0xFF00E676))
+                                        : (doc.status == DocumentStatus.expiringSoon
+                                            ? const Color(0xFFF59E0B)
+                                            : const Color(0xFFFF5252)),
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                   ),

@@ -34,7 +34,7 @@ class TripCompletedScreen extends StatefulWidget {
     this.startedAt,
     required this.fromLocation,
     required this.toLocation,
-    this.fromLatLng = const LatLng(22.7196, 75.8577),
+    this.fromLatLng = const LatLng(20.5937, 78.9629),
     this.toLatLng = const LatLng(0.0, 0.0),
     this.dateTimeRange,
     this.distance = '0 km',
@@ -57,7 +57,7 @@ class _TripCompletedScreenState extends State<TripCompletedScreen> {
   LatLng get _effectiveFromLatLng {
     if (widget.fromLatLng.latitude != 0.0) return widget.fromLatLng;
     if (widget.routePoints.isNotEmpty && widget.routePoints.first.latitude != 0.0) return widget.routePoints.first;
-    return const LatLng(22.7196, 75.8577);
+    return const LatLng(20.5937, 78.9629);
   }
 
   LatLng get _effectiveToLatLng {

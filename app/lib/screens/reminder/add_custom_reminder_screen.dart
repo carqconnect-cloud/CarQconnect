@@ -35,7 +35,7 @@ class _AddCustomReminderScreenState extends State<AddCustomReminderScreen> {
   late TextEditingController _titleController;
   late TextEditingController _notesController;
 
-  String _selectedVehicleName = Globals.vehicleModel.isNotEmpty ? Globals.vehicleModel : 'My Vehicle';
+  String _selectedVehicleName = Globals.vehicleModel;
   String _selectedVehicleNumber = Globals.vehicleRegistration;
 
   String _selectedCategory = 'Vehicle maintenance';
@@ -105,7 +105,7 @@ class _AddCustomReminderScreenState extends State<AddCustomReminderScreen> {
     final isLight = AppTheme.isLightNotifier.value;
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime(2026, 10, 12),
+      initialDate: _selectedDate ?? now,
       firstDate: now.subtract(const Duration(days: 365)),
       lastDate: DateTime(2035),
       builder: (context, child) {
@@ -306,6 +306,12 @@ class _AddCustomReminderScreenState extends State<AddCustomReminderScreen> {
     );
 
     try {
+      final notifications = <String>[
+        if (_notify7Days) '7 days before',
+        if (_notify3Days) '3 days before',
+        if (_notify1Day) '1 day before',
+        if (_notifyOnDueDate) 'On due date',
+      ];
       final response = await http.post(
         ApiConfig.uri('/reminders'),
         headers: {
@@ -317,6 +323,8 @@ class _AddCustomReminderScreenState extends State<AddCustomReminderScreen> {
           'description': _notesController.text.trim(),
           'type': _selectedCategory,
           'date': _selectedDate!.toUtc().toIso8601String(),
+          'repeat': _selectedRepeat,
+          'notifications': notifications,
         }),
       );
 
@@ -325,7 +333,11 @@ class _AddCustomReminderScreenState extends State<AddCustomReminderScreen> {
 
       if (response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        final reminder = ReminderItem.fromJson(data['data']);
+        final parsed = ReminderItem.fromJson(data['data']);
+        final reminder = parsed.copyWith(
+          repeat: _selectedRepeat,
+          notifications: notifications,
+        );
         
         if (!mounted) return;
         final res = await Navigator.push<ReminderItem>(

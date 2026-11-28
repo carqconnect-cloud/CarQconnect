@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import '../../theme/app_theme.dart';
 import '../../loading.dart';
 import '../../globals.dart';
@@ -23,13 +24,14 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
 
   String? _selectedCategory;
   bool _hasScreenshot = false;
+  String? _screenshotName;
   bool _isSubmitting = false;
 
   final List<String> _categories = [
     'Fastag & Toll Payments',
     'Vehicle GPS & Tracking',
     'Telemetry & OBD Diagnostics',
-    'Zap Wallet & Refunds',
+    'Payments & Refunds',
     'Insurance & Service Booking',
     'App Account & Authentication',
     'Hardware & Device Replacement',
@@ -218,10 +220,14 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
     if (!mounted) return;
     setState(() => _isSubmitting = false);
 
-    // Fallback if network was offline
     if (generatedTicketId == null || generatedTicketId.isEmpty) {
-      final randomId = (100000 + DateTime.now().millisecond * 899).toString();
-      generatedTicketId = '#FN$randomId';
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text('Could not submit ticket. Please check your connection and try again.'),
+        ),
+      );
+      return;
     }
 
     Navigator.pushReplacement(
@@ -409,21 +415,26 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
                           _buildLabel('Add Screenshot (Optional)', isLight),
                           const SizedBox(height: 8),
                           InkWell(
-                            onTap: () {
-                              setState(() {
-                                _hasScreenshot = !_hasScreenshot;
-                              });
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: isLight ? Colors.white : const Color(0xFF101726),
-                                  content: Text(
-                                    _hasScreenshot
-                                        ? 'Screenshot attached: error_log.png'
-                                        : 'Screenshot removed',
-                                    style: TextStyle(color: isLight ? const Color(0xFF0F172A) : Colors.white),
+                            onTap: () async {
+                              try {
+                                final picked = await ImagePicker().pickImage(
+                                  source: ImageSource.gallery,
+                                );
+                                if (!mounted) return;
+                                if (picked != null) {
+                                  setState(() {
+                                    _hasScreenshot = true;
+                                    _screenshotName = picked.name;
+                                  });
+                                }
+                              } catch (_) {
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Unable to open image gallery.'),
                                   ),
-                                ),
-                              );
+                                );
+                              }
                             },
                             borderRadius: BorderRadius.circular(12),
                             child: Container(
@@ -459,7 +470,7 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
                                     const SizedBox(width: 8),
                                     Text(
                                       _hasScreenshot
-                                          ? 'error_log.png attached'
+                                          ? (_screenshotName != null ? '$_screenshotName attached' : 'Screenshot attached')
                                           : 'Upload',
                                       style: const TextStyle(
                                         color: Color(0xFF0066FF),

@@ -41,161 +41,37 @@ class TopViewCarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: width,
       height: height,
-      decoration: const BoxDecoration(),
-      child: CustomPaint(
-        size: Size(width, height),
-        painter: _TopViewCarPainter(),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (showGlow)
+            Container(
+              width: width * 0.9,
+              height: height * 0.9,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    const Color(0xFF00C2FF).withValues(alpha: 0.28),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          Image.asset(
+            'assets/images/car_scan_frame_0.png',
+            width: width,
+            height: height,
+            fit: BoxFit.contain,
+            filterQuality: FilterQuality.high,
+          ),
+        ],
       ),
     );
   }
-}
-
-class _TopViewCarPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-
-    // Body Paint (White luxury car body)
-    final bodyPaint = Paint()
-      ..color = const Color(0xFFF1F5F9)
-      ..style = PaintingStyle.fill;
-
-    // Shadow Paint
-    final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.35)
-      ..style = PaintingStyle.fill;
-
-    // Outer Body Path
-    final bodyRect = RRect.fromRectAndCorners(
-      Rect.fromLTWH(w * 0.12, h * 0.08, w * 0.76, h * 0.84),
-      topLeft: Radius.circular(w * 0.36),
-      topRight: Radius.circular(w * 0.36),
-      bottomLeft: Radius.circular(w * 0.28),
-      bottomRight: Radius.circular(w * 0.28),
-    );
-
-    // Subtle dark undercarriage / wheels
-    final wheelPaint = Paint()..color = const Color(0xFF0F172A);
-    // Front Wheels
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(w * 0.05, h * 0.2, w * 0.12, h * 0.18),
-        const Radius.circular(2),
-      ),
-      wheelPaint,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(w * 0.83, h * 0.2, w * 0.12, h * 0.18),
-        const Radius.circular(2),
-      ),
-      wheelPaint,
-    );
-    // Rear Wheels
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(w * 0.05, h * 0.62, w * 0.12, h * 0.18),
-        const Radius.circular(2),
-      ),
-      wheelPaint,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(w * 0.83, h * 0.62, w * 0.12, h * 0.18),
-        const Radius.circular(2),
-      ),
-      wheelPaint,
-    );
-
-    // Draw Main Body
-    canvas.drawRRect(bodyRect, shadowPaint);
-    canvas.drawRRect(bodyRect, bodyPaint);
-
-    // Windshield (front dark glass)
-    final glassPaint = Paint()
-      ..color = const Color(0xFF0F172A)
-      ..style = PaintingStyle.fill;
-
-    final windshieldRect = RRect.fromRectAndCorners(
-      Rect.fromLTWH(w * 0.22, h * 0.26, w * 0.56, h * 0.14),
-      topLeft: Radius.circular(w * 0.2),
-      topRight: Radius.circular(w * 0.2),
-      bottomLeft: const Radius.circular(4),
-      bottomRight: const Radius.circular(4),
-    );
-    canvas.drawRRect(windshieldRect, glassPaint);
-
-    // Sunroof / Roof
-    final roofPaint = Paint()
-      ..color = const Color(0xFFCBD5E1)
-      ..style = PaintingStyle.fill;
-    final roofRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(w * 0.24, h * 0.42, w * 0.52, h * 0.24),
-      const Radius.circular(4),
-    );
-    canvas.drawRRect(roofRect, roofPaint);
-
-    // Sunroof glass
-    final sunroofPaint = Paint()..color = const Color(0xFF1E293B);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(w * 0.28, h * 0.44, w * 0.44, h * 0.18),
-        const Radius.circular(3),
-      ),
-      sunroofPaint,
-    );
-
-    // Rear Windshield
-    final rearGlassRect = RRect.fromRectAndCorners(
-      Rect.fromLTWH(w * 0.24, h * 0.68, w * 0.52, h * 0.1),
-      topLeft: const Radius.circular(3),
-      topRight: const Radius.circular(3),
-      bottomLeft: Radius.circular(w * 0.16),
-      bottomRight: Radius.circular(w * 0.16),
-    );
-    canvas.drawRRect(rearGlassRect, glassPaint);
-
-    // Headlights (cyan glow tints)
-    final headLightPaint = Paint()..color = const Color(0xFF00C2FF);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(w * 0.2, h * 0.08, w * 0.14, h * 0.04),
-        const Radius.circular(2),
-      ),
-      headLightPaint,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(w * 0.66, h * 0.08, w * 0.14, h * 0.04),
-        const Radius.circular(2),
-      ),
-      headLightPaint,
-    );
-
-    // Tail lights (red)
-    final tailLightPaint = Paint()..color = const Color(0xFFEF4444);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(w * 0.2, h * 0.88, w * 0.16, h * 0.035),
-        const Radius.circular(2),
-      ),
-      tailLightPaint,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(w * 0.64, h * 0.88, w * 0.16, h * 0.035),
-        const Radius.circular(2),
-      ),
-      tailLightPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 /// Realistic vector map painter matching screenshots with light/dark support

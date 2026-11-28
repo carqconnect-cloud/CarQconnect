@@ -17,6 +17,7 @@ import 'services/network_service.dart';
 import 'services/localization_service.dart';
 import 'services/vehicle_model_service.dart';
 import 'services/auth_storage_service.dart';
+import 'services/app_notification_service.dart';
 import 'services/screen_refresh_service.dart';
 import 'services/security_service.dart';
 import 'screens/no_connection_screen.dart';
@@ -91,6 +92,7 @@ void main() async {
   // Screens can render cached/local content and report API errors as needed.
   final hasSavedSession = await AuthStorageService.restoreSession();
   VehicleModelService.init();
+  await AppNotificationService.instance.initialize();
   runApp(MyApp(isInitialOnline: true, isLoggedIn: hasSavedSession));
 }
 
@@ -208,8 +210,12 @@ class _AppRootGateState extends State<AppRootGate> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && _isLoggedIn) {
+    if (!_isLoggedIn) return;
+    if (state == AppLifecycleState.resumed) {
       AuthStorageService.isSessionValid();
+      AppNotificationService.instance.onAppResumed();
+    } else if (state == AppLifecycleState.paused) {
+      AppNotificationService.instance.onAppPaused();
     }
   }
 
@@ -705,39 +711,25 @@ class _FirstOnboardingPageState extends State<FirstOnboardingPage>
                     disablePan: true,
                     disableTap: true,
                     environmentImage: 'neutral',
-                    exposure: 0.90,
-                    shadowIntensity: 0.95,
-                    shadowSoftness: 0.8,
+                    exposure: 0.95,
                     backgroundColor: Colors.transparent,
                     loading: Loading.eager,
-                        relatedCss: '''
+                    relatedCss: '''
 model-viewer {
   --poster-color: transparent;
   pointer-events: none;
   touch-action: none;
-  contain: strict;
-  transform: translate3d(0, 0, 0);
-  will-change: transform;
 }
 ''',
-                        relatedJs: '''
-try {
-  Object.defineProperty(window, 'devicePixelRatio', {
-    get: function() { return 1.25; },
-    configurable: true
-  });
-} catch(e) {}
+                    relatedJs: '''
 window.ModelViewerElement = window.ModelViewerElement || {};
 window.ModelViewerElement.powerPreference = 'high-performance';
 if (window.customElements) {
   customElements.whenDefined('model-viewer').then(function() {
-    var MVE = customElements.get('model-viewer');
-    if (MVE) {
-      MVE.minimumRenderScale = 1.0;
-    }
     var mv = document.querySelector('model-viewer');
     if (mv) {
-      mv.interpolationDecay = 0;
+      mv.shadowIntensity = 0.85;
+      mv.shadowSoftness = 0.8;
       mv.setAttribute('power-preference', 'high-performance');
     }
   });

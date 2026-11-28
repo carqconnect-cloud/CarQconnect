@@ -14,7 +14,19 @@ class TransactionDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tx = transaction ?? kSampleFastagTransactions.first;
+    final tx = transaction;
+    if (tx == null) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: AnimatedBackArrowButton(onTap: () => Navigator.pop(context)),
+          title: const Text('Transaction Details'),
+        ),
+        body: const Center(child: Text('No transaction selected.')),
+      );
+    }
 
     return ValueListenableBuilder<bool>(
       valueListenable: AppTheme.isLightNotifier,

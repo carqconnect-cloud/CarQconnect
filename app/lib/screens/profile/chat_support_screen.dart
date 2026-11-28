@@ -81,39 +81,12 @@ class _ChatSupportScreenState extends State<ChatSupportScreen> {
       ];
     } else {
       _messages = [
-        const ChatMessage(
-          id: '1',
-          text: 'How do I renew my car insurance?',
-          isUser: true,
-          time: '10:30 AM',
-        ),
-        const ChatMessage(
-          id: '2',
+        ChatMessage(
+          id: 'welcome_1',
           text:
-              'I can help you with that! You can renew your car insurance from the Services section. Would you like me to show you the steps?',
+              'Hello! Welcome to CarQConnect Support. Tell us what you need help with, or raise a support ticket if your issue needs account review.',
           isUser: false,
-          time: '10:30 AM',
-        ),
-        const ChatMessage(
-          id: '3',
-          text: 'Yes, please.',
-          isUser: true,
-          time: '10:31 AM',
-        ),
-        const ChatMessage(
-          id: '4',
-          text: 'Here are the steps to renew your insurance:',
-          isUser: false,
-          time: '10:31 AM',
-          isStepsCard: true,
-          steps: [
-            'Go to Services > Insurance',
-            'Select your vehicle',
-            'Choose a plan and make the payment',
-            'You\'ll receive the updated policy on your registered email',
-          ],
-          note:
-              'You can also renew directly from the Insurance section on your vehicle profile.',
+          time: timeStr,
         ),
       ];
     }
@@ -754,15 +727,7 @@ class _ChatSupportScreenState extends State<ChatSupportScreen> {
                           height: 44,
                           child: ElevatedButton(
                             onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: isLight ? Colors.white : const Color(0xFF101726),
-                                  content: Text(
-                                    'Navigating to Insurance Section...',
-                                    style: TextStyle(color: isLight ? const Color(0xFF0F172A) : Colors.white),
-                                  ),
-                                ),
-                              );
+                              Navigator.pop(context);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF0066FF),
@@ -778,7 +743,7 @@ class _ChatSupportScreenState extends State<ChatSupportScreen> {
                                     color: Colors.white, size: 16),
                                 SizedBox(width: 8),
                                 Text(
-                                  'Open Insurance Section',
+                                  'Done',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 13.5,
@@ -1082,7 +1047,7 @@ class _ChatSupportScreenState extends State<ChatSupportScreen> {
                       SnackBar(
                         backgroundColor: isLight ? Colors.white : const Color(0xFF101726),
                         content: Text(
-                          'Attachment picker opened',
+                          'Please describe your issue in the message box or raise a ticket with a screenshot.',
                           style: TextStyle(color: isLight ? const Color(0xFF0F172A) : Colors.white),
                         ),
                       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../globals.dart';
@@ -11,18 +12,27 @@ import '../../utils/api_config.dart';
 import '../../utils/app_icons.dart';
 import '../../widgets/animated_back_arrow.dart';
 import '../../widgets/app_toggle_switch.dart';
+import '../../utils/app_validators.dart';
 
 /// Screen 3: Set Contact & Privacy (Step 2 of 2 matching Screenshot 3)
 class SetContactPrivacyScreen extends StatefulWidget {
   final String vehicleId;
   final String vehicleName;
   final String vehicleReg;
+  final bool isEdit;
+  final String existingTagId;
+  final String? initialBloodGroup;
+  final String? initialMedicalNotes;
 
   const SetContactPrivacyScreen({
     super.key,
     required this.vehicleId,
     required this.vehicleName,
     required this.vehicleReg,
+    this.isEdit = false,
+    this.existingTagId = '',
+    this.initialBloodGroup,
+    this.initialMedicalNotes,
   });
 
   @override
@@ -34,7 +44,8 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
   late TextEditingController _phoneController;
   late TextEditingController _bloodGroupController;
   late TextEditingController _emergencyContactController;
-  final TextEditingController _medicalNotesController = TextEditingController();
+  late TextEditingController _medicalNotesController;
+  final FocusNode _phoneFocusNode = FocusNode();
 
   // 4 Switches matching Screenshot 3 (all ON by default)
   bool _allowCall = true;
@@ -78,13 +89,39 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
       initialPhone = initialPhone.substring(initialPhone.length - 10);
     }
     _phoneController = TextEditingController(text: initialPhone);
-    _bloodGroupController = TextEditingController(text: 'B+');
+    _bloodGroupController = TextEditingController(
+      text: widget.initialBloodGroup ?? (Globals.bloodGroup.isNotEmpty ? Globals.bloodGroup : 'B+'),
+    );
     
     String emContact = '';
     if (Globals.emergencyContacts.isNotEmpty) {
       emContact = Globals.emergencyContacts.first['phone'] ?? '';
     }
     _emergencyContactController = TextEditingController(text: emContact);
+    _medicalNotesController = TextEditingController(
+      text: widget.initialMedicalNotes ?? (Globals.medicalNotes.isNotEmpty ? Globals.medicalNotes : ''),
+    );
+    _loadSavedPreferences();
+  }
+
+  Future<void> _loadSavedPreferences() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedNotes = prefs.getString('carq_medical_notes');
+      final savedBlood = prefs.getString('carq_blood_group');
+      if (mounted) {
+        setState(() {
+          if (savedNotes != null && savedNotes.isNotEmpty && _medicalNotesController.text.isEmpty) {
+            _medicalNotesController.text = savedNotes;
+            Globals.medicalNotes = savedNotes;
+          }
+          if (savedBlood != null && savedBlood.isNotEmpty) {
+            _bloodGroupController.text = savedBlood;
+            Globals.bloodGroup = savedBlood;
+          }
+        });
+      }
+    } catch (_) {}
   }
 
   @override
@@ -93,6 +130,7 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
     _bloodGroupController.dispose();
     _emergencyContactController.dispose();
     _medicalNotesController.dispose();
+    _phoneFocusNode.dispose();
     super.dispose();
   }
 
@@ -141,7 +179,7 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
                 ],
                 decoration: InputDecoration(
                   labelText: 'Contact Name',
-                  hintText: 'e.g. Papa, John Doe',
+                  hintText: 'e.g. Family, Emergency Contact',
                   labelStyle: TextStyle(
                     color: isLight ? const Color(0xFF64748B) : const Color(0xFF7B8C9F),
                   ),
@@ -348,7 +386,9 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
                         Expanded(
                           child: Center(
                             child: Text(
-                              'Set Contact & Privacy',
+                              widget.isEdit
+                                  ? 'Edit Contact & Privacy'
+                                  : 'Set Contact & Privacy',
                               style: TextStyle(
                                 color: isLight ? const Color(0xFF0F172A) : Colors.white,
                                 fontSize: 18.5,
@@ -371,31 +411,34 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
                         children: [
                           const SizedBox(height: 8),
 
-                          // Progress Bar: Step 2 of 2 (100% filled)
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  height: 4,
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.primaryColor,
-                                    borderRadius: BorderRadius.circular(2),
+                          // Progress Bar: Step 2 of 2 (Only during activation)
+                          if (!widget.isEdit) ...[
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: 4,
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.primaryColor,
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 14),
-                              Text(
-                                'Step 2 of 2',
-                                style: TextStyle(
-                                  color: AppTheme.primaryColor,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
+                                const SizedBox(width: 14),
+                                Text(
+                                  'Step 2 of 2',
+                                  style: TextStyle(
+                                    color: AppTheme.primaryColor,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 24),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+                          ] else ...[
+                            const SizedBox(height: 12),
+                          ],
 
                           // Field 1: Contact
                           Text(
@@ -422,11 +465,9 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
                             ),
                             child: TextField(
                               controller: _phoneController,
+                              focusNode: _phoneFocusNode,
                               keyboardType: TextInputType.phone,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(10),
-                              ],
+                              inputFormatters: AppValidators.phoneFormatters,
                               onChanged: (val) {
                                 if (_phoneError != null) {
                                   setState(() => _phoneError = null);
@@ -443,10 +484,20 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
                                   color: isLight ? AppTheme.primaryColor : const Color(0xFF6B7C91),
                                   size: 19,
                                 ),
-                                suffixIcon: Icon(
-                                  Icons.edit_outlined,
-                                  color: isLight ? const Color(0xFF64748B) : const Color(0xFF6B7C91),
-                                  size: 18,
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    Icons.edit_outlined,
+                                    color: isLight ? AppTheme.primaryBlue : const Color(0xFF00C2FF),
+                                    size: 20,
+                                  ),
+                                  tooltip: 'Edit Phone Number',
+                                  onPressed: () {
+                                    _phoneFocusNode.requestFocus();
+                                    _phoneController.selection = TextSelection(
+                                      baseOffset: 0,
+                                      extentOffset: _phoneController.text.length,
+                                    );
+                                  },
                                 ),
                                 hintText: '10-digit mobile number',
                                 hintStyle: TextStyle(
@@ -753,21 +804,12 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
                             child: ElevatedButton(
                               onPressed: _isSaving ? null : () async {
                                 final phoneInput = _phoneController.text.trim();
-                                if (phoneInput.isEmpty) {
-                                  setState(() => _phoneError = 'Primary contact number is required');
+                                final phoneErr = AppValidators.validatePhone(phoneInput);
+                                if (phoneErr != null) {
+                                  setState(() => _phoneError = phoneErr);
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Please enter primary contact number'),
-                                      backgroundColor: Colors.redAccent,
-                                    ),
-                                  );
-                                  return;
-                                }
-                                if (phoneInput.length != 10 || !RegExp(r'^[0-9]{10}$').hasMatch(phoneInput)) {
-                                  setState(() => _phoneError = 'Please enter a valid 10-digit mobile number');
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Please enter a valid 10-digit mobile number'),
+                                    SnackBar(
+                                      content: Text(phoneErr),
                                       backgroundColor: Colors.redAccent,
                                     ),
                                   );
@@ -804,6 +846,18 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
 
                                 setState(() => _isSaving = true);
 
+                                final notes = _medicalNotesController.text.trim();
+                                final blood = _bloodGroupController.text.trim();
+
+                                Globals.medicalNotes = notes;
+                                Globals.bloodGroup = blood;
+
+                                try {
+                                  final prefs = await SharedPreferences.getInstance();
+                                  await prefs.setString('carq_medical_notes', notes);
+                                  await prefs.setString('carq_blood_group', blood);
+                                } catch (_) {}
+
                                 if (phoneInput.isNotEmpty) {
                                   Globals.phone = phoneInput;
                                 }
@@ -821,22 +875,87 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
                                   }
                                 }
 
+                                // If this is an EDIT mode, we just update the privacy & details on backend and pop!
+                                if (widget.isEdit) {
+                                  final tagCode = widget.existingTagId.isNotEmpty
+                                      ? widget.existingTagId
+                                      : (MyQrScreen.cachedActiveTag?['tagId'] ?? MyQrScreen.cachedActiveTag?['code'] ?? '');
+
+                                  if (tagCode.isNotEmpty && Globals.accessToken.isNotEmpty) {
+                                    try {
+                                      await http.patch(
+                                        ApiConfig.uri('/app-qr/tags/$tagCode/privacy'),
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                          'Authorization': 'Bearer ${Globals.accessToken}'
+                                        },
+                                        body: jsonEncode({
+                                          'callOwner': _allowCall,
+                                          'sendMessage': _allowMessage,
+                                          'bloodGroupVisibility': blood.isNotEmpty,
+                                          'emergencyContact': _showEmergencyContact,
+                                          'bloodGroup': blood,
+                                          'medicalNotes': notes,
+                                        }),
+                                      ).timeout(const Duration(seconds: 5));
+                                    } catch (e) {
+                                      debugPrint('Error updating privacy: $e');
+                                    }
+                                  }
+
+                                  if (MyQrScreen.cachedActiveTag != null) {
+                                    MyQrScreen.cachedActiveTag!['callOwner'] = _allowCall;
+                                    MyQrScreen.cachedActiveTag!['sendMessage'] = _allowMessage;
+                                    MyQrScreen.cachedActiveTag!['bloodGroupVisibility'] = blood.isNotEmpty;
+                                    MyQrScreen.cachedActiveTag!['emergencyContact'] = _showEmergencyContact;
+                                    MyQrScreen.cachedActiveTag!['bloodGroup'] = blood;
+                                    MyQrScreen.cachedActiveTag!['medicalNotes'] = notes;
+                                  }
+
+                                  if (context.mounted) {
+                                    setState(() => _isSaving = false);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Details updated successfully!'),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                    Navigator.pop(context, true);
+                                  }
+                                  return;
+                                }
+
                                 final generatedTagId = 'FN${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}';
 
-                                if (Globals.accessToken.isNotEmpty && widget.vehicleId.isNotEmpty) {
-                                  try {
-                                    await http.post(
-                                      ApiConfig.uri('/app-qr/tags/link'),
-                                      headers: {
-                                        'Content-Type': 'application/json',
-                                        'Authorization': 'Bearer ${Globals.accessToken}'
-                                      },
-                                      body: jsonEncode({
-                                        'tagId': generatedTagId,
-                                        'vehicleId': widget.vehicleId,
-                                      }),
-                                    ).timeout(const Duration(seconds: 4));
+                                if (Globals.accessToken.isEmpty || widget.vehicleId.isEmpty) {
+                                  if (context.mounted) {
+                                    setState(() => _isSaving = false);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Please sign in and select a valid vehicle first.'),
+                                        backgroundColor: Colors.redAccent,
+                                      ),
+                                    );
+                                  }
+                                  return;
+                                }
 
+                                bool linkedSuccess = false;
+                                try {
+                                  final linkRes = await http.post(
+                                    ApiConfig.uri('/app-qr/tags/link'),
+                                    headers: {
+                                      'Content-Type': 'application/json',
+                                      'Authorization': 'Bearer ${Globals.accessToken}'
+                                    },
+                                    body: jsonEncode({
+                                      'tagId': generatedTagId,
+                                      'vehicleId': widget.vehicleId,
+                                    }),
+                                  ).timeout(const Duration(seconds: 6));
+
+                                  if (linkRes.statusCode == 200 || linkRes.statusCode == 201) {
+                                    linkedSuccess = true;
                                     await http.patch(
                                       ApiConfig.uri('/app-qr/tags/$generatedTagId/privacy'),
                                       headers: {
@@ -846,13 +965,28 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
                                       body: jsonEncode({
                                         'callOwner': _allowCall,
                                         'sendMessage': _allowMessage,
-                                        'bloodGroupVisibility': _bloodGroupController.text.trim().isNotEmpty,
+                                        'bloodGroupVisibility': blood.isNotEmpty,
                                         'emergencyContact': _showEmergencyContact,
+                                        'bloodGroup': blood,
+                                        'medicalNotes': notes,
                                       }),
                                     ).timeout(const Duration(seconds: 4));
-                                  } catch (e) {
-                                    debugPrint('Error linking tag: $e');
                                   }
+                                } catch (e) {
+                                  debugPrint('Error linking tag: $e');
+                                }
+
+                                if (!linkedSuccess) {
+                                  if (context.mounted) {
+                                    setState(() => _isSaving = false);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Could not activate QR tag. Please check your connection and try again.'),
+                                        backgroundColor: Colors.redAccent,
+                                      ),
+                                    );
+                                  }
+                                  return;
                                 }
 
                                 MyQrScreen.cachedActiveTag = {
@@ -861,8 +995,10 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
                                   'vehicleId': widget.vehicleId,
                                   'callOwner': _allowCall,
                                   'sendMessage': _allowMessage,
-                                  'bloodGroupVisibility': _bloodGroupController.text.trim().isNotEmpty,
+                                  'bloodGroupVisibility': blood.isNotEmpty,
                                   'emergencyContact': _showEmergencyContact,
+                                  'bloodGroup': blood,
+                                  'medicalNotes': notes,
                                   'vehicle': {
                                     'id': widget.vehicleId,
                                     'name': widget.vehicleName,
@@ -895,9 +1031,9 @@ class _SetContactPrivacyScreenState extends State<SetContactPrivacyScreen> {
                               ),
                               child: _isSaving
                                   ? const AppLoadingSpinner(size: 22)
-                                  : const Text(
-                                      'Save & Activate',
-                                      style: TextStyle(
+                                  : Text(
+                                      widget.isEdit ? 'Save Changes' : 'Save & Activate',
+                                      style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,

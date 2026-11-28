@@ -218,7 +218,7 @@ class VehicleSelectorCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final displayName = (vehicleName != null && vehicleName!.isNotEmpty)
         ? vehicleName!
-        : (Globals.vehicleModel.isNotEmpty ? Globals.vehicleModel : 'My Vehicle');
+        : (Globals.vehicleModel.isNotEmpty ? Globals.vehicleModel : 'No Vehicle Linked');
     final displayReg = (vehicleNumber != null && vehicleNumber!.isNotEmpty)
         ? vehicleNumber!
         : (Globals.vehicleRegistration.isNotEmpty ? Globals.vehicleRegistration : '');

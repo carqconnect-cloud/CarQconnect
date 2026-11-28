@@ -12,80 +12,19 @@ class VehicleAlertsScreen extends StatefulWidget {
 class _VehicleAlertsScreenState extends State<VehicleAlertsScreen> {
   int _selectedFilterIndex = 0;
 
-  final List<String> _filters = [
-    'All (5)',
-    'Critical (1)',
-    'Warning (2)',
-    'Info (2)',
-  ];
+  final List<Map<String, dynamic>> _alerts = [];
 
-  final List<Map<String, dynamic>> _alerts = [
-    {
-      'title': 'Check Engine',
-      'type': 'Critical',
-      'description': 'Engine fault detected. Get it checked soon.',
-      'time': 'Today, 10:24 AM',
-      'icon': Icons.engineering_outlined,
-      'color': const Color(0xFFEF4444),
-      'bgColor': const Color(0xFF381218),
-      'lightBgColor': const Color(0xFFFEE2E2),
-      'badgeColor': const Color(0xFFEF4444),
-      'dtcCode': 'P0300 - Random/Multiple Cylinder Misfire Detected',
-      'action': 'Schedule Immediate Diagnostic Inspection',
-    },
-    {
-      'title': 'Low Battery Voltage',
-      'type': 'Warning',
-      'description': 'Battery voltage is below normal range.',
-      'time': '12 Aug 2026, 08:12 AM',
-      'icon': Icons.warning_amber_rounded,
-      'color': const Color(0xFFF59E0B),
-      'bgColor': const Color(0xFF382810),
-      'lightBgColor': const Color(0xFFFEF3C7),
-      'badgeColor': const Color(0xFFF59E0B),
-      'dtcCode': 'B1318 - Battery Voltage Low (11.8V Detected)',
-      'action': 'Check Alternator or Recharge Battery',
-    },
-    {
-      'title': 'High Engine Temperature',
-      'type': 'Warning',
-      'description': 'Temperature is higher than usual.',
-      'time': '10 Aug 2026, 06:45 PM',
-      'icon': Icons.thermostat_outlined,
-      'color': const Color(0xFFF59E0B),
-      'bgColor': const Color(0xFF382810),
-      'lightBgColor': const Color(0xFFFEF3C7),
-      'badgeColor': const Color(0xFFF59E0B),
-      'dtcCode': 'P0217 - Engine Coolant Over Temperature Condition (104°C)',
-      'action': 'Check Coolant Level and Radiator Fan Operation',
-    },
-    {
-      'title': 'Service Due',
-      'type': 'Info',
-      'description': 'Next service due in 1,200 km.',
-      'time': '5 Aug 2026, 11:30 AM',
-      'icon': Icons.settings_outlined,
-      'color': const Color(0xFF0066FF),
-      'bgColor': const Color(0xFF0C2B47),
-      'lightBgColor': const Color(0xFFEFF6FF),
-      'badgeColor': const Color(0xFF0066FF),
-      'dtcCode': 'Periodic Maintenance Interval (20,000 km)',
-      'action': 'Book Service Appointment at Authorized Service Center',
-    },
-    {
-      'title': 'Good Driving Streak',
-      'type': 'Info',
-      'description': "You've saved 12% fuel this week!",
-      'time': '3 Aug 2026, 09:20 PM',
-      'icon': Icons.spa_outlined,
-      'color': const Color(0xFF10B981),
-      'bgColor': const Color(0xFF063B2B),
-      'lightBgColor': const Color(0xFFD1FAE5),
-      'badgeColor': const Color(0xFF10B981),
-      'dtcCode': 'Eco Score: 88/100 (Optimal acceleration & braking)',
-      'action': 'Keep up smooth acceleration and steady cruising',
-    },
-  ];
+  List<String> get _filters {
+    final critCount = _alerts.where((a) => a['type'] == 'Critical').length;
+    final warnCount = _alerts.where((a) => a['type'] == 'Warning').length;
+    final infoCount = _alerts.where((a) => a['type'] == 'Info').length;
+    return [
+      'All (${_alerts.length})',
+      'Critical ($critCount)',
+      'Warning ($warnCount)',
+      'Info ($infoCount)',
+    ];
+  }
 
   List<Map<String, dynamic>> get _filteredAlerts {
     if (_selectedFilterIndex == 0) return _alerts;
@@ -351,11 +290,52 @@ class _VehicleAlertsScreenState extends State<VehicleAlertsScreen> {
 
                   // 3. Alerts List
                   Expanded(
-                    child: ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: _filteredAlerts.length,
-                      itemBuilder: (context, index) {
+                    child: _filteredAlerts.isEmpty
+                        ? Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(32),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.verified_user_outlined,
+                                    size: 48,
+                                    color: isLight
+                                        ? const Color(0xFF94A3B8)
+                                        : const Color(0xFF64748B),
+                                  ),
+                                  const SizedBox(height: 14),
+                                  Text(
+                                    'No Active Alerts',
+                                    style: TextStyle(
+                                      color: isLight
+                                          ? const Color(0xFF0F172A)
+                                          : Colors.white,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    'No diagnostic fault codes detected. Connect an OBD-II scanner to run a live vehicle check.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: isLight
+                                          ? const Color(0xFF64748B)
+                                          : const Color(0xFF94A3B8),
+                                      fontSize: 13.5,
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemCount: _filteredAlerts.length,
+                            itemBuilder: (context, index) {
                         final alert = _filteredAlerts[index];
                         final Color themeColor = alert['color'] as Color;
                         final Color badgeColor = (alert['badgeColor'] ?? themeColor) as Color;

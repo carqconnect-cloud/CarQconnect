@@ -17,9 +17,9 @@ class QrCodeWidget extends StatelessWidget {
     this.darkColor = Colors.black,
     this.lightColor = Colors.white,
     this.hasRoundedCorners = true,
-    this.data = 'https://carqconnect.com',
+    this.data = 'https://car-qconnect.vercel.app',
     this.isEncrypted = true,
-    this.lockMessage = 'Order Digital E-tag\nto unlock your code',
+    this.lockMessage = 'Purchase the physical\nQR tag to view your code',
   });
 
   @override
@@ -69,9 +69,9 @@ class QrCodeWidget extends StatelessWidget {
           child: Stack(
           alignment: Alignment.center,
           children: [
-            // 1. Gaussian blur showing blurred QR matrix matching Screenshot 2
+            // 1. Gaussian blur showing blurred QR matrix matching Image 1
             ImageFiltered(
-              imageFilter: ui.ImageFilter.blur(sigmaX: 9.0, sigmaY: 9.0),
+              imageFilter: ui.ImageFilter.blur(sigmaX: 7.0, sigmaY: 7.0),
               child: qrContent,
             ),
 

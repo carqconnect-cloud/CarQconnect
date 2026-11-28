@@ -66,23 +66,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
       category: 'QR TAG',
       question: 'What should I do if my QR tag is lost?',
       answer:
-          'If lost or damaged, you can deactivate the current tag instantly from the QR Tag settings and request a free replacement tag.',
-    ),
-
-    // WALLET & PAYMENTS
-    const FaqItem(
-      id: 'wallet_1',
-      category: 'WALLET & PAYMENTS',
-      question: 'How do I add money to Zap Wallet?',
-      answer:
-          'Go to Zap Wallet from your Home screen, tap "Top Up", choose UPI, Credit/Debit Card or Net Banking, enter the amount and complete the payment.',
-    ),
-    const FaqItem(
-      id: 'wallet_2',
-      category: 'WALLET & PAYMENTS',
-      question: 'How long does a refund take?',
-      answer:
-          'Refunds to Zap Wallet are credited instantly. Refunds to original payment source (bank account or card) usually take 3-5 business days.',
+          'If lost or damaged, you can deactivate the current tag instantly from the QR Tag settings and request a replacement tag.',
     ),
 
     // ACCOUNT
@@ -91,14 +75,14 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
       category: 'ACCOUNT',
       question: 'How do I change my phone number?',
       answer:
-          'Navigate to Account > Personal Information > Phone Number. Tap "Edit", enter your new phone number, and verify it via the OTP sent to your new number.',
+          'Navigate to Account > Personal Information > Phone Number and save your updated contact details.',
     ),
     const FaqItem(
       id: 'account_2',
       category: 'ACCOUNT',
-      question: 'How do referrals work?',
+      question: 'How do subscriptions work?',
       answer:
-          'Share your unique referral link with friends. When they register and activate their first vehicle or QR tag, both of you receive ₹100 in your Zap Wallet.',
+          'Visit Account > Membership to view your active CarQConnect plan and upgrade or manage billing anytime via Razorpay.',
     ),
   ];
 
@@ -199,9 +183,6 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                           // Filter Chips Horizontal Row
                           _buildCategoryChips(isLight),
                           const SizedBox(height: 20),
-
-                          // Active Ticket Banner Card
-                          _buildActiveTicketBanner(isLight),
 
                           // FAQ Categories
                           if (groupedFaqs.isEmpty)
@@ -560,148 +541,6 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildActiveTicketBanner(bool isLight) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      decoration: BoxDecoration(
-        color: AppTheme.settingsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1B263C),
-          width: 1,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ChatSupportScreen(
-                  ticketId: '#FN123456',
-                  category: 'QR Tag',
-                  subject: 'New QR tag order',
-                ),
-              ),
-            );
-          },
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Cyan Grid Icon Box
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: isLight ? const Color(0xFFEFF6FF) : const Color(0xFF0C2442),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: isLight
-                              ? const Color(0xFFBFDBFE)
-                              : const Color(0xFF0284C7).withValues(alpha: 0.35),
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      child: const Icon(
-                        Icons.grid_view_rounded,
-                        color: Color(0xFF0066FF),
-                        size: 22,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Ticket ID & Category
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '#FN123456',
-                            style: TextStyle(
-                              color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'QR Tag • New QR tag order',
-                            style: TextStyle(
-                              color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
-                              fontSize: 12.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Open Amber Badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 3.5),
-                      decoration: BoxDecoration(
-                        color: isLight ? const Color(0xFFFEF3C7) : const Color(0xFF332005),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: const Color(0xFFFFB300).withValues(alpha: 0.4),
-                        ),
-                      ),
-                      child: const Text(
-                        'Open',
-                        style: TextStyle(
-                          color: Color(0xFFD97706),
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                // Bottom row with View Ticket link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '12 Sep 2026',
-                      style: TextStyle(
-                        color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
-                        fontSize: 12,
-                      ),
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Text(
-                          'View Ticket',
-                          style: TextStyle(
-                            color: Color(0xFF0066FF),
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(width: 4),
-                        Icon(
-                          Icons.arrow_forward_rounded,
-                          color: Color(0xFF0066FF),
-                          size: 15,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

@@ -23,7 +23,7 @@ class VehicleHealthData {
   final String carImage;
 
   const VehicleHealthData({
-    this.carName = 'Hyundai Tucson Turbo Hybrid',
+    this.carName = 'My Vehicle',
     this.overallHealth = 'Good',
     this.note = 'No major issues detected.',
     this.engine = 'Normal',
@@ -47,7 +47,7 @@ class VehicleHealthData {
 
   factory VehicleHealthData.fromJson(Map<String, dynamic> json) =>
       VehicleHealthData(
-        carName: json['carName'] as String? ?? 'Hyundai Tucson Turbo Hybrid',
+        carName: json['carName'] as String? ?? 'My Vehicle',
         overallHealth: json['overallHealth'] as String? ?? 'Good',
         note: json['note'] as String? ?? 'No major issues detected.',
         engine: json['engine'] as String? ?? 'Normal',

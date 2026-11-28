@@ -63,13 +63,19 @@ export const adminOrdersService = {
 
     // Notify user about order status transition
     try {
-      await prisma.notification.create({
+      const notif = await prisma.notification.create({
         data: {
           userId: existing.userId,
           title: `Order ${input.status}`,
           description: `Your order (${existing.orderNo}) status has been updated to ${input.status}.`,
           type: 'order',
         },
+      });
+      realTimeService.broadcastNotification(existing.userId, {
+        id: notif.id,
+        title: notif.title,
+        description: notif.description,
+        type: notif.type,
       });
 
       // Real-time WebSocket event dispatch to user and admin rooms
@@ -205,13 +211,19 @@ export const adminOrdersService = {
 
     // Notify user with AWB and tracking link
     try {
-      await prisma.notification.create({
+      const notif = await prisma.notification.create({
         data: {
           userId: existing.userId,
           title: `Order Dispatched via Shiprocket`,
           description: `Your order (${existing.orderNo}) has been dispatched with ${carrier}. Tracking AWB: ${awbCode}`,
           type: 'order',
         },
+      });
+      realTimeService.broadcastNotification(existing.userId, {
+        id: notif.id,
+        title: notif.title,
+        description: notif.description,
+        type: notif.type,
       });
 
       realTimeService.broadcastOrderUpdate(existing.userId, {

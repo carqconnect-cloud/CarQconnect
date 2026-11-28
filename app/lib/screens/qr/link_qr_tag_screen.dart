@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import 'qr_code_widget.dart';
 import 'qr_activated_screen.dart';
+import 'qr_scanner_screen.dart';
 import '../../widgets/animated_back_arrow.dart';
 
 /// Screen: Link Your QR Tag matching Image 1
@@ -52,41 +53,36 @@ class _LinkQrTagScreenState extends State<LinkQrTagScreen>
   }
 
   void _onScanTapped() {
-    setState(() {
-      _isScanning = true;
-    });
-
-    // Simulate instant scan detection after 1.2s
-    Future.delayed(const Duration(milliseconds: 1200), () {
-      if (!mounted) return;
-      setState(() {
-        _isScanning = false;
-        _tagIdController.text = 'FNR78451236';
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFF101C2B),
-          duration: Duration(seconds: 2),
-          content: Row(
-            children: [
-              Icon(Icons.check_circle_rounded, color: Color(0xFF00C2FF), size: 19),
-              SizedBox(width: 8),
-              Text(
-                'Tag Scanned: FNR78451236',
-                style: TextStyle(color: Colors.white),
-              ),
-            ],
-          ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QrScannerScreen(
+          onScanResult: (code) {
+            if (!mounted) return;
+            setState(() {
+              _isScanning = false;
+              _tagIdController.text = code.trim().toUpperCase();
+            });
+          },
         ),
-      );
-    });
+      ),
+    );
   }
 
   void _onContinue() {
-    final tagId = _tagIdController.text.trim().isNotEmpty
-        ? _tagIdController.text.trim().toUpperCase()
-        : 'FN78451236';
+    final tagId = _tagIdController.text.trim().toUpperCase();
+    if (tagId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Color(0xFF101C2B),
+          content: Text(
+            'Please scan or enter your QR Tag ID.',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      );
+      return;
+    }
 
     Navigator.push(
       context,
@@ -317,7 +313,7 @@ class _LinkQrTagScreenState extends State<LinkQrTagScreen>
                                   letterSpacing: 0.5,
                                 ),
                                 decoration: InputDecoration(
-                                  hintText: 'E.G. FNR78451236',
+                                  hintText: 'Enter QR Tag ID',
                                   hintStyle: TextStyle(
                                     color: isLight ? const Color(0xFF94A3B8) : const Color(0xFF3F5064),
                                     fontSize: 14,

@@ -78,11 +78,37 @@ class _FastagTransactionsScreenState extends State<FastagTransactionsScreen> {
 
                   // Transactions List
                   Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: transactions.length,
-                      itemBuilder: (context, index) {
-                        final tx = transactions[index];
+                    child: transactions.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.receipt_long_outlined,
+                                  size: 44,
+                                  color: isLight
+                                      ? const Color(0xFF94A3B8)
+                                      : const Color(0xFF64748B),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'No FASTag Transactions Yet',
+                                  style: TextStyle(
+                                    color: isLight
+                                        ? const Color(0xFF0F172A)
+                                        : Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemCount: transactions.length,
+                            itemBuilder: (context, index) {
+                              final tx = transactions[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: InkWell(

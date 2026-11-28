@@ -1,13 +1,18 @@
 package com.fioner.carqconnect.app
 
+import android.Manifest
 import android.content.ContentValues
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
+import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.annotation.NonNull
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -16,9 +21,100 @@ import java.io.FileOutputStream
 
 class MainActivity : FlutterActivity() {
     private val CHANNEL = "com.carqconnect.app/media"
+    private val NOTIF_CHANNEL = "com.carqconnect.app/notifications"
+    private val REQUEST_POST_NOTIFICATIONS = 4101
+
+    private var notifChannel: MethodChannel? = null
+    private var pendingPermissionResult: MethodChannel.Result? = null
+    private var pendingRoute: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        CarQNotificationHelper.ensureChannel(this)
+        captureRouteFromIntent(intent, notifyFlutter = false)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        captureRouteFromIntent(intent, notifyFlutter = true)
+    }
+
+    private fun captureRouteFromIntent(intent: Intent?, notifyFlutter: Boolean) {
+        val route = intent?.getStringExtra(CarQNotificationHelper.EXTRA_ROUTE)
+        if (!route.isNullOrBlank()) {
+            pendingRoute = route
+            if (notifyFlutter) {
+                notifChannel?.invokeMethod("onNotificationTap", mapOf("route" to route))
+            }
+        }
+    }
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        CarQNotificationHelper.ensureChannel(this)
+
+        notifChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, NOTIF_CHANNEL)
+        notifChannel?.setMethodCallHandler { call, result ->
+            when (call.method) {
+                "hasPermission" -> {
+                    result.success(CarQNotificationHelper.hasNotificationPermission(this))
+                }
+                "requestPermission" -> {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                        result.success(CarQNotificationHelper.hasNotificationPermission(this))
+                        return@setMethodCallHandler
+                    }
+                    val granted = ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+                    if (granted) {
+                        result.success(true)
+                        return@setMethodCallHandler
+                    }
+                    pendingPermissionResult?.success(false)
+                    pendingPermissionResult = result
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                        REQUEST_POST_NOTIFICATIONS
+                    )
+                }
+                "showNotification" -> {
+                    val id = call.argument<String>("id") ?: System.currentTimeMillis().toString()
+                    val title = call.argument<String>("title") ?: "CarQConnect"
+                    val body = call.argument<String>("body") ?: ""
+                    val type = call.argument<String>("type") ?: "general"
+                    CarQNotificationHelper.showSystemNotification(this, id, title, body, type)
+                    result.success(true)
+                }
+                "syncConfig" -> {
+                    val baseUrl = call.argument<String>("baseUrl") ?: ""
+                    val token = call.argument<String>("token") ?: ""
+                    val enabled = call.argument<Boolean>("enabled") ?: true
+                    val seedIds = call.argument<List<String>>("seedIds")
+                    CarQNotificationHelper.syncConfig(this, baseUrl, token, enabled, seedIds)
+                    result.success(true)
+                }
+                "markSeenIds" -> {
+                    val ids = call.argument<List<String>>("ids") ?: emptyList()
+                    CarQNotificationHelper.markSeenIds(this, ids)
+                    result.success(true)
+                }
+                "pollNow" -> {
+                    CarQNotificationHelper.pollNotificationsAsync(this)
+                    result.success(true)
+                }
+                "getLaunchRoute" -> {
+                    val route = pendingRoute
+                    pendingRoute = null
+                    result.success(route)
+                }
+                else -> result.notImplemented()
+            }
+        }
+
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
                 "saveImageToGallery" -> {
@@ -63,6 +159,19 @@ class MainActivity : FlutterActivity() {
                 }
                 else -> result.notImplemented()
             }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_POST_NOTIFICATIONS) {
+            val granted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            pendingPermissionResult?.success(granted)
+            pendingPermissionResult = null
         }
     }
 

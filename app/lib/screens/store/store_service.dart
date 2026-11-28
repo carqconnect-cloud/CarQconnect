@@ -75,20 +75,7 @@ class StoreService {
       } catch (_) {}
     }
 
-    // Real coupons uploaded by super-admin
-    return [
-      {
-        'id': 'cpn_diwali90',
-        'code': 'DIWALI90',
-        'title': 'Diwali offer 90% Off for top 10 customers',
-        'description': '90% off on your purchase (Min Order: ₹100)',
-        'discountType': 'PERCENT',
-        'discountValue': 90,
-        'minOrder': 100,
-        'maxDiscount': 1000,
-        'status': 'active',
-      },
-    ];
+    return [];
   }
 
   static Future<Map<String, dynamic>?> validateCoupon(String code, int subtotal) async {
@@ -110,45 +97,13 @@ class StoreService {
       final data = json.decode(response.body);
       if (response.statusCode == 200 && data['success'] == true) {
         return Map<String, dynamic>.from(data['data']);
-      } else if (response.statusCode != 404) {
+      } else {
         return {'valid': false, 'message': data['message'] ?? 'Invalid coupon code'};
       }
     } catch (e) {
       debugPrint('Error validating coupon with backend: $e');
+      return {'valid': false, 'message': 'Unable to verify coupon right now.'};
     }
-
-    // Local validation fallback for real uploaded coupons
-    final localCoupons = await getCoupons();
-    final match = localCoupons.firstWhere(
-      (c) => (c['code'] ?? '').toString().toUpperCase() == upper,
-      orElse: () => {},
-    );
-
-    if (match.isNotEmpty) {
-      final minOrder = (match['minOrder'] as num?)?.toInt() ?? 0;
-      if (minOrder > 0 && subtotal < minOrder) {
-        return {'valid': false, 'message': 'Minimum order amount of ₹$minOrder required for this coupon'};
-      }
-      final discountType = (match['discountType'] ?? 'PERCENT').toString().toUpperCase();
-      final discountValue = (match['discountValue'] as num?)?.toInt() ?? 0;
-      final maxDiscount = (match['maxDiscount'] as num?)?.toInt() ?? 500;
-      int discountAmount = 0;
-      if (discountType == 'FLAT') {
-        discountAmount = discountValue > subtotal ? subtotal : discountValue;
-      } else {
-        final calc = ((subtotal * discountValue) / 100).round();
-        final capped = maxDiscount > 0 ? (calc > maxDiscount ? maxDiscount : calc) : calc;
-        discountAmount = capped > subtotal ? subtotal : capped;
-      }
-      return {
-        'valid': true,
-        'code': upper,
-        'discountAmount': discountAmount,
-        'coupon': match,
-      };
-    }
-
-    return {'valid': false, 'message': 'Invalid or inactive coupon code'};
   }
 
   static Future<Map<String, dynamic>?> createRazorpayOrder(int amount) async {
@@ -220,8 +175,7 @@ class StoreService {
     try {
       final token = _getToken();
       if (token == null) {
-        // Fallback for offline / guest / demo checkout
-        return true;
+        return false;
       }
 
       final response = await http.post(
@@ -246,7 +200,7 @@ class StoreService {
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
       debugPrint('Error creating order: $e');
-      return true; // Graceful fallback so checkout is never blocked
+      return false;
     }
   }
 

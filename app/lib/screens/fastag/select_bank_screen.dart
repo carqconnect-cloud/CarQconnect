@@ -8,7 +8,7 @@ import '../../widgets/animated_back_arrow.dart';
 class SelectBankScreen extends StatefulWidget {
   final String vehicleNumber;
 
-  const SelectBankScreen({super.key, this.vehicleNumber = 'MP 09 AB 1234'});
+  const SelectBankScreen({super.key, this.vehicleNumber = ''});
 
   @override
   State<SelectBankScreen> createState() => _SelectBankScreenState();

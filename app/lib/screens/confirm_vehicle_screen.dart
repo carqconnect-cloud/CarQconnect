@@ -100,24 +100,24 @@ class ConfirmVehicleScreen extends StatelessWidget {
                                 Text(
                                   Globals.vehicleModel.isNotEmpty
                                       ? Globals.vehicleModel
-                                      : 'Hyundai Creta',
+                                      : 'My Vehicle',
                                   style: TextStyle(
                                     color: AppTheme.textPrimary,
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  Globals.vehicleRegistration.isNotEmpty
-                                      ? Globals.vehicleRegistration
-                                      : 'MP 09 AB 1234',
-                                  style: TextStyle(
-                                    color: AppTheme.textSecondary,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
+                                if (Globals.vehicleRegistration.isNotEmpty) ...[
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    Globals.vehicleRegistration,
+                                    style: TextStyle(
+                                      color: AppTheme.textSecondary,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
+                                ],
                                 const SizedBox(height: 24),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

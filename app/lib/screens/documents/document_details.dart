@@ -278,11 +278,10 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 _buildSmartCardItem('Owner Name', doc.ownerName),
-                                const SizedBox(height: 8),
-                                _buildSmartCardItem(
-                                  'Chassis No.',
-                                  'MA3NB81S7RK123456',
-                                ),
+                                if (doc.subtitle.isNotEmpty) ...[
+                                  const SizedBox(height: 8),
+                                  _buildSmartCardItem('Document Type', doc.title),
+                                ],
                               ],
                             ),
                           ),
@@ -291,8 +290,10 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 _buildSmartCardItem('Vehicle No.', doc.regNumber),
-                                const SizedBox(height: 8),
-                                _buildSmartCardItem('Engine No.', 'G4FGKU123456'),
+                                if (doc.expiryDate.isNotEmpty) ...[
+                                  const SizedBox(height: 8),
+                                  _buildSmartCardItem('Valid Till', doc.expiryDate),
+                                ],
                               ],
                             ),
                           ),
@@ -368,9 +369,17 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
                             border: Border.all(color: isLight ? const Color(0xFF6EE7B7) : const Color(0xFF104A3A)),
                           ),
                           child: Text(
-                            'Valid',
+                            doc.status == DocumentStatus.valid
+                                ? 'Valid'
+                                : (doc.status == DocumentStatus.expiringSoon
+                                    ? 'Expiring Soon'
+                                    : 'Expired'),
                             style: TextStyle(
-                              color: isLight ? const Color(0xFF10B981) : const Color(0xFF00E676),
+                              color: doc.status == DocumentStatus.valid
+                                  ? (isLight ? const Color(0xFF10B981) : const Color(0xFF00E676))
+                                  : (doc.status == DocumentStatus.expiringSoon
+                                      ? const Color(0xFFF59E0B)
+                                      : const Color(0xFFFF5252)),
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                             ),
@@ -652,7 +661,7 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: isLight ? const Color(0xFF0F172A) : const Color(0xFF101726),
-            content: Text('${doc.title} details are active & valid.'),
+            content: const Text('No downloadable image attached to this document.'),
           ),
         );
       }

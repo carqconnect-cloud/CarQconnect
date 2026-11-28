@@ -44,7 +44,7 @@ class _BotScreenState extends State<BotScreen>
 
   String get _displayName {
     final name = Globals.firstName.trim();
-    return name.isNotEmpty ? name : 'Ananya';
+    return name.isNotEmpty ? name : 'there';
   }
 
   String get _storageSessionsKey {
@@ -879,7 +879,7 @@ class _BotScreenState extends State<BotScreen>
         children: [
           const SizedBox(height: 8),
 
-          // Greeting: "Hi Ananya," + "How may I help you?"
+          // Greeting: "Hi {Name}," + "How may I help you?"
           RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
@@ -1248,7 +1248,7 @@ class _BotScreenState extends State<BotScreen>
           Expanded(
             child: Container(
               height: 52,
-              padding: const EdgeInsets.only(left: 6, right: 14),
+              padding: const EdgeInsets.only(left: 3, right: 14),
               decoration: BoxDecoration(
                 color: isLight ? Colors.white : const Color(0xFF101726),
                 borderRadius: BorderRadius.circular(26),

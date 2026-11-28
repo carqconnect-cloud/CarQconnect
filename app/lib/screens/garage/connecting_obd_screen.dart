@@ -18,14 +18,12 @@ class _ConnectingObdScreenState extends State<ConnectingObdScreen>
     with TickerProviderStateMixin {
   late AnimationController _pulseController;
   late AnimationController _dotsController;
-  Timer? _stepTimer1;
-  Timer? _stepTimer2;
-  Timer? _stepTimer3;
-  Timer? _finishTimer;
+  Timer? _discoveryTimer;
 
-  // Connection steps: 0 = Searching, 1 = Pairing, 2 = Vehicle, 3 = Monitoring, 4 = Done
-  int _currentStep = 1;
+  // Connection steps: 0 = Searching, 1 = Waiting for BLE hardware
+  int _currentStep = 0;
   bool _isCancelled = false;
+  bool _deviceNotFound = false;
 
   @override
   void initState() {
@@ -40,70 +38,27 @@ class _ConnectingObdScreenState extends State<ConnectingObdScreen>
       duration: const Duration(milliseconds: 1200),
     )..repeat();
 
-    _startConnectionSimulation();
+    _startHardwareDiscovery();
   }
 
-  void _startConnectionSimulation() {
-    _stepTimer1 = Timer(const Duration(milliseconds: 2500), () {
+  void _startHardwareDiscovery() {
+    _discoveryTimer?.cancel();
+    setState(() {
+      _currentStep = 0;
+      _deviceNotFound = false;
+    });
+    _discoveryTimer = Timer(const Duration(milliseconds: 2800), () {
       if (mounted && !_isCancelled) {
-        setState(() => _currentStep = 2);
+        setState(() {
+          _deviceNotFound = true;
+        });
       }
     });
-
-    _stepTimer2 = Timer(const Duration(milliseconds: 4500), () {
-      if (mounted && !_isCancelled) {
-        setState(() => _currentStep = 3);
-      }
-    });
-
-    _stepTimer3 = Timer(const Duration(milliseconds: 6200), () {
-      if (mounted && !_isCancelled) {
-        setState(() => _currentStep = 4);
-      }
-    });
-
-    _finishTimer = Timer(const Duration(milliseconds: 7200), () {
-      if (mounted && !_isCancelled) {
-        _handleSuccess();
-      }
-    });
-  }
-
-  void _handleSuccess() {
-    widget.onConnectionComplete?.call(true);
-    if (mounted) {
-      final isLight = AppTheme.isLightNotifier.value;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.check_circle, color: Color(0xFF10B981), size: 20),
-              const SizedBox(width: 10),
-              Text(
-                'OBD device connected successfully!',
-                style: TextStyle(
-                  color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          backgroundColor: isLight ? Colors.white : const Color(0xFF0F1A2E),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      Navigator.pop(context, true);
-    }
   }
 
   void _handleCancel() {
     _isCancelled = true;
-    _stepTimer1?.cancel();
-    _stepTimer2?.cancel();
-    _stepTimer3?.cancel();
-    _finishTimer?.cancel();
+    _discoveryTimer?.cancel();
     widget.onConnectionComplete?.call(false);
     Navigator.pop(context, false);
   }
@@ -112,10 +67,7 @@ class _ConnectingObdScreenState extends State<ConnectingObdScreen>
   void dispose() {
     _pulseController.dispose();
     _dotsController.dispose();
-    _stepTimer1?.cancel();
-    _stepTimer2?.cancel();
-    _stepTimer3?.cancel();
-    _finishTimer?.cancel();
+    _discoveryTimer?.cancel();
     super.dispose();
   }
 
@@ -149,9 +101,11 @@ class _ConnectingObdScreenState extends State<ConnectingObdScreen>
 
                           const SizedBox(height: 36),
 
-                          // Title: Connecting to OBD device...
+                          // Title & Hardware Status
                           Text(
-                            'Connecting to OBD device...',
+                            _deviceNotFound
+                                ? 'No OBD-II Dongle Detected'
+                                : 'Searching for OBD device...',
                             style: TextStyle(
                               color: isLight ? const Color(0xFF0F172A) : Colors.white,
                               fontSize: 22,
@@ -164,7 +118,9 @@ class _ConnectingObdScreenState extends State<ConnectingObdScreen>
 
                           // Subtitle
                           Text(
-                            'Make sure your device is powered on\nand nearby.',
+                            _deviceNotFound
+                                ? 'Plug your CarQConnect OBD Pro into the\nvehicle port and pair Bluetooth first.'
+                                : 'Make sure your device is powered on\nand nearby.',
                             style: TextStyle(
                               color: isLight ? const Color(0xFF64748B) : const Color(0xFF8B9CB5),
                               fontSize: 14,
@@ -184,47 +140,77 @@ class _ConnectingObdScreenState extends State<ConnectingObdScreen>
                     ),
                   ),
 
-                  // Bottom Cancel Connection Button
+                  // Bottom Action Button
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: ElevatedButton(
-                        onPressed: _handleCancel,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isLight ? Colors.white : const Color(0xFF0A1224),
-                          foregroundColor: isLight ? const Color(0xFF0F172A) : Colors.white,
-                          elevation: isLight ? 1 : 0,
-                          side: BorderSide(
-                            color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1B2B4C),
-                            width: 1.0,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(26),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.bluetooth,
-                              color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Cancel Connection',
-                              style: TextStyle(
-                                color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.1,
+                    child: Column(
+                      children: [
+                        if (_deviceNotFound) ...[
+                          SizedBox(
+                            width: double.infinity,
+                            height: 52,
+                            child: ElevatedButton.icon(
+                              onPressed: _startHardwareDiscovery,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF0066FF),
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(26),
+                                ),
+                              ),
+                              icon: const Icon(Icons.refresh_rounded, size: 18),
+                              label: const Text(
+                                'Retry Scan',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ],
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                        SizedBox(
+                          width: double.infinity,
+                          height: 52,
+                          child: ElevatedButton(
+                            onPressed: _handleCancel,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: isLight ? Colors.white : const Color(0xFF0A1224),
+                              foregroundColor: isLight ? const Color(0xFF0F172A) : Colors.white,
+                              elevation: isLight ? 1 : 0,
+                              side: BorderSide(
+                                color: isLight ? const Color(0xFFE2E8F0) : const Color(0xFF1B2B4C),
+                                width: 1.0,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(26),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.bluetooth,
+                                  color: isLight ? const Color(0xFF0F172A) : Colors.white,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  _deviceNotFound ? 'Close' : 'Cancel Connection',
+                                  style: TextStyle(
+                                    color: isLight ? const Color(0xFF0F172A) : Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ],

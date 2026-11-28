@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import 'fastag_models.dart';
-import 'payment_processing_screen.dart';
 import '../../widgets/animated_back_arrow.dart';
 
 class RechargeFastagScreen extends StatefulWidget {
@@ -20,13 +19,9 @@ class _RechargeFastagScreenState extends State<RechargeFastagScreen> {
   final List<int> _quickAmounts = [200, 500, 1000, 2000];
 
   void _proceedToPay(FastagAccount account) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PaymentProcessingScreen(
-          account: account,
-          amount: _selectedAmount,
-        ),
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('NPCI NETC FASTag live recharge gateway is not connected yet.'),
       ),
     );
   }
@@ -35,12 +30,10 @@ class _RechargeFastagScreenState extends State<RechargeFastagScreen> {
   Widget build(BuildContext context) {
     final account = widget.account ??
         const FastagAccount(
-          id: '1',
-          bankName: 'Axis Bank FASTag',
-          vehicleNumber: 'MP09CZ1111',
-          balance: 200,
-          customerName: 'John Doe',
-          logoAsset: 'assets/fastagicons/Axis.png',
+          id: '',
+          bankName: 'FASTag',
+          vehicleNumber: '',
+          balance: 0,
         );
 
     return ValueListenableBuilder<bool>(

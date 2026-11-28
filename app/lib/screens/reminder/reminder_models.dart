@@ -172,8 +172,10 @@ class ReminderItem {
       dueStatus: dueStatus,
       statusColor: statusColor,
       statusCategory: statusCategory,
-      repeat: 'Never',
-      notifications: [],
+      repeat: (json['repeat'] ?? 'Never').toString(),
+      notifications: json['notifications'] is List
+          ? (json['notifications'] as List).map((e) => e.toString()).toList()
+          : const [],
       notes: json['description'] ?? '',
       icon: icon,
       iconColor: iconColor,
@@ -205,56 +207,7 @@ class ReminderTypeInfo {
   });
 }
 
-final List<ReminderItem> kSampleReminders = [
-  const ReminderItem(
-    id: 'sample_service',
-    title: 'General Service',
-    type: 'Service / Maintenance',
-    dueDate: '25 Oct 2026',
-    dueStatus: 'Due in 10 days',
-    statusColor: Color(0xFFFBBF24),
-    statusCategory: 'Upcoming',
-    repeat: 'Every 6 months',
-    notifications: ['7 days before', '1 day before'],
-    notes: 'Oil filter and brake inspection',
-    icon: Icons.build_rounded,
-    iconColor: Color(0xFF00C2FF),
-    iconBgColor: Color(0xFF14243B),
-    svgAsset: AppIcons.service,
-  ),
-  const ReminderItem(
-    id: 'sample_puc',
-    title: 'PUC Certificate Renewal',
-    type: 'PUC Renewal',
-    dueDate: '12 Nov 2026',
-    dueStatus: 'Due in 28 days',
-    statusColor: Color(0xFFFBBF24),
-    statusCategory: 'Upcoming',
-    repeat: 'Every 6 months',
-    notifications: ['3 days before', 'On due date'],
-    notes: 'Pollution check compliance',
-    icon: Icons.cloud_outlined,
-    iconColor: Color(0xFF00C2FF),
-    iconBgColor: Color(0xFF14243B),
-    svgAsset: AppIcons.puc,
-  ),
-  const ReminderItem(
-    id: 'sample_insurance',
-    title: 'Comprehensive Insurance',
-    type: 'Insurance Renewal',
-    dueDate: '10 Oct 2026',
-    dueStatus: 'Overdue by 5 days',
-    statusColor: Color(0xFFFF5252),
-    statusCategory: 'Overdue',
-    repeat: 'Every 12 months',
-    notifications: ['7 days before', 'On due date'],
-    notes: 'Renew zero-dep policy',
-    icon: Icons.verified_user_outlined,
-    iconColor: Color(0xFF00C2FF),
-    iconBgColor: Color(0xFF14243B),
-    svgAsset: AppIcons.shield,
-  ),
-];
+final List<ReminderItem> kSampleReminders = const [];
 
 final List<ReminderTypeInfo> kReminderTypes = const [
   ReminderTypeInfo(
@@ -350,7 +303,7 @@ class VehicleSelectorCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  vehicleName.isNotEmpty ? vehicleName : (Globals.vehicleModel.isNotEmpty ? Globals.vehicleModel : 'Vehicle Model'),
+                  vehicleName.isNotEmpty ? vehicleName : (Globals.vehicleModel.isNotEmpty ? Globals.vehicleModel : 'No Vehicle Linked'),
                   style: TextStyle(
                     color: AppTheme.textPrimary,
                     fontSize: 15,
@@ -359,7 +312,7 @@ class VehicleSelectorCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  vehicleNumber.isNotEmpty ? vehicleNumber : (Globals.vehicleRegistration.isNotEmpty ? Globals.vehicleRegistration : 'XX 00 XX 0000'),
+                  vehicleNumber.isNotEmpty ? vehicleNumber : Globals.vehicleRegistration,
                   style: TextStyle(
                     color: AppTheme.textSecondary,
                     fontSize: 12.5,
@@ -459,8 +412,8 @@ void showSwitchVehicleModal(
 
               // Vehicle 1
               _buildVehicleOption(
-                name: Globals.vehicleModel.isNotEmpty ? Globals.vehicleModel : 'Vehicle Model',
-                regNumber: Globals.vehicleRegistration.isNotEmpty ? Globals.vehicleRegistration : 'XX 00 XX 0000',
+                name: Globals.vehicleModel.isNotEmpty ? Globals.vehicleModel : 'No Vehicle Linked',
+                regNumber: Globals.vehicleRegistration,
                 isSelected: selected == Globals.vehicleModel,
                 isLight: isLight,
                 onTap: () {
@@ -479,15 +432,6 @@ void showSwitchVehicleModal(
                 child: ElevatedButton.icon(
                   onPressed: () {
                     Navigator.pop(ctx);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: isLight ? const Color(0xFF0F172A) : const Color(0xFF101726),
-                        content: const Text(
-                          'Add vehicle flow initiated',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isLight ? const Color(0xFF0066FF) : const Color(0xFF00C2FF),

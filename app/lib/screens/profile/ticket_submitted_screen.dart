@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../theme/app_theme.dart';
 import 'chat_support_screen.dart';
 import '../../widgets/animated_back_arrow.dart';
@@ -11,7 +12,7 @@ class TicketSubmittedScreen extends StatelessWidget {
 
   const TicketSubmittedScreen({
     super.key,
-    this.ticketId = '#FN123456',
+    required this.ticketId,
     this.category,
     this.subject,
   });
@@ -136,7 +137,9 @@ class TicketSubmittedScreen extends StatelessWidget {
                               color: isLight ? const Color(0xFF64748B) : const Color(0xFF8E9BAE),
                               size: 20,
                             ),
-                            onPressed: () {
+                            onPressed: () async {
+                              await Clipboard.setData(ClipboardData(text: ticketId));
+                              if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   backgroundColor: isLight ? Colors.white : const Color(0xFF101726),

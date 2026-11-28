@@ -8,6 +8,7 @@ import 'profile/profile.dart';
 import 'sos/sos.dart';
 import 'qr/qr.dart';
 import '../services/localization_service.dart';
+import '../services/app_notification_service.dart';
 import '../theme/app_theme.dart';
 import '../services/screen_refresh_service.dart';
 
@@ -35,6 +36,9 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
     _selectedIndex = widget.initialIndex;
     AppTheme.isLightNotifier.addListener(_onThemeChanged);
     LocalizationService.currentCodeNotifier.addListener(_onThemeChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppNotificationService.instance.requestPermissionIfNeeded();
+    });
   }
 
   @override

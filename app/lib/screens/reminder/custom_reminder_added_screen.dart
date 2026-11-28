@@ -18,7 +18,7 @@ class CustomReminderAddedScreen extends StatelessWidget {
 
   String _formatNotifications(List<String> notifs) {
     if (notifs.isEmpty) {
-      return '7 days, 3 days,\non due date';
+      return 'On due date';
     }
     final clean = notifs.map((n) {
       return n.replaceAll(' before', '');

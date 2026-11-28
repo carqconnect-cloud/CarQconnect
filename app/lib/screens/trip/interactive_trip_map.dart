@@ -167,7 +167,7 @@ class _InteractiveTripMapState extends State<InteractiveTripMap> {
     if (widget.currentLocation != null && widget.currentLocation!.latitude != 0.0) {
       return widget.currentLocation!;
     }
-    return const LatLng(22.7196, 75.8577);
+    return const LatLng(20.5937, 78.9629);
   }
 
   double get _overviewZoom {

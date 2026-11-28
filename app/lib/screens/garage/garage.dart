@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import 'dart:async';
 import 'dart:convert';
@@ -7,6 +8,8 @@ import '../../globals.dart';
 import '../../services/screen_refresh_service.dart';
 import '../../services/auth_storage_service.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/api_config.dart';
+import '../../utils/app_validators.dart';
 
 import 'vehicle_tabs.dart';
 import 'obd_connection.dart';
@@ -36,7 +39,8 @@ class GarageScreen extends StatefulWidget {
 
 class _GarageScreenState extends State<GarageScreen>
     with RefreshOnRouteReturn<GarageScreen> {
-  bool _isObdConnected = true;
+  bool _isObdConnected = false;
+  bool _isLoadingVehicles = true;
   Timer? _autoRefreshTimer;
 
   @override
@@ -62,25 +66,59 @@ class _GarageScreenState extends State<GarageScreen>
         final response = await AuthStorageService.authenticatedGet('/app-qr/vehicles');
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
-          if (data['success'] == true &&
-              data['data'] != null &&
-              (data['data'] as List).isNotEmpty) {
+          if (data['success'] == true && data['data'] is List) {
             final list = data['data'] as List;
-            if (mounted) {
-              setState(() {
-                final first = list[0];
-                if (first['name'] != null &&
-                    first['name'].toString().isNotEmpty) {
-                  _vehicles[0]['name'] = first['name'];
-                }
-
-                if (first['regNumber'] != null &&
-                    first['regNumber'].toString().isNotEmpty) {
-                  _vehicles[0]['plate'] = first['regNumber'];
-                }
-                _vehicles[0]['lastSynced'] = 'Just now';
+            final loaded = <Map<String, dynamic>>[];
+            for (final raw in list) {
+              if (raw is! Map) continue;
+              final name = (raw['name'] ?? '').toString().trim();
+              final plate = (raw['regNumber'] ?? '').toString().trim();
+              final fuel = (raw['type'] ?? raw['fuel'] ?? 'Petrol').toString();
+              final imagePath = (raw['imagePath'] ?? '').toString().trim();
+              final lower = name.toLowerCase();
+              final isBike = lower.contains('bike') ||
+                  lower.contains('enfield') ||
+                  lower.contains('activa') ||
+                  lower.contains('scooter') ||
+                  lower.contains('pulsar') ||
+                  lower.contains('apache') ||
+                  lower.contains('splendor') ||
+                  lower.contains('jupiter') ||
+                  lower.contains('dio') ||
+                  lower.contains('ktm');
+              loaded.add({
+                'id': (raw['id'] ?? name).toString(),
+                'name': name.isNotEmpty ? name : 'Vehicle',
+                'plate': plate,
+                'type': isBike ? 'bike' : 'car',
+                'fuel': fuel,
+                'brand': (raw['brand'] ?? '').toString(),
+                'model': (raw['model'] ?? '').toString(),
+                'year': (raw['year'] ?? '').toString(),
+                'color': (raw['color'] ?? '').toString(),
+                'chassisNumber': (raw['chassisNumber'] ?? '').toString(),
+                'engineNumber': (raw['engineNumber'] ?? '').toString(),
+                'image': imagePath.isNotEmpty
+                    ? imagePath
+                    : (isBike
+                        ? 'assets/homescreensicons/bikeimage.png'
+                        : 'assets/homescreensicons/carimage.png'),
+                'connected': _isObdConnected && loaded.isEmpty,
+                'lastSynced': '',
+                'engineHealth': null,
+                'battery': null,
+                'drivingScore': null,
               });
             }
+            if (mounted) {
+              setState(() {
+                _vehicles
+                  ..clear()
+                  ..addAll(loaded);
+                _isLoadingVehicles = false;
+              });
+            }
+            return;
           }
         }
       } catch (e) {
@@ -89,9 +127,7 @@ class _GarageScreenState extends State<GarageScreen>
     }
     if (mounted) {
       setState(() {
-        if (_isObdConnected && _vehicles.isNotEmpty) {
-          _vehicles[0]['lastSynced'] = 'Just now';
-        }
+        _isLoadingVehicles = false;
       });
     }
   }
@@ -101,14 +137,9 @@ class _GarageScreenState extends State<GarageScreen>
       context,
       MaterialPageRoute(
         builder: (context) => CarScanAnimationScreen(
-          vehicleName: car['name'] as String? ?? 'Hyundai Creta',
-          vehiclePlate: car['plate'] as String? ?? 'MP 09 AB 1234',
-          onScanComplete: () {
-            setState(() {
-              car['lastSynced'] = 'Just now';
-              car['engineHealth'] = 98;
-            });
-          },
+          vehicleName: car['name'] as String? ?? '',
+          vehiclePlate: car['plate'] as String? ?? '',
+          hasObdConnection: _isObdConnected,
         ),
       ),
     );
@@ -123,8 +154,10 @@ class _GarageScreenState extends State<GarageScreen>
     if (result == true && mounted) {
       setState(() {
         _isObdConnected = true;
-        _vehicles[0]['connected'] = true;
-        _vehicles[0]['lastSynced'] = 'Just now';
+        if (_vehicles.isNotEmpty) {
+          _vehicles[0]['connected'] = true;
+          _vehicles[0]['lastSynced'] = 'Just now';
+        }
       });
     }
   }
@@ -132,7 +165,9 @@ class _GarageScreenState extends State<GarageScreen>
   void _disconnectObd() {
     setState(() {
       _isObdConnected = false;
-      _vehicles[0]['connected'] = false;
+      for (final v in _vehicles) {
+        v['connected'] = false;
+      }
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -449,33 +484,8 @@ class _GarageScreenState extends State<GarageScreen>
     );
   }
 
-  // Vehicle list state for interactivity
-  final List<Map<String, dynamic>> _vehicles = [
-    {
-      'id': '1',
-      'name': 'Hyundai Creta',
-      'plate': 'MP 09 AB 1234',
-      'type': 'car',
-      'image': 'assets/homescreensicons/carimage.png',
-      'connected': true,
-      'lastSynced': 'Last synced 2 min ago',
-      'engineHealth': 76,
-      'battery': '12.4 V',
-      'drivingScore': 'Good',
-    },
-    {
-      'id': '2',
-      'name': 'Royal Enfield Classic 350',
-      'plate': 'MP 09 CD 5678',
-      'type': 'bike',
-      'image': 'assets/homescreensicons/bikeimage.png',
-      'connected': false,
-      'lastSynced': '',
-      'engineHealth': null,
-      'battery': null,
-      'drivingScore': null,
-    },
-  ];
+  // Vehicle list populated strictly from backend API (/app-qr/vehicles)
+  final List<Map<String, dynamic>> _vehicles = [];
 
   void _handleBack() {
     if (Navigator.canPop(context)) {
@@ -715,16 +725,15 @@ class _GarageScreenState extends State<GarageScreen>
                   // Registration Number
                   TextField(
                     controller: plateController,
+                    inputFormatters: AppValidators.vehicleNumberFormatters,
                     textCapitalization: TextCapitalization.characters,
                     style: TextStyle(
                       color: isLight ? const Color(0xFF0F172A) : Colors.white,
                     ),
                     decoration: InputDecoration(
-                      labelText: 'Registration Number (e.g. MP 09 ZZ 9999)',
-                      labelStyle: TextStyle(
-                        color: isLight
-                            ? const Color(0xFF64748B)
-                            : const Color(0xFF64748B),
+                      labelText: 'Registration Number',
+                      labelStyle: const TextStyle(
+                        color: Color(0xFF64748B),
                       ),
                       filled: true,
                       fillColor: isLight
@@ -763,12 +772,10 @@ class _GarageScreenState extends State<GarageScreen>
                   const SizedBox(height: 14),
 
                   // Fuel Type
-                  Text(
+                  const Text(
                     'Fuel Type',
                     style: TextStyle(
-                      color: isLight
-                          ? const Color(0xFF64748B)
-                          : const Color(0xFF64748B),
+                      color: Color(0xFF64748B),
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                     ),
@@ -837,41 +844,87 @@ class _GarageScreenState extends State<GarageScreen>
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {
-                        if (nameController.text.trim().isNotEmpty) {
-                          setState(() {
-                            _vehicles.add({
-                              'id': DateTime.now().millisecondsSinceEpoch
-                                  .toString(),
-                              'name': nameController.text.trim(),
-                              'plate': plateController.text.trim().isEmpty
-                                  ? 'MP 09 XY 0000'
-                                  : plateController.text.trim().toUpperCase(),
-                              'type': selectedType.toLowerCase(),
-                              'fuel': selectedFuel,
-                              'image': selectedType == 'Car'
-                                  ? 'assets/homescreensicons/carimage.png'
-                                  : 'assets/homescreensicons/bikeimage.png',
-                              'connected': false,
-                              'lastSynced': '',
-                              'engineHealth': null,
-                              'battery': null,
-                              'drivingScore': null,
-                            });
-                          });
-                          Navigator.pop(ctx);
+                      onPressed: () async {
+                        final vName = nameController.text.trim();
+                        final vPlate = plateController.text.trim().toUpperCase();
+                        final nameErr = AppValidators.validateVehicleName(vName);
+                        if (nameErr != null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(
-                                '${nameController.text.trim()} added to your garage!',
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              backgroundColor: isLight
-                                  ? const Color(0xFF0F172A)
-                                  : const Color(0xFF0F1A2E),
-                              behavior: SnackBarBehavior.floating,
+                              content: Text(nameErr),
                             ),
                           );
+                          return;
+                        }
+                        final plateErr = AppValidators.validateVehicleNumber(vPlate);
+                        if (plateErr != null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(plateErr),
+                            ),
+                          );
+                          return;
+                        }
+                        if (Globals.accessToken.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please sign in to save vehicles to your garage.'),
+                            ),
+                          );
+                          return;
+                        }
+                        try {
+                          final res = await http
+                              .post(
+                                ApiConfig.uri('/app-qr/vehicles'),
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                  'Authorization': 'Bearer ${Globals.accessToken}',
+                                },
+                                body: jsonEncode({
+                                  'name': vName,
+                                  'regNumber': vPlate,
+                                  'fuel': selectedFuel,
+                                  'type': selectedType.toLowerCase(),
+                                  'imagePath': '',
+                                }),
+                              )
+                              .timeout(const Duration(seconds: 8));
+                          if (res.statusCode == 200 || res.statusCode == 201) {
+                            await _refreshGarage();
+                            if (ctx.mounted) Navigator.pop(ctx);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '$vName added to your garage!',
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                  backgroundColor: isLight
+                                      ? const Color(0xFF0F172A)
+                                      : const Color(0xFF0F1A2E),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            }
+                            return;
+                          }
+                          final errData = jsonDecode(res.body);
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  errData['message']?.toString() ?? 'Failed to add vehicle.',
+                                ),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Could not add vehicle: $e')),
+                            );
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -1069,20 +1122,44 @@ class _GarageScreenState extends State<GarageScreen>
     );
   }
 
+  Widget _buildVehicleThumbnail(Map<String, dynamic> v, double width, double height) {
+    final img = (v['image'] ?? '').toString().trim();
+    final fallback = (v['type'] == 'bike')
+        ? 'assets/homescreensicons/bikeimage.png'
+        : 'assets/homescreensicons/carimage.png';
+    if (img.startsWith('http')) {
+      return Image.network(
+        img,
+        width: width,
+        height: height,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) => Image.asset(
+          fallback,
+          width: width,
+          height: height,
+          fit: BoxFit.contain,
+        ),
+      );
+    }
+    return Image.asset(
+      img.isNotEmpty ? img : fallback,
+      width: width,
+      height: height,
+      fit: BoxFit.contain,
+      errorBuilder: (_, __, ___) => Image.asset(
+        fallback,
+        width: width,
+        height: height,
+        fit: BoxFit.contain,
+      ),
+    );
+  }
+
   @override
   Future<void> refreshOnRouteReturn() => _refreshGarage();
 
   @override
   Widget build(BuildContext context) {
-    final primaryCar = _vehicles.firstWhere(
-      (v) => v['name'] == 'Hyundai Creta',
-      orElse: () => _vehicles.first,
-    );
-    final secondaryBike = _vehicles.firstWhere(
-      (v) => v['name'] == 'Royal Enfield Classic 350',
-      orElse: () => _vehicles.length > 1 ? _vehicles[1] : _vehicles.first,
-    );
-
     return ValueListenableBuilder<bool>(
       valueListenable: AppTheme.isLightNotifier,
       builder: (context, isLight, _) {
@@ -1158,27 +1235,75 @@ class _GarageScreenState extends State<GarageScreen>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // --- Vehicle 1: Hyundai Creta Card ---
-                            _buildCretaCard(primaryCar),
-
-                            const SizedBox(height: 14),
-
-                            // --- Vehicle 2: Royal Enfield Bike Card ---
-                            _buildBikeCard(secondaryBike),
-
-                            // Render any additional added vehicles
-                            ..._vehicles
-                                .where(
-                                  (v) =>
-                                      v['id'] != primaryCar['id'] &&
-                                      v['id'] != secondaryBike['id'],
-                                )
-                                .map(
-                                  (v) => Padding(
-                                    padding: const EdgeInsets.only(top: 14),
-                                    child: _buildGenericVehicleCard(v),
+                            if (_isLoadingVehicles && _vehicles.isEmpty)
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(vertical: 48),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.cardBg,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: AppTheme.cardBorder),
+                                ),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppTheme.primaryColor,
+                                    strokeWidth: 2.5,
                                   ),
                                 ),
+                              )
+                            else if (_vehicles.isEmpty)
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 36,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.cardBg,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: AppTheme.cardBorder),
+                                  boxShadow: AppTheme.cardShadow,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.directions_car_outlined,
+                                      size: 44,
+                                      color: AppTheme.textSecondary,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      'No Vehicles Added Yet',
+                                      style: TextStyle(
+                                        color: AppTheme.textPrimary,
+                                        fontSize: 16.5,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      'Add your vehicle below to track health diagnostics and link OBD hardware.',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: AppTheme.textSecondary,
+                                        fontSize: 13,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            else ...[
+                              _buildCretaCard(_vehicles.first),
+                              ..._vehicles.skip(1).map(
+                                    (v) => Padding(
+                                      padding: const EdgeInsets.only(top: 14),
+                                      child: (v['type'] == 'bike')
+                                          ? _buildBikeCard(v)
+                                          : _buildGenericVehicleCard(v),
+                                    ),
+                                  ),
+                            ],
 
                             const SizedBox(height: 16),
 
@@ -1203,17 +1328,28 @@ class _GarageScreenState extends State<GarageScreen>
     );
   }
 
-  // Widget for Hyundai Creta with 3 Metric Cards inside
+  // Primary Garage Vehicle Card with Telemetry Summary
   Widget _buildCretaCard(Map<String, dynamic> car) {
     final isConnected = _isObdConnected && (car['connected'] as bool? ?? false);
+    final healthValue = isConnected && car['engineHealth'] is num
+        ? (car['engineHealth'] as num).toDouble()
+        : null;
+    final batteryText = isConnected && car['battery'] != null
+        ? car['battery'].toString()
+        : '—';
+    final scoreText = isConnected && car['drivingScore'] != null
+        ? car['drivingScore'].toString()
+        : '—';
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => VehicleTabsScreen(
-              vehicleName: car['name'] as String,
-              vehiclePlate: car['plate'] as String,
+              vehicleName: car['name'] as String? ?? '',
+              vehiclePlate: car['plate'] as String? ?? '',
+              vehicleData: car,
+              isObdConnected: isConnected,
               initialTabIndex: 0,
             ),
           ),
@@ -1229,17 +1365,14 @@ class _GarageScreenState extends State<GarageScreen>
         ),
         child: Column(
           children: [
-            // Top Row: Car Image, Name, Plate, Status, Chevron
+            // Top Row: Vehicle Image, Name, Plate, Status, Chevron
             Row(
               children: [
-                // Car Image
+                // Vehicle Image
                 SizedBox(
                   width: 90,
                   height: 56,
-                  child: Image.asset(
-                    car['image'] as String,
-                    fit: BoxFit.contain,
-                  ),
+                  child: _buildVehicleThumbnail(car, 90, 56),
                 ),
                 const SizedBox(width: 14),
 
@@ -1249,7 +1382,7 @@ class _GarageScreenState extends State<GarageScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        car['name'] as String,
+                        car['name'] as String? ?? '',
                         style: TextStyle(
                           color: AppTheme.textPrimary,
                           fontSize: 16.5,
@@ -1259,7 +1392,7 @@ class _GarageScreenState extends State<GarageScreen>
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        car['plate'] as String,
+                        car['plate'] as String? ?? '',
                         style: TextStyle(
                           color: AppTheme.textSecondary,
                           fontSize: 13,
@@ -1350,7 +1483,7 @@ class _GarageScreenState extends State<GarageScreen>
             // Bottom Row: 3 Metric Cards (Engine Health, Battery, Driving Score)
             Row(
               children: [
-                // 1. Engine Health (76%) -> Tapping opens Health Tab
+                // 1. Engine Health -> Tapping opens Health Tab
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
@@ -1358,8 +1491,10 @@ class _GarageScreenState extends State<GarageScreen>
                         context,
                         MaterialPageRoute(
                           builder: (context) => VehicleTabsScreen(
-                            vehicleName: car['name'] as String,
-                            vehiclePlate: car['plate'] as String,
+                            vehicleName: car['name'] as String? ?? '',
+                            vehiclePlate: car['plate'] as String? ?? '',
+                            vehicleData: car,
+                            isObdConnected: isConnected,
                             initialTabIndex: 1, // Health tab
                           ),
                         ),
@@ -1388,9 +1523,9 @@ class _GarageScreenState extends State<GarageScreen>
                               alignment: Alignment.center,
                               children: [
                                 CircularProgressIndicator(
-                                  value:
-                                      (car['engineHealth'] as num? ?? 76) /
-                                      100.0,
+                                  value: healthValue != null
+                                      ? (healthValue / 100.0).clamp(0.0, 1.0)
+                                      : 0.0,
                                   strokeWidth: 3.5,
                                   backgroundColor: const Color(0xFF1A2942),
                                   valueColor:
@@ -1399,7 +1534,9 @@ class _GarageScreenState extends State<GarageScreen>
                                       ),
                                 ),
                                 Text(
-                                  '${car['engineHealth'] ?? 76}%',
+                                  healthValue != null
+                                      ? '${healthValue.toInt()}%'
+                                      : '—',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
@@ -1428,7 +1565,7 @@ class _GarageScreenState extends State<GarageScreen>
                 ),
                 const SizedBox(width: 10),
 
-                // 2. Battery (12.4 V) -> Tapping opens Live Data Tab
+                // 2. Battery -> Tapping opens Live Data Tab
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
@@ -1436,8 +1573,10 @@ class _GarageScreenState extends State<GarageScreen>
                         context,
                         MaterialPageRoute(
                           builder: (context) => VehicleTabsScreen(
-                            vehicleName: car['name'] as String,
-                            vehiclePlate: car['plate'] as String,
+                            vehicleName: car['name'] as String? ?? '',
+                            vehiclePlate: car['plate'] as String? ?? '',
+                            vehicleData: car,
+                            isObdConnected: isConnected,
                             initialTabIndex: 2, // Live data tab
                           ),
                         ),
@@ -1481,7 +1620,7 @@ class _GarageScreenState extends State<GarageScreen>
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            car['battery'] as String? ?? '12.4 V',
+                            batteryText,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 14,
@@ -1505,7 +1644,7 @@ class _GarageScreenState extends State<GarageScreen>
                 ),
                 const SizedBox(width: 10),
 
-                // 3. Driving Score (Good) -> Tapping opens Overview
+                // 3. Driving Score -> Tapping opens Overview
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
@@ -1513,8 +1652,10 @@ class _GarageScreenState extends State<GarageScreen>
                         context,
                         MaterialPageRoute(
                           builder: (context) => VehicleTabsScreen(
-                            vehicleName: car['name'] as String,
-                            vehiclePlate: car['plate'] as String,
+                            vehicleName: car['name'] as String? ?? '',
+                            vehiclePlate: car['plate'] as String? ?? '',
+                            vehicleData: car,
+                            isObdConnected: isConnected,
                             initialTabIndex: 0,
                           ),
                         ),
@@ -1558,9 +1699,11 @@ class _GarageScreenState extends State<GarageScreen>
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            car['drivingScore'] as String? ?? 'Good',
-                            style: const TextStyle(
-                              color: Color(0xFF10B981),
+                            scoreText,
+                            style: TextStyle(
+                              color: isConnected
+                                  ? const Color(0xFF10B981)
+                                  : Colors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1585,7 +1728,7 @@ class _GarageScreenState extends State<GarageScreen>
 
             const SizedBox(height: 16),
 
-            // Vibrant Cyan 'Scan for Live Data →' Pill Button
+            // Scan for Live Data Pill Button
             SizedBox(
               width: double.infinity,
               height: 48,
@@ -1599,9 +1742,9 @@ class _GarageScreenState extends State<GarageScreen>
                     borderRadius: BorderRadius.circular(24),
                   ),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Text(
                       'Scan for Live Data',
                       style: TextStyle(
@@ -1627,7 +1770,7 @@ class _GarageScreenState extends State<GarageScreen>
     );
   }
 
-  // Widget for Royal Enfield Bike Card
+  // Secondary Two-Wheeler Card
   Widget _buildBikeCard(Map<String, dynamic> bike) {
     return GestureDetector(
       onTap: () => _showBikeOptions(context, bike),
@@ -1645,7 +1788,7 @@ class _GarageScreenState extends State<GarageScreen>
             SizedBox(
               width: 90,
               height: 56,
-              child: Image.asset(bike['image'] as String, fit: BoxFit.contain),
+              child: _buildVehicleThumbnail(bike, 90, 56),
             ),
             const SizedBox(width: 14),
 
@@ -1655,7 +1798,7 @@ class _GarageScreenState extends State<GarageScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    bike['name'] as String,
+                    bike['name'] as String? ?? '',
                     style: TextStyle(
                       color: AppTheme.textPrimary,
                       fontSize: 15.5,
@@ -1665,7 +1808,7 @@ class _GarageScreenState extends State<GarageScreen>
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    bike['plate'] as String,
+                    bike['plate'] as String? ?? '',
                     style: TextStyle(
                       color: AppTheme.textSecondary,
                       fontSize: 13,
@@ -1724,7 +1867,7 @@ class _GarageScreenState extends State<GarageScreen>
     );
   }
 
-  // Generic vehicle card for newly added vehicles
+  // Generic vehicle card for additional vehicles
   Widget _buildGenericVehicleCard(Map<String, dynamic> v) {
     return GestureDetector(
       onTap: () {
@@ -1732,8 +1875,10 @@ class _GarageScreenState extends State<GarageScreen>
           context,
           MaterialPageRoute(
             builder: (context) => VehicleTabsScreen(
-              vehicleName: v['name'] as String,
-              vehiclePlate: v['plate'] as String,
+              vehicleName: v['name'] as String? ?? '',
+              vehiclePlate: v['plate'] as String? ?? '',
+              vehicleData: v,
+              isObdConnected: _isObdConnected && (v['connected'] as bool? ?? false),
             ),
           ),
         );
@@ -1741,16 +1886,16 @@ class _GarageScreenState extends State<GarageScreen>
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF0F1A2E),
+          color: AppTheme.cardBg,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFF1E2D4A), width: 1.0),
+          border: Border.all(color: AppTheme.cardBorder, width: 1.0),
         ),
         child: Row(
           children: [
             SizedBox(
               width: 80,
               height: 50,
-              child: Image.asset(v['image'] as String, fit: BoxFit.contain),
+              child: _buildVehicleThumbnail(v, 80, 50),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -1758,18 +1903,18 @@ class _GarageScreenState extends State<GarageScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    v['name'] as String,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    v['name'] as String? ?? '',
+                    style: TextStyle(
+                      color: AppTheme.textPrimary,
                       fontSize: 15.5,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    v['plate'] as String,
-                    style: const TextStyle(
-                      color: Color(0xFF64748B),
+                    v['plate'] as String? ?? '',
+                    style: TextStyle(
+                      color: AppTheme.textSecondary,
                       fontSize: 13,
                     ),
                   ),

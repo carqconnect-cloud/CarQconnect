@@ -420,6 +420,13 @@ export const sosService = {
           type: 'SOS',
           isUnread: true,
         },
+      }).then((notif) => {
+        realTimeService.broadcastNotification(user.id, {
+          id: notif.id,
+          title: notif.title,
+          description: notif.description,
+          type: notif.type,
+        });
       }).catch(console.error);
 
       // 2. Sync to Customer Activity in CRM
@@ -505,6 +512,13 @@ export const sosService = {
           type: 'SOS_CANCELLED',
           isUnread: true,
         },
+      }).then((notif) => {
+        realTimeService.broadcastNotification(user.id, {
+          id: notif.id,
+          title: notif.title,
+          description: notif.description,
+          type: notif.type,
+        });
       }).catch(console.error);
 
       syncUserToCustomer(user.id).catch(console.error);

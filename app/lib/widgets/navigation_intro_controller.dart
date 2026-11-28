@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
 
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:latlong2/latlong.dart';
 import 'package:mappls_gl/mappls_gl.dart' as mappls;
 import 'mappls_native_map.dart';
@@ -19,7 +18,7 @@ import 'mappls_native_map.dart';
 ///   currentLocation   -> _nav.follow(...)
 ///   dispose           -> _nav.dispose();
 class NavigationIntroController {
-  static const String carAsset = 'assets/vehicles/car_top.png';
+  static const String carAsset = 'assets/images/car_scan_frame_0.png';
   static const String bikeAsset = 'assets/vehicles/bike_top.png';
 
   static const double navZoom = 17.5;
@@ -204,16 +203,9 @@ class NavigationIntroController {
   ) async {
     final imageName = isTwoWheeler ? 'carq_vehicle_bike' : 'carq_vehicle_car';
 
-    Uint8List? bytes;
-    try {
-      final asset = isTwoWheeler ? bikeAsset : carAsset;
-      bytes = (await rootBundle.load(asset)).buffer.asUint8List();
-    } catch (_) {
-      // Fallback to high-definition canvas-generated vehicle icon
-      bytes = isTwoWheeler
-          ? await MapplsMarkerHelper.createBikeMarkerBytes()
-          : await MapplsMarkerHelper.createCarMarkerBytes();
-    }
+    final Uint8List bytes = isTwoWheeler
+        ? await MapplsMarkerHelper.createBikeMarkerBytes()
+        : await MapplsMarkerHelper.createCarMarkerBytes();
 
     try {
       await c.addImage(imageName, bytes);

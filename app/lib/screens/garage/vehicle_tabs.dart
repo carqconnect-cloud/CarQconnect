@@ -11,12 +11,16 @@ class VehicleTabsScreen extends StatefulWidget {
   final int initialTabIndex;
   final String vehicleName;
   final String vehiclePlate;
+  final Map<String, dynamic>? vehicleData;
+  final bool isObdConnected;
 
   const VehicleTabsScreen({
     super.key,
     this.initialTabIndex = 0,
-    this.vehicleName = 'Hyundai Creta',
-    this.vehiclePlate = 'MP 09 AB 1234',
+    this.vehicleName = '',
+    this.vehiclePlate = '',
+    this.vehicleData,
+    this.isObdConnected = false,
   });
 
   @override
@@ -126,8 +130,11 @@ class _VehicleTabsScreenState extends State<VehicleTabsScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const VehicleDetailsScreen(
+                                  builder: (context) => VehicleDetailsScreen(
                                     isStandalone: true,
+                                    vehicleName: widget.vehicleName,
+                                    vehiclePlate: widget.vehiclePlate,
+                                    vehicleData: widget.vehicleData,
                                   ),
                                 ),
                               );
@@ -135,7 +142,12 @@ class _VehicleTabsScreenState extends State<VehicleTabsScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const VehicleSettingsScreen(),
+                                  builder: (context) => VehicleSettingsScreen(
+                                    vehicleName: widget.vehicleName,
+                                    vehiclePlate: widget.vehiclePlate,
+                                    vehicleData: widget.vehicleData,
+                                    isObdConnected: widget.isObdConnected,
+                                  ),
                                 ),
                               );
                             }
@@ -215,10 +227,27 @@ class _VehicleTabsScreenState extends State<VehicleTabsScreen> {
                       onPageChanged: _onPageChanged,
                       physics: const BouncingScrollPhysics(),
                       children: [
-                        VehicleDashboardScreen(onNavigateTab: _onTabTapped),
-                        VehicleHealthScreen(onNavigateTab: _onTabTapped),
-                        VehicleLiveDataScreen(onNavigateTab: _onTabTapped),
-                        VehicleDetailsScreen(onNavigateTab: _onTabTapped),
+                        VehicleDashboardScreen(
+                          onNavigateTab: _onTabTapped,
+                          vehicleName: widget.vehicleName,
+                          vehiclePlate: widget.vehiclePlate,
+                          vehicleData: widget.vehicleData,
+                          isObdConnected: widget.isObdConnected,
+                        ),
+                        VehicleHealthScreen(
+                          onNavigateTab: _onTabTapped,
+                          isObdConnected: widget.isObdConnected,
+                        ),
+                        VehicleLiveDataScreen(
+                          onNavigateTab: _onTabTapped,
+                          isObdConnected: widget.isObdConnected,
+                        ),
+                        VehicleDetailsScreen(
+                          onNavigateTab: _onTabTapped,
+                          vehicleName: widget.vehicleName,
+                          vehiclePlate: widget.vehiclePlate,
+                          vehicleData: widget.vehicleData,
+                        ),
                       ],
                     ),
                   ),

@@ -70,8 +70,8 @@ class TrackService {
       }
     }
 
-    // Default: Indore live center
-    return const LatLng(22.7196, 75.8577);
+    // Neutral geographic center when device GPS & saved addresses are unavailable
+    return const LatLng(20.5937, 78.9629);
   }
 
   /// 3. Reverse geocode current position into clean address
@@ -96,8 +96,8 @@ class TrackService {
         for (var t in trips) {
           final from = (t['fromName'] ?? 'Start').toString().split(',').first.trim();
           final to = (t['toName'] ?? 'Destination').toString().split(',').first.trim();
-          final dist = t['distance']?.toString() ?? '36 km';
-          final dur = t['duration']?.toString() ?? '45 mins';
+          final dist = t['distance']?.toString() ?? '—';
+          final dur = t['duration']?.toString() ?? '—';
           final status = t['status']?.toString() ?? 'COMPLETED';
 
           String timeLabel = 'Recent Trip';
@@ -249,7 +249,7 @@ class TrackService {
             'title': toLoc.split(',').first.trim(),
             'location': toLoc,
             'time': '$dateStr • Trip Destination',
-            'duration': t['duration'] ?? '2 hrs',
+            'duration': t['duration']?.toString() ?? '—',
             'status': 'Completed',
           });
         }

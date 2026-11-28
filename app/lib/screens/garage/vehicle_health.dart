@@ -4,8 +4,13 @@ import '../../theme/app_theme.dart';
 
 class VehicleHealthScreen extends StatelessWidget {
   final Function(int index)? onNavigateTab;
+  final bool isObdConnected;
 
-  const VehicleHealthScreen({super.key, this.onNavigateTab});
+  const VehicleHealthScreen({
+    super.key,
+    this.onNavigateTab,
+    this.isObdConnected = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +53,6 @@ class VehicleHealthScreen extends StatelessWidget {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          // Radial background glow
                           Container(
                             width: 110,
                             height: 110,
@@ -58,40 +62,28 @@ class VehicleHealthScreen extends StatelessWidget {
                           ),
                           CustomPaint(
                             size: const Size(160, 160),
-                            painter: _HealthGaugePainter(progress: 0.76, isLight: isLight),
+                            painter: _HealthGaugePainter(
+                              progress: isObdConnected ? 0.0 : 0.0,
+                              isLight: isLight,
+                            ),
                           ),
                           Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                textBaseline: TextBaseline.alphabetic,
-                                children: [
-                                  Text(
-                                    '76',
-                                    style: TextStyle(
-                                      fontSize: 38,
-                                      fontWeight: FontWeight.bold,
-                                      color: isLight ? const Color(0xFF0F172A) : Colors.white,
-                                      letterSpacing: -1,
-                                    ),
-                                  ),
-                                  Text(
-                                    '%',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: isLight ? const Color(0xFF64748B) : Colors.white70,
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                '—',
+                                style: TextStyle(
+                                  fontSize: 38,
+                                  fontWeight: FontWeight.bold,
+                                  color: isLight ? const Color(0xFF0F172A) : Colors.white,
+                                  letterSpacing: -1,
+                                ),
                               ),
                               const SizedBox(height: 2),
-                              Text(
+                              const Text(
                                 'Overall Health',
                                 style: TextStyle(
-                                  color: isLight ? const Color(0xFF64748B) : const Color(0xFF64748B),
+                                  color: Color(0xFF64748B),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -102,17 +94,17 @@ class VehicleHealthScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    const Text(
-                      'Good Condition',
-                      style: TextStyle(
-                        color: Color(0xFF10B981),
+                    Text(
+                      isObdConnected ? 'Awaiting Scan' : 'OBD Not Connected',
+                      style: const TextStyle(
+                        color: Color(0xFF64748B),
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      'All key systems are working properly.',
+                      'Connect an OBD-II device to inspect live vehicle systems.',
                       style: TextStyle(
                         color: isLight ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
                         fontSize: 13,
@@ -155,38 +147,26 @@ class VehicleHealthScreen extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      // Green Good status pill
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
                           color: isLight
-                              ? const Color(0xFFD1FAE5)
-                              : const Color(0xFF064E3B).withValues(alpha: 0.5),
+                              ? const Color(0xFFF1F5F9)
+                              : const Color(0xFF1E293B),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: isLight
-                                ? const Color(0xFFA7F3D0)
-                                : const Color(0xFF10B981).withValues(alpha: 0.4),
+                                ? const Color(0xFFCBD5E1)
+                                : const Color(0xFF334155),
                           ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.check,
-                              color: isLight ? const Color(0xFF059669) : const Color(0xFF10B981),
-                              size: 13,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Good',
-                              style: TextStyle(
-                                color: isLight ? const Color(0xFF059669) : const Color(0xFF10B981),
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          'No Data',
+                          style: TextStyle(
+                            color: isLight ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),

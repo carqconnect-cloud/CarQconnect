@@ -42,26 +42,6 @@ class _FastagScreenState extends State<FastagScreen>
     });
     _accounts = [
       if (widget.newAccount != null) widget.newAccount!,
-      const FastagAccount(
-        id: '1',
-        bankName: 'Axis Bank FASTag',
-        vehicleNumber: 'MP09CZ1111',
-        balance: 200,
-        customerName: 'John Doe',
-        logoAsset: 'assets/fastagicons/Axis.png',
-        statusMessage: 'Low balance : ₹200',
-        isLowBalance: true,
-      ),
-      const FastagAccount(
-        id: '2',
-        bankName: 'Airtal Payment Bank FASTag',
-        vehicleNumber: 'MP09BP2222',
-        balance: 1000,
-        customerName: 'John Doe',
-        logoAsset: 'assets/fastagicons/airtel.png',
-        statusMessage: 'Continue recharge of ₹1,000',
-        isLowBalance: false,
-      ),
     ];
   }
 
@@ -201,7 +181,7 @@ class _FastagScreenState extends State<FastagScreen>
                   const SnackBar(
                     backgroundColor: Color(0xFF101726),
                     content: Text(
-                      'FASTag 24x7 Helpdesk: 1800 120 1200',
+                      'For FASTag support, please visit Account > Help & Support.',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -399,8 +379,53 @@ class _FastagScreenState extends State<FastagScreen>
                           children: [
                             const SizedBox(height: 12),
 
-                            // Linked FASTag Cards List
-                            ..._accounts.map((account) {
+                            // Empty State or Linked FASTag Cards List
+                            if (_accounts.isEmpty)
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 32,
+                                ),
+                                margin: const EdgeInsets.only(bottom: 14),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.cardBg,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: AppTheme.cardBorder,
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.credit_card_off_outlined,
+                                      color: AppTheme.textSecondary,
+                                      size: 40,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      'No FASTag Linked Yet',
+                                      style: TextStyle(
+                                        color: AppTheme.textPrimary,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      'Tap "Add New FASTag" below to link your vehicle FASTag for balance checks and recharges.',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: AppTheme.textSecondary,
+                                        fontSize: 13,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            else
+                              ..._accounts.map((account) {
                               return InkWell(
                                 onTap: () async {
                                   await Navigator.push(
