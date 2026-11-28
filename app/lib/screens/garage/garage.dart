@@ -501,6 +501,9 @@ class _GarageScreenState extends State<GarageScreen>
     final plateController = TextEditingController();
     String selectedType = 'Car';
     String selectedFuel = 'Petrol';
+    String? nameError;
+    String? plateError;
+    String? generalError;
 
     showModalBottomSheet(
       context: context,
@@ -547,6 +550,40 @@ class _GarageScreenState extends State<GarageScreen>
                       ),
                     ],
                   ),
+                  if (generalError != null) ...[
+                    const SizedBox(height: 10),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEF4444).withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: const Color(0xFFEF4444).withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.error_outline_rounded,
+                            color: Color(0xFFEF4444),
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              generalError!,
+                              style: const TextStyle(
+                                color: Color(0xFFEF4444),
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 16),
 
                   // Vehicle Type Selector (Car / Bike)
@@ -679,12 +716,37 @@ class _GarageScreenState extends State<GarageScreen>
                     style: TextStyle(
                       color: isLight ? const Color(0xFF0F172A) : Colors.white,
                     ),
+                    onChanged: (val) {
+                      if (nameError != null) {
+                        setModalState(() => nameError = null);
+                      }
+                    },
                     decoration: InputDecoration(
                       labelText: 'Vehicle Brand & Model (e.g. Tata Nexon)',
                       labelStyle: TextStyle(
                         color: isLight
                             ? const Color(0xFF64748B)
                             : const Color(0xFF64748B),
+                      ),
+                      errorText: nameError,
+                      errorStyle: const TextStyle(
+                        color: Color(0xFFEF4444),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(
+                          color: Color(0xFFEF4444),
+                          width: 1.5,
+                        ),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(
+                          color: Color(0xFFEF4444),
+                          width: 1.8,
+                        ),
                       ),
                       filled: true,
                       fillColor: isLight
@@ -730,10 +792,35 @@ class _GarageScreenState extends State<GarageScreen>
                     style: TextStyle(
                       color: isLight ? const Color(0xFF0F172A) : Colors.white,
                     ),
+                    onChanged: (val) {
+                      if (plateError != null) {
+                        setModalState(() => plateError = null);
+                      }
+                    },
                     decoration: InputDecoration(
                       labelText: 'Registration Number',
                       labelStyle: const TextStyle(
                         color: Color(0xFF64748B),
+                      ),
+                      errorText: plateError,
+                      errorStyle: const TextStyle(
+                        color: Color(0xFFEF4444),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(
+                          color: Color(0xFFEF4444),
+                          width: 1.5,
+                        ),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(
+                          color: Color(0xFFEF4444),
+                          width: 1.8,
+                        ),
                       ),
                       filled: true,
                       fillColor: isLight
@@ -848,31 +935,29 @@ class _GarageScreenState extends State<GarageScreen>
                         final vName = nameController.text.trim();
                         final vPlate = plateController.text.trim().toUpperCase();
                         final nameErr = AppValidators.validateVehicleName(vName);
-                        if (nameErr != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(nameErr),
-                            ),
-                          );
-                          return;
-                        }
                         final plateErr = AppValidators.validateVehicleNumber(vPlate);
-                        if (plateErr != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(plateErr),
-                            ),
-                          );
+
+                        if (nameErr != null || plateErr != null) {
+                          setModalState(() {
+                            nameError = nameErr;
+                            plateError = plateErr;
+                            generalError = null;
+                          });
                           return;
                         }
+
                         if (Globals.accessToken.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Please sign in to save vehicles to your garage.'),
-                            ),
-                          );
+                          setModalState(() {
+                            generalError = 'Please sign in to save vehicles to your garage.';
+                          });
                           return;
                         }
+
+                        setModalState(() {
+                          nameError = null;
+                          plateError = null;
+                          generalError = null;
+                        });
                         try {
                           final res = await http
                               .post(

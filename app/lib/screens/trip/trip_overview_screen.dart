@@ -72,7 +72,7 @@ class _TripOverviewScreenState extends State<TripOverviewScreen> {
     super.initState();
     _currentDistance = widget.distance;
     _currentDuration = widget.duration;
-    _stops = List.from(widget.stops);
+    _stops = TripService.sortStopsAlongRoute(widget.stops, widget.fromLatLng, widget.toLatLng);
     _routePoints = List.from(widget.routePoints);
     _stepsList = widget.steps != null ? List.from(widget.steps!) : null;
     if ((_currentDistance.isEmpty || _currentDistance == '--' || _currentDistance == '0 km') && _routePoints.length >= 2) {
@@ -1135,7 +1135,7 @@ class _TripOverviewScreenState extends State<TripOverviewScreen> {
     );
     if (res != null && mounted) {
       setState(() {
-        _stops = res;
+        _stops = TripService.sortStopsAlongRoute(res, widget.fromLatLng, widget.toLatLng);
       });
       _recalculateRouteWithStops();
       final isLight = AppTheme.isLightNotifier.value;
@@ -1166,7 +1166,7 @@ class _TripOverviewScreenState extends State<TripOverviewScreen> {
     );
     if (res != null && mounted) {
       setState(() {
-        _stops = res;
+        _stops = TripService.sortStopsAlongRoute(res, widget.fromLatLng, widget.toLatLng);
       });
       _recalculateRouteWithStops();
       final isLight = AppTheme.isLightNotifier.value;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../../services/plan_limits_service.dart';
+import '../../globals.dart';
 import 'document_model.dart';
 import 'add_documents.dart';
 import '../../widgets/animated_back_arrow.dart';
@@ -258,10 +260,22 @@ class DocumentPage extends StatelessWidget {
                       height: 52,
                       child: ElevatedButton(
                         onPressed: () async {
+                          if (!PlanLimitsService.canUploadDocument(0)) {
+                            final limit = PlanLimitsService.getDocumentLimit();
+                            PlanLimitsService.showUpgradeDialog(
+                              context: context,
+                              title: 'Document Limit Reached',
+                              message:
+                                  'Your ${Globals.currentPlan.isEmpty ? "Free" : Globals.currentPlan} plan allows up to $limit ${limit == 1 ? "document" : "documents"}. Upgrade your membership to upload more documents.',
+                              limit: limit,
+                              reason: 'document',
+                            );
+                            return;
+                          }
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const AddDocumentsScreen(),
+                              builder: (context) => const AddDocumentsScreen(currentDocCount: 0),
                             ),
                           );
                           onDocumentAdded?.call();

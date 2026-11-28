@@ -182,100 +182,59 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
     return '';
   }
 
-  List<LatLng> get _stopLocations =>
-      _addedStops.map((s) => LatLng(s.lat, s.lon)).toList();
-  List<String> get _stopLabels => _addedStops.map((s) => s.shortTitle).toList();
-
-  List<PlaceSearchResult> get _allDestinationStops {
-    final list = <PlaceSearchResult>[];
-    if (_toLocation.isNotEmpty && _toLatLng.latitude != 0.0) {
-      list.add(PlaceSearchResult(
-        displayName: _toLocation,
-        lat: _toLatLng.latitude,
-        lon: _toLatLng.longitude,
-      ));
-    }
-    for (final s in _addedStops) {
-      if (s.lat != 0.0 && s.lon != 0.0) {
-        list.add(s);
-      }
-    }
-    if (_isDoubleRoute && _fromLatLng.latitude != 0.0) {
-      list.add(PlaceSearchResult(
-        displayName: _fromLocation.isNotEmpty ? _fromLocation : 'Return',
-        lat: _fromLatLng.latitude,
-        lon: _fromLatLng.longitude,
-      ));
-    }
-    return list;
+  List<PlaceSearchResult> get _sortedAddedStops {
+    return TripService.sortStopsAlongRoute(_addedStops, _fromLatLng, _toLatLng);
   }
 
+  List<LatLng> get _stopLocations =>
+      _sortedAddedStops.map((s) => LatLng(s.lat, s.lon)).toList();
+  List<String> get _stopLabels => _sortedAddedStops.map((s) => s.shortTitle).toList();
+
   LatLng get _effectiveEndLocation {
-    if (!_showRouteBuilder) {
-      return _isDoubleRoute ? _fromLatLng : _toLatLng;
-    }
-    final all = _allDestinationStops;
-    if (all.isNotEmpty) {
-      return LatLng(all.last.lat, all.last.lon);
-    }
     return _isDoubleRoute ? _fromLatLng : _toLatLng;
   }
 
   String get _effectiveEndLabel {
-    if (!_showRouteBuilder) {
-      return _isDoubleRoute
-          ? (_fromLocation.isNotEmpty ? _fromLocation.split(',').first.trim() : 'Return')
-          : (_toLocation.isNotEmpty ? _toLocation.split(',').first.trim() : 'Destination');
-    }
-    final all = _allDestinationStops;
-    if (all.isNotEmpty) {
-      final s = all.last;
-      return s.shortTitle.isNotEmpty ? s.shortTitle : s.displayName.split(',').first.trim();
-    }
-    return _toLocation.isNotEmpty ? _toLocation.split(',').first.trim() : 'Destination';
+    return _isDoubleRoute
+        ? (_fromLocation.isNotEmpty ? _fromLocation.split(',').first.trim() : 'Return')
+        : (_toLocation.isNotEmpty ? _toLocation.split(',').first.trim() : 'Destination');
   }
 
   List<LatLng> get _effectiveWaypoints {
-    if (!_showRouteBuilder) {
-      return _isDoubleRoute
-          ? [if (_toLatLng.latitude != 0.0) _toLatLng, ..._stopLocations]
-          : _stopLocations;
+    final stops = _stopLocations;
+    if (_isDoubleRoute) {
+      return [
+        ...stops,
+        if (_toLatLng.latitude != 0.0) _toLatLng,
+      ];
     }
-    final all = _allDestinationStops;
-    if (all.length > 1) {
-      return all.sublist(0, all.length - 1).map((s) => LatLng(s.lat, s.lon)).toList();
-    }
-    return <LatLng>[];
+    return stops;
   }
 
   List<String> get _effectiveWaypointLabels {
-    if (!_showRouteBuilder) {
-      return _isDoubleRoute
-          ? [
-              _toLocation.isNotEmpty ? _toLocation.split(',').first.trim() : 'Turnaround',
-              ..._stopLabels,
-            ]
-          : _stopLabels;
+    final labels = _stopLabels;
+    if (_isDoubleRoute) {
+      return [
+        ...labels,
+        _toLocation.isNotEmpty ? _toLocation.split(',').first.trim() : 'Turnaround',
+      ];
     }
-    final all = _allDestinationStops;
-    if (all.length > 1) {
-      return all
-          .sublist(0, all.length - 1)
-          .map((s) => s.shortTitle.isNotEmpty ? s.shortTitle : s.displayName.split(',').first.trim())
-          .toList();
-    }
-    return <String>[];
+    return labels;
   }
 
   List<PlaceSearchResult> get _effectiveWaypointStops {
-    if (!_showRouteBuilder) {
-      return _addedStops;
+    final stops = _sortedAddedStops;
+    if (_isDoubleRoute) {
+      return [
+        ...stops,
+        PlaceSearchResult(
+          displayName: _toLocation,
+          lat: _toLatLng.latitude,
+          lon: _toLatLng.longitude,
+        ),
+      ];
     }
-    final all = _allDestinationStops;
-    if (all.length > 1) {
-      return all.sublist(0, all.length - 1);
-    }
-    return <PlaceSearchResult>[];
+    return stops;
   }
 
   // Dynamic route data
@@ -927,7 +886,7 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
     if (res != null && mounted) {
       setState(() {
         _addedStops.clear();
-        _addedStops.addAll(res);
+        _addedStops.addAll(TripService.sortStopsAlongRoute(res, _fromLatLng, _toLatLng));
         _selectedStops.clear();
         for (final s in _addedStops) {
           final cat = _categoryForStop(s.displayName);
@@ -1785,7 +1744,7 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                                       ),
                                       const Spacer(),
                                       GestureDetector(
-                                        onTap: () => setState(() => _showRouteBuilder = true),
+                                        onTap: _addStop,
                                         child: const Text(
                                           'Edit stops',
                                           style: TextStyle(
@@ -2317,68 +2276,84 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                           const SizedBox(height: 16),
 
                           // 2x2 Grid of Category Tiles
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildStopCategoryTile(
-                                  svgAsset: AppIcons.fuel,
-                                  iconColor: isLight
-                                      ? const Color(0xFF059669)
-                                      : const Color(0xFF00E676),
-                                  title: 'Fuel Pump',
-                                  subtitle: '26 stations',
-                                  category: 'Fuel Pump',
-                                  isLight: isLight,
-                                  primaryColor: primaryColor,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: _buildStopCategoryTile(
-                                  svgAsset: AppIcons.evCharging,
-                                  iconColor: isLight
-                                      ? const Color(0xFF0284C7)
-                                      : const Color(0xFF00C2FF),
-                                  title: 'EV Charging',
-                                  subtitle: '13 stations',
-                                  category: 'EV Charging',
-                                  isLight: isLight,
-                                  primaryColor: primaryColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildStopCategoryTile(
-                                  svgAsset: AppIcons.restaurants,
-                                  iconColor: isLight
-                                      ? const Color(0xFFD97706)
-                                      : const Color(0xFFFFD600),
-                                  title: 'Restaurants',
-                                  subtitle: '15 spots',
-                                  category: 'Restaurants',
-                                  isLight: isLight,
-                                  primaryColor: primaryColor,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: _buildStopCategoryTile(
-                                  svgAsset: AppIcons.hotel,
-                                  iconColor: isLight
-                                      ? const Color(0xFF7C3AED)
-                                      : const Color(0xFFB388FF),
-                                  title: 'Hotels',
-                                  subtitle: '10 stays',
-                                  category: 'Hotels',
-                                  isLight: isLight,
-                                  primaryColor: primaryColor,
-                                ),
-                              ),
-                            ],
+                          Builder(
+                            builder: (context) {
+                              final distNum = double.tryParse(_distance.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0.0;
+                              final isLongTrip = distNum >= 700;
+                              final fuelStationsText = isLongTrip ? '28 stations' : (distNum >= 400 ? '26 stations' : '${(distNum / 25).clamp(6, 26).toInt()} stations');
+                              final evStationsText = isLongTrip ? '18 stations' : (distNum >= 400 ? '13 stations' : '${(distNum / 35).clamp(4, 18).toInt()} stations');
+                              final restaurantsText = isLongTrip ? '18 spots' : (distNum >= 400 ? '15 spots' : '${(distNum / 30).clamp(4, 18).toInt()} spots');
+                              final hotelsText = isLongTrip ? '12 stays' : (distNum >= 400 ? '10 stays' : '${(distNum / 50).clamp(3, 12).toInt()} stays');
+
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: _buildStopCategoryTile(
+                                          svgAsset: AppIcons.fuel,
+                                          iconColor: isLight
+                                              ? const Color(0xFF059669)
+                                              : const Color(0xFF00E676),
+                                          title: 'Fuel Pump',
+                                          subtitle: fuelStationsText,
+                                          category: 'Fuel Pump',
+                                          isLight: isLight,
+                                          primaryColor: primaryColor,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: _buildStopCategoryTile(
+                                          svgAsset: AppIcons.evCharging,
+                                          iconColor: isLight
+                                              ? const Color(0xFF0284C7)
+                                              : const Color(0xFF00C2FF),
+                                          title: 'EV Charging',
+                                          subtitle: evStationsText,
+                                          category: 'EV Charging',
+                                          isLight: isLight,
+                                          primaryColor: primaryColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: _buildStopCategoryTile(
+                                          svgAsset: AppIcons.restaurants,
+                                          iconColor: isLight
+                                              ? const Color(0xFFD97706)
+                                              : const Color(0xFFFFD600),
+                                          title: 'Restaurants',
+                                          subtitle: restaurantsText,
+                                          category: 'Restaurants',
+                                          isLight: isLight,
+                                          primaryColor: primaryColor,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: _buildStopCategoryTile(
+                                          svgAsset: AppIcons.hotel,
+                                          iconColor: isLight
+                                              ? const Color(0xFF7C3AED)
+                                              : const Color(0xFFB388FF),
+                                          title: 'Hotels',
+                                          subtitle: hotelsText,
+                                          category: 'Hotels',
+                                          isLight: isLight,
+                                          primaryColor: primaryColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -2929,9 +2904,9 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
                           MaterialPageRoute(
                             builder: (context) => RouteOptionsScreen(
                               fromLocation: _fromLocation,
-                              toLocation: _effectiveEndLabel,
+                              toLocation: _isDoubleRoute ? _effectiveEndLabel : _toLocation,
                               fromLatLng: effectiveFrom,
-                              toLatLng: effectiveEnd,
+                              toLatLng: _isDoubleRoute ? effectiveEnd : _toLatLng,
                               preference: _routePreference,
                               avoidTolls: _avoidTolls,
                               avoidHighways: _avoidHighways,

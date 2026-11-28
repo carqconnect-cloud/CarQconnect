@@ -64,6 +64,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     final isEmail = input.contains('@');
     final isPhone = _isNumeric(input);
+    String cleanTarget = input;
 
     if (isEmail) {
       final emailErr = AppValidators.validateEmail(input);
@@ -78,8 +79,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         return;
       }
     } else if (isPhone) {
-      final cleanDigits = input.replaceAll(RegExp(r'[^0-9]'), '');
-      final phoneErr = AppValidators.validatePhone(cleanDigits);
+      final rawDigits = input.replaceAll(RegExp(r'[^0-9]'), '');
+      final phoneDigits = rawDigits.length > 10 && rawDigits.startsWith('91')
+          ? rawDigits.substring(2)
+          : (rawDigits.length > 10 && rawDigits.startsWith('0') ? rawDigits.substring(1) : rawDigits);
+      cleanTarget = phoneDigits;
+      final phoneErr = AppValidators.validatePhone(cleanTarget);
       if (phoneErr != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -108,19 +113,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           .map((b) => '$b/auth/send-otp')
           .toList();
 
+      http.Response? lastResponse;
       bool sent = false;
+      final Map<String, dynamic> requestBody = isEmail
+          ? {'email': input, 'channel': 'email', 'purpose': 'reset'}
+          : {'phone': cleanTarget, 'channel': 'sms', 'purpose': 'reset'};
+
       for (final url in endpoints) {
         try {
           final res = await http
               .post(
                 Uri.parse(url),
                 headers: {'Content-Type': 'application/json'},
-                body: jsonEncode(isEmail
-                    ? {'email': input}
-                    : {'phone': input, 'email': '$input@mobile.carq'}),
+                body: jsonEncode(requestBody),
               )
               .timeout(const Duration(seconds: 20));
-
+          lastResponse = res;
           if (res.statusCode == 200) {
             sent = true;
             break;
@@ -130,6 +138,33 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
       if (!mounted) return;
       setState(() => _isLoading = false);
+
+      if (!sent) {
+        String errMsg = 'Failed to send verification code. Please try again.';
+        if (lastResponse != null) {
+          try {
+            final data = jsonDecode(lastResponse.body);
+            if (data is Map) {
+              final err = data['error'];
+              if (err is Map && err['message'] != null) {
+                errMsg = err['message'].toString();
+              } else if (err is String && err.isNotEmpty) {
+                errMsg = err;
+              } else if (data['message'] != null) {
+                errMsg = data['message'].toString();
+              }
+            }
+          } catch (_) {}
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+            content: Text(errMsg),
+          ),
+        );
+        return;
+      }
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -146,9 +181,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  sent
+                  isEmail
                       ? '4-digit verification code sent to $input'
-                      : 'Verification code sent to $input',
+                      : '4-digit verification code sent to +91 $cleanTarget',
                   style: const TextStyle(color: Colors.white, fontSize: 13.5),
                 ),
               ),
@@ -164,8 +199,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           builder: (context) => OtpScreen(
             firstName: 'User',
             lastName: '',
-            phone: isPhone ? input : '',
-            email: isEmail ? input : '$input@mobile.carq',
+            phone: isPhone ? cleanTarget : '',
+            email: isEmail ? input : '',
             password: '',
             isForgotPassword: true,
           ),

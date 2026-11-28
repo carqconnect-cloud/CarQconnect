@@ -2,6 +2,7 @@ import { prisma } from '../../../config/database';
 import { ApiError } from '../../../common/utils/apiError';
 import { syncUserToCustomer } from '../../../common/utils/customerSync';
 import type { CreateDocumentInput, UpdateDocumentInput } from './documents.schema';
+import { getUserPlanLimits } from '../../../common/utils/planLimits';
 
 export const documentsService = {
   async getAllDocuments(userId: string) {
@@ -22,6 +23,14 @@ export const documentsService = {
   },
 
   async createDocument(userId: string, data: CreateDocumentInput) {
+    const limits = await getUserPlanLimits(userId);
+    const currentCount = await prisma.document.count({ where: { userId } });
+    if (currentCount >= limits.maxDocuments) {
+      throw ApiError.forbidden(
+        `Document limit reached for your ${limits.plan} plan (${limits.maxDocuments} max). Upgrade your membership to upload more documents.`
+      );
+    }
+
     const doc = await prisma.document.create({
       data: {
         ...data,

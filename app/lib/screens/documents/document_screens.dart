@@ -7,6 +7,7 @@ import 'dart:async';
 import '../../globals.dart';
 import '../../services/auth_storage_service.dart';
 import '../../services/screen_refresh_service.dart';
+import '../../services/plan_limits_service.dart';
 import '../../theme/app_theme.dart';
 import '../../loading.dart';
 import 'document_model.dart';
@@ -643,10 +644,22 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen>
                       height: 52,
                       child: ElevatedButton(
                         onPressed: () async {
+                          if (!PlanLimitsService.canUploadDocument(_documents.length)) {
+                            final limit = PlanLimitsService.getDocumentLimit();
+                            PlanLimitsService.showUpgradeDialog(
+                              context: context,
+                              title: 'Document Limit Reached',
+                              message:
+                                  'Your ${Globals.currentPlan.isEmpty ? "Free" : Globals.currentPlan} plan allows up to $limit ${limit == 1 ? "document" : "documents"}. Upgrade your membership to upload more documents.',
+                              limit: limit,
+                              reason: 'document',
+                            );
+                            return;
+                          }
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const AddDocumentsScreen(),
+                              builder: (context) => AddDocumentsScreen(currentDocCount: _documents.length),
                             ),
                           );
                           if (mounted) {

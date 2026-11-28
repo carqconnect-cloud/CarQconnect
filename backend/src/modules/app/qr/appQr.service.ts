@@ -4,6 +4,7 @@ import { ApiError } from '../../../common/utils/apiError';
 import { syncUserToCustomer } from '../../../common/utils/customerSync';
 import { vehicleImageService } from './vehicleImage.service';
 import { realTimeService } from '../../../common/services/socket.service';
+import { getUserPlanLimits } from '../../../common/utils/planLimits';
 
 /**
  * Mobile App service for QR tag assignment, vehicle linking, and public scan interactions.
@@ -46,6 +47,14 @@ export const appQrService = {
   },
 
   async addVehicle(userId: string, data: { name: string; regNumber: string; fuel?: string; type?: string; imagePath?: string }) {
+    const limits = await getUserPlanLimits(userId);
+    const vehicleCount = await prisma.vehicle.count({ where: { userId } });
+    if (vehicleCount >= limits.maxVehicles) {
+      throw ApiError.forbidden(
+        `Vehicle limit reached for your ${limits.plan} plan (${limits.maxVehicles} max). Upgrade your membership to add more vehicles.`
+      );
+    }
+
     let imagePath = data.imagePath;
     if (!imagePath ||
       imagePath === 'assets/images/white_creta.jpg' ||

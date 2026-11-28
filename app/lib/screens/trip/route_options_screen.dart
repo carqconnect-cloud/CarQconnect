@@ -444,7 +444,12 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
       _effectiveTo = const LatLng(23.1765, 75.7885);
     }
 
-    final stopWaypoints = widget.stops
+    final sortedStops = TripService.sortStopsAlongRoute(
+      widget.stops,
+      _effectiveFrom,
+      _effectiveTo,
+    );
+    final stopWaypoints = sortedStops
         .where((s) => s.lat != 0.0 && s.lon != 0.0)
         .map((s) => LatLng(s.lat, s.lon))
         .toList();
@@ -1375,8 +1380,13 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
                                     () {
                                       final from = widget.fromLocation.split(',').first.trim();
                                       final to = widget.toLocation.split(',').first.trim();
-                                      if (widget.stops.isEmpty) return '$from → $to';
-                                      final intermediate = widget.stops.map((s) => s.shortTitle).where((s) => s.isNotEmpty).join(' → ');
+                                      final sortedStops = TripService.sortStopsAlongRoute(
+                                        widget.stops,
+                                        _effectiveFrom,
+                                        _effectiveTo,
+                                      );
+                                      if (sortedStops.isEmpty) return '$from → $to';
+                                      final intermediate = sortedStops.map((s) => s.shortTitle).where((s) => s.isNotEmpty).join(' → ');
                                       return intermediate.isNotEmpty ? '$from → $intermediate → $to' : '$from → $to';
                                     }(),
                                     style: TextStyle(
@@ -1561,7 +1571,11 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
                                         avoidTolls: _avoidTolls,
                                         avoidHighways: _avoidHighways,
                                         vehicle: _selectedVehicle ?? widget.vehicle,
-                                        stops: widget.stops,
+                                        stops: TripService.sortStopsAlongRoute(
+                                          widget.stops,
+                                          _effectiveFrom,
+                                          _effectiveTo,
+                                        ),
                                         steps: selected.steps,
                                       ),
                                     ),
@@ -1817,10 +1831,10 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
                     builder: (context) => FullScreenMapScreen(
                       startLocation: _effectiveFrom,
                       endLocation: _effectiveTo,
-                      stopLocations: widget.stops
+                      stopLocations: TripService.sortStopsAlongRoute(widget.stops, _effectiveFrom, _effectiveTo)
                           .map((s) => LatLng(s.lat, s.lon))
                           .toList(),
-                      stopLabels: widget.stops
+                      stopLabels: TripService.sortStopsAlongRoute(widget.stops, _effectiveFrom, _effectiveTo)
                           .map((s) => s.shortTitle)
                           .toList(),
                       routePoints: points,
@@ -1859,10 +1873,10 @@ class _RouteOptionsScreenState extends State<RouteOptionsScreen>
                           endLocation: _effectiveTo,
                           startLabel: widget.fromLocation,
                           endLabel: widget.toLocation,
-                          stopLocations: widget.stops
+                          stopLocations: TripService.sortStopsAlongRoute(widget.stops, _effectiveFrom, _effectiveTo)
                               .map((s) => LatLng(s.lat, s.lon))
                               .toList(),
-                          stopLabels: widget.stops
+                          stopLabels: TripService.sortStopsAlongRoute(widget.stops, _effectiveFrom, _effectiveTo)
                               .map((s) => s.shortTitle)
                               .toList(),
                           routePoints: points,

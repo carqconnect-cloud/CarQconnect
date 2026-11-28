@@ -124,9 +124,13 @@ class TripService {
     defaultValue: 'kpcbzqyjjppxpxjqyqhvkjqwsxezvtkfkrrv',
   );
 
-  /// Primary Mappls (MapmyIndia) Raster Map Tile URL
-  static String get mapplsTileUrl =>
-      'https://apis.mappls.com/advancedmaps/v1/$mapplsApiKey/map/{z}/{x}/{y}.png';
+  /// Primary Mappls (MapmyIndia) Raster Map Tile URL (uses CORS-compliant tiles on web)
+  static String get mapplsTileUrl {
+    if (kIsWeb) {
+      return fallbackTileUrl;
+    }
+    return 'https://apis.mappls.com/advancedmaps/v1/$mapplsApiKey/map/{z}/{x}/{y}.png';
+  }
 
   /// High-reliability fallback tile URL (Google Maps tile server) if Mappls quota/network issues occur
   static const String fallbackTileUrl =
@@ -533,6 +537,31 @@ class TripService {
     return 12742 * math.asin(math.sqrt(math.max(0.0, a)));
   }
 
+  /// Sorts intermediate route stops in true sequential driving order from start to destination
+  static List<PlaceSearchResult> sortStopsAlongRoute(
+    List<PlaceSearchResult> stops,
+    LatLng start,
+    LatLng dest,
+  ) {
+    if (stops.length <= 1) return List.from(stops);
+
+    final sorted = List<PlaceSearchResult>.from(stops);
+    final sLat = start.latitude != 0.0 ? start.latitude : 22.7196;
+    final sLon = start.longitude != 0.0 ? start.longitude : 75.8577;
+
+    sorted.sort((a, b) {
+      final distA = _parseDistanceFromStart(a.displayName);
+      final distB = _parseDistanceFromStart(b.displayName);
+      if (distA != null && distB != null) {
+        return distA.compareTo(distB);
+      }
+      final geoA = _distanceBetweenKm(sLat, sLon, a.lat, a.lon);
+      final geoB = _distanceBetweenKm(sLat, sLon, b.lat, b.lon);
+      return geoA.compareTo(geoB);
+    });
+    return sorted;
+  }
+
   /// Search genuine real-world POIs / stops along the specific corridor between start & destination
   static Future<List<PlaceSearchResult>> searchStopsAlongRoute({
     required String query,
@@ -582,14 +611,77 @@ class TripService {
     }
 
     final List<PlaceSearchResult> collected = [];
-    final cat = (categoryId ?? '').toLowerCase();
-    final qLower = cleanQuery.toLowerCase();
+    final cat = (categoryId ?? '').toLowerCase().trim();
+    final qLower = cleanQuery.toLowerCase().trim();
 
-    final isFuel = cat == 'fuel' || qLower.contains('petrol') || qLower.contains('fuel') || qLower.contains('diesel') || qLower.contains('pump');
-    final isEV = cat == 'ev' || qLower.contains('ev') || qLower.contains('charge') || qLower.contains('charging');
-    final isFood = cat == 'food' || qLower.contains('food') || qLower.contains('dhaba') || qLower.contains('restaurant');
-    final isHotel = cat == 'hotel' || qLower.contains('hotel') || qLower.contains('stay') || qLower.contains('lodge');
-    final isCNG = cat == 'cng' || qLower.contains('cng');
+    final isFuel = cat == 'fuel' ||
+        qLower == 'petrol pump' ||
+        qLower == 'fuel' ||
+        qLower == 'fuel / petrol' ||
+        qLower == 'diesel' ||
+        qLower.contains('petrol') ||
+        qLower.contains('diesel') ||
+        qLower.contains('pump');
+    final isCNG = cat == 'cng' ||
+        qLower == 'cng station' ||
+        qLower == 'cng' ||
+        qLower.contains('cng');
+    final isEV = cat == 'ev' ||
+        qLower == 'ev charging' ||
+        qLower == 'ev charging station' ||
+        qLower.contains('charging') ||
+        (qLower.contains('ev') && !qLower.contains('rev'));
+    final isFood = cat == 'food' ||
+        cat == 'restaurant' ||
+        qLower == 'food & dhaba' ||
+        qLower == 'restaurant dhaba' ||
+        qLower == 'restaurants' ||
+        qLower == 'food' ||
+        qLower.contains('dhaba') ||
+        qLower.contains('restaurant') ||
+        qLower.contains('food') ||
+        qLower.contains('eatery') ||
+        qLower.contains('cafe');
+    final isHotel = cat == 'hotel' ||
+        cat == 'stay' ||
+        qLower == 'hotels & stay' ||
+        qLower == 'hotel highway lodge' ||
+        qLower == 'hotels' ||
+        qLower == 'hotel' ||
+        qLower.contains('hotel') ||
+        qLower.contains('resort') ||
+        qLower.contains('lodge') ||
+        qLower.contains('stay') ||
+        qLower.contains('motel');
+    final isRest = cat == 'rest' ||
+        qLower == 'rest stops' ||
+        qLower == 'rest area washroom' ||
+        qLower == 'rest stop' ||
+        qLower == 'rest area' ||
+        qLower.contains('rest stop') ||
+        qLower.contains('rest area') ||
+        qLower.contains('washroom') ||
+        qLower.contains('toilet') ||
+        qLower.contains('wayside');
+    final isEmergency = cat == 'emergency' ||
+        cat == 'hospital' ||
+        qLower == 'emergency' ||
+        qLower == 'hospital medical emergency' ||
+        qLower.contains('emergency') ||
+        qLower.contains('hospital') ||
+        qLower.contains('trauma') ||
+        qLower.contains('medical') ||
+        qLower.contains('clinic') ||
+        qLower.contains('doctor');
+    final isATM = cat == 'atm' ||
+        cat == 'cash' ||
+        qLower == 'atm / cash' ||
+        qLower == 'atm bank' ||
+        qLower == 'atm' ||
+        qLower == 'cash' ||
+        qLower.contains('atm') ||
+        qLower.contains('cash') ||
+        qLower.contains('bank');
 
     // 4. Corridor Detection: Check if route is Indore <-> Mumbai (NH 52 / NH 60 / NH 160)
     final fromText = (fromLocation ?? '').toLowerCase();
@@ -608,7 +700,7 @@ class TripService {
     if (isIndoreToMumbai || isMumbaiToIndore) {
       const double totalCorridorDistance = 614.0;
 
-      if (isFuel || isCNG || (!isEV && !isFood && !isHotel && cleanQuery.isEmpty)) {
+      if (isFuel || (!isCNG && !isEV && !isFood && !isHotel && !isRest && !isEmergency && !isATM && cleanQuery.isEmpty)) {
         // 26 Major highway fuel stations ordered from Indore to Mumbai
         final indoreToMumbaiFuelStations = <(String, double, double, double, String)>[
           ('Indian Oil COCO - Swagat Highway Hub', 12.5, 22.6280, 75.8020, 'AB Road, Rau, Indore'),
@@ -651,6 +743,33 @@ class TripService {
         }
       }
 
+      if (isCNG) {
+        // 10 Major Highway CNG Stations
+        final indoreToMumbaiCNGStations = <(String, double, double, double, String)>[
+          ('Avantika Gas CNG Mother Station', 13.5, 22.6285, 75.8025, 'AB Road, Rau, Indore'),
+          ('Avantika Gas Highway CNG Hub', 33.0, 22.5300, 75.6970, 'Pithampur Sector 1, NH 52'),
+          ('Adani Total Gas Highway CNG Station', 148.5, 21.6905, 75.2945, 'Sendhwa Bypass, NH 52'),
+          ('Maharashtra Natural Gas (MNGL) Station', 206.2, 21.3515, 75.1175, 'Shirpur Toll, NH 52'),
+          ('MNGL Green Highway CNG Station', 268.5, 20.9035, 74.7745, 'Dhule Bypass, NH 52'),
+          ('Malegaon City Gas CNG Station', 324.5, 20.5505, 74.5275, 'Malegaon Highway, NH 60'),
+          ('MNGL Dwarka Circle CNG Hub', 416.8, 19.9970, 73.7895, 'Mumbai Naka, Nashik'),
+          ('Mahanagar Gas (MGL) Highway CNG Station', 520.5, 19.4515, 73.3275, 'Shahapur Bypass, NH 160'),
+          ('MGL Mother CNG Station', 562.5, 19.3115, 73.1115, 'Padgha, Bhiwandi Bypass, NH 160'),
+          ('MGL Eastern Express CNG Hub', 598.5, 19.1715, 72.9555, 'Mulund Check Naka, Mumbai'),
+        ];
+
+        for (final s in indoreToMumbaiCNGStations) {
+          final distFromStart = isIndoreToMumbai ? s.$2 : (totalCorridorDistance - s.$2).abs();
+          final formatted = '${s.$1}, ${distFromStart.toStringAsFixed(1)} km from start • ${s.$5}';
+          collected.add(PlaceSearchResult(
+            displayName: formatted,
+            lat: s.$3,
+            lon: s.$4,
+            category: 'cng',
+          ));
+        }
+      }
+
       if (isEV) {
         // 13 Major Highway EV Charging Hubs
         final indoreToMumbaiEVStations = <(String, double, double, double, String)>[
@@ -682,21 +801,25 @@ class TripService {
       }
 
       if (isFood) {
-        // 15 Highway Dhabas & Restaurants
+        // 18 Highway Dhabas & Restaurants along the route
         final indoreToMumbaiFoodDhabas = <(String, double, double, double, String)>[
           ('Apna Sweets & Highway Treat', 14.0, 22.6250, 75.8010, 'Rau, AB Road, Indore'),
           ('Sagar Gaire Highway Express', 33.0, 22.5290, 75.6950, 'Pithampur Junction, NH 52'),
+          ('Gujri Ghat Punjabi Family Dhaba', 52.0, 22.3830, 75.5660, 'Gujri Section, NH 52'),
           ('Sharma Punjabi Family Dhaba', 70.0, 22.2190, 75.4690, 'Dhamnod Highway, NH 52'),
           ('MPT Narmada Retreat Highway Restaurant', 89.0, 22.1610, 75.4390, 'Narmada River Bridge, Khalghat'),
-          ('Rajputana Highway Dhaba', 150.0, 21.6890, 75.2920, 'Sendhwa Bypass, NH 52'),
-          ('Kisan Highway Punjabi Dhaba', 207.5, 21.3510, 75.1160, 'Shirpur Highway, NH 52'),
+          ('Shree Krishna Highway Food Plaza', 119.0, 21.9830, 75.3830, 'Julwania Junction, NH 52'),
+          ('Rajputana Highway Dhaba & Family Garden', 150.0, 21.6890, 75.2920, 'Sendhwa Bypass, NH 52'),
+          ('Border Star Highway Dhaba', 175.0, 21.5190, 75.2130, 'MP-MH Border, NH 52'),
+          ('Kisan Highway Punjabi Dhaba & Food Court', 207.5, 21.3510, 75.1160, 'Shirpur Highway, NH 52'),
+          ('Shivam Family Dhaba & Restaurant', 237.0, 21.1900, 74.9800, 'Nardana, NH 52'),
           ('Sagar Deluxe Highway Family Garden', 270.0, 20.9020, 74.7730, 'Dhule Bypass, NH 52'),
           ('Hotel Sai Leela & Family Garden Restaurant', 326.0, 20.5490, 74.5260, 'Malegaon Highway, NH 60'),
           ('Hotel Shivraj Pure Veg Highway Restaurant', 362.0, 20.3270, 74.2400, 'Chandwad Ghat, NH 60'),
           ('Gateway Gourmet Highway Dhaba', 418.0, 19.9960, 73.7880, 'Mumbai Naka, Nashik'),
-          ('Manas Resort Highway Diner', 472.0, 19.6970, 73.5600, 'Igatpuri Hill Station, NH 160'),
+          ('Manas Resort Highway Diner & Food Court', 472.0, 19.6970, 73.5600, 'Igatpuri Hill Station, NH 160'),
           ('Kasara Valley Food Court Plaza', 492.0, 19.6430, 73.4830, 'Kasara Ghat Express, NH 160'),
-          ('Highway King Food Plaza', 522.0, 19.4500, 73.3260, 'Shahapur Bypass, NH 160'),
+          ('Highway King Food Plaza & Dhaba', 522.0, 19.4500, 73.3260, 'Shahapur Bypass, NH 160'),
           ('Kailash Parbat Highway Food Lounge', 538.0, 19.3930, 73.2630, 'Asangaon, Mumbai Highway'),
           ('Fountain Highway Food Court', 586.0, 19.2060, 72.9760, 'Eastern Express Highway, Thane'),
         ];
@@ -714,16 +837,19 @@ class TripService {
       }
 
       if (isHotel) {
-        // 10 Highway Hotels & Stays
+        // 12 Highway Hotels & Stays
         final indoreToMumbaiHotels = <(String, double, double, double, String)>[
           ('Papaya Tree Resort & Hotel', 13.5, 22.6270, 75.8025, 'AB Road, Rau, Indore'),
+          ('Mandu Junction Highway Resort', 52.5, 22.3840, 75.5670, 'Gujri, NH 52'),
           ('MPT Narmada Retreat Resort', 89.5, 22.1600, 75.4380, 'Riverside, Khalghat, NH 52'),
           ('Hotel Grand Sendhwa Highway Comfort', 151.0, 21.6880, 75.2910, 'Sendhwa Bypass, NH 52'),
           ('Hotel Ganpati Palace & Executive Rooms', 208.0, 21.3500, 75.1150, 'Shirpur Highway, NH 52'),
           ('Hotel Amit Executive & Highway Suites', 271.0, 20.9010, 74.7720, 'Dhule Bypass, NH 52'),
           ('Hotel Radhika Grand & Family Suites', 327.0, 20.5480, 74.5250, 'Malegaon Highway, NH 60'),
+          ('Hotel Chandwad Highway Residency', 363.0, 20.3260, 74.2390, 'Chandwad Toll, NH 60'),
           ('Express Inn The Business Luxury Hotel', 419.0, 19.9950, 73.7870, 'Pathardi Phata, Nashik'),
           ('Manas Resort & Spa Igatpuri', 473.0, 19.6960, 73.5590, 'Igatpuri Hill Station, NH 160'),
+          ('Kasara Hill View Resort & Stay', 493.0, 19.6420, 73.4820, 'Kasara Ghat, NH 160'),
           ('Hotel Sai Residency Highway Motel', 523.0, 19.4490, 73.3250, 'Shahapur Bypass, NH 160'),
           ('Vivanta by Taj & Business Hotel', 587.0, 19.2050, 72.9750, 'Eastern Express Highway, Thane'),
         ];
@@ -739,13 +865,399 @@ class TripService {
           ));
         }
       }
+
+      if (isRest) {
+        // 14 Highway Rest Stops & Clean Washroom Plazas
+        final indoreToMumbaiRestStops = <(String, double, double, double, String)>[
+          ('Rau Highway Rest Area & Clean Washrooms', 12.8, 22.6275, 75.8015, 'AB Road, Rau, Indore'),
+          ('Pithampur Wayside Rest Facility', 33.5, 22.5295, 75.6965, 'NH 52 Bypass, Pithampur'),
+          ('Narmada Wayside Amenity Plaza (Washrooms & Cafe)', 88.5, 22.1615, 75.4400, 'Khalghat River Bridge, NH 52'),
+          ('Julwania NHAI Way-Side Amenity & Rest Stop', 119.5, 21.9840, 75.3840, 'Julwania, NH 52'),
+          ('Sendhwa Bypass Rest Area & Public Toilets', 149.5, 21.6900, 75.2930, 'Sendhwa, NH 52'),
+          ('Border Welcome Rest Area & Facilities', 175.0, 21.5200, 75.2140, 'MP-MH Border, Bijasan Ghat'),
+          ('Shirpur Toll Way-Side Amenity Center', 206.5, 21.3515, 75.1170, 'Shirpur Toll Plaza, NH 52'),
+          ('Dhule Highway Rest Stop & Tourist Plaza', 269.0, 20.9030, 74.7740, 'Dhule Bypass, NH 52'),
+          ('Malegaon NHAI Rest Stop & Clean Facilities', 325.5, 20.5500, 74.5270, 'Malegaon Highway, NH 60'),
+          ('Chandwad Toll Plaza Rest Area', 361.5, 20.3275, 74.2410, 'Chandwad Toll, NH 60'),
+          ('Nashik Highway Travelers Rest Lounge', 417.0, 19.9965, 73.7885, 'Mumbai Naka, Nashik'),
+          ('Igatpuri Hill Mist Rest Plaza & Washrooms', 471.5, 19.6975, 73.5610, 'Igatpuri Hill Pass, NH 160'),
+          ('Kasara Ghat Rest Area & Valley View', 491.5, 19.6440, 73.4840, 'Kasara Ghat Toll, NH 160'),
+          ('Shahapur Wayside Amenities (Washrooms & Tea)', 521.5, 19.4510, 73.3270, 'Shahapur Bypass, NH 160'),
+          ('Padgha Highway Rest Center & Washroom', 562.5, 19.3125, 73.1125, 'Bhiwandi Bypass, NH 160'),
+        ];
+
+        for (final s in indoreToMumbaiRestStops) {
+          final distFromStart = isIndoreToMumbai ? s.$2 : (totalCorridorDistance - s.$2).abs();
+          final formatted = '${s.$1}, ${distFromStart.toStringAsFixed(1)} km from start • ${s.$5}';
+          collected.add(PlaceSearchResult(
+            displayName: formatted,
+            lat: s.$3,
+            lon: s.$4,
+            category: 'rest',
+          ));
+        }
+      }
+
+      if (isEmergency) {
+        // 15 Highway Trauma Centers & Emergency Hospitals
+        final indoreToMumbaiEmergency = <(String, double, double, double, String)>[
+          ('Choithram Highway Trauma & Emergency Hospital', 13.2, 22.6265, 75.8010, 'Rau, AB Road, Indore'),
+          ('Pithampur Industrial Emergency Hospital', 34.0, 22.5280, 75.6940, 'Pithampur, NH 52'),
+          ('Community Health Centre & Highway Trauma Care', 71.0, 22.2180, 75.4680, 'Dhamnod, NH 52'),
+          ('Narmada Highway Emergency First Aid Post', 90.0, 22.1590, 75.4370, 'Khalghat, NH 52'),
+          ('Sendhwa Civil Hospital & 24x7 Trauma Unit', 150.5, 21.6875, 75.2905, 'Sendhwa Bypass, NH 52'),
+          ('Shirpur Cottage Hospital & Emergency Care', 207.2, 21.3495, 75.1145, 'Shirpur Highway, NH 52'),
+          ('Dhule Civil Hospital & Trauma Center (GMC)', 270.5, 20.9005, 74.7715, 'Dhule Bypass, NH 52'),
+          ('Malegaon General Hospital 24x7 Emergency', 326.5, 20.5475, 74.5245, 'Malegaon Highway, NH 60'),
+          ('Chandwad Sub-District Hospital & Emergency Unit', 362.5, 20.3265, 74.2395, 'Chandwad, NH 60'),
+          ('Baswant Rural Hospital & First Aid Station', 389.5, 20.1740, 73.9840, 'Pimpalgaon Baswant, NH 60'),
+          ('Apollo Hospitals & Emergency Trauma Center', 418.5, 19.9945, 73.7865, 'Dwarka Circle, Nashik'),
+          ('Igatpuri Rural Hospital Emergency Casualty', 472.5, 19.6955, 73.5585, 'Igatpuri, NH 160'),
+          ('Kasara Ghat Emergency Rescue & First Aid Center', 492.5, 19.6425, 73.4825, 'Kasara Ghat, NH 160'),
+          ('Shahapur Sub-District Emergency Hospital', 522.5, 19.4485, 73.3245, 'Shahapur, NH 160'),
+          ('Jupiter Hospital 24x7 Emergency Trauma Centre', 588.0, 19.2045, 72.9745, 'Eastern Express Highway, Thane'),
+        ];
+
+        for (final s in indoreToMumbaiEmergency) {
+          final distFromStart = isIndoreToMumbai ? s.$2 : (totalCorridorDistance - s.$2).abs();
+          final formatted = '${s.$1}, ${distFromStart.toStringAsFixed(1)} km from start • ${s.$5}';
+          collected.add(PlaceSearchResult(
+            displayName: formatted,
+            lat: s.$3,
+            lon: s.$4,
+            category: 'emergency',
+          ));
+        }
+      }
+
+      if (isATM) {
+        // 14 Bank ATMs & Cash Points along Highway
+        final indoreToMumbaiATMs = <(String, double, double, double, String)>[
+          ('State Bank of India (SBI) 24x7 Highway ATM', 13.0, 22.6278, 75.8018, 'AB Road, Rau, Indore'),
+          ('HDFC Bank 24x7 Highway ATM', 52.0, 22.3835, 75.5665, 'Gujri Section, NH 52'),
+          ('Bank of India 24x7 Highway ATM', 69.5, 22.2205, 75.4705, 'Dhamnod Bypass, NH 52'),
+          ('SBI Highway ATM Khalghat', 88.8, 22.1610, 75.4395, 'Khalghat Bridge, NH 52'),
+          ('Punjab National Bank (PNB) Highway ATM', 149.0, 21.6908, 75.2938, 'Sendhwa Bypass, NH 52'),
+          ('ICICI Bank 24x7 Cash Point & ATM', 206.8, 21.3510, 75.1165, 'Shirpur Toll, NH 52'),
+          ('Axis Bank Highway Hub ATM', 269.5, 20.9025, 74.7735, 'Dhule Bypass, NH 52'),
+          ('Bank of Baroda 24x7 ATM', 325.0, 20.5508, 74.5278, 'Malegaon Outer Bypass, NH 60'),
+          ('SBI Toll Plaza 24x7 ATM', 361.0, 20.3285, 74.2415, 'Chandwad Toll, NH 60'),
+          ('HDFC Bank Dwarka Circle ATM', 417.5, 19.9972, 73.7892, 'Mumbai Naka, Nashik'),
+          ('State Bank of India (SBI) Highway ATM', 471.0, 19.6985, 73.5615, 'Igatpuri Hill Pass, NH 160'),
+          ('Bank of Maharashtra 24x7 ATM', 521.0, 19.4518, 73.3278, 'Shahapur Bypass, NH 160'),
+          ('ICICI Bank Majiwada Highway ATM', 586.5, 19.2065, 72.9765, 'Eastern Express Highway, Thane'),
+        ];
+
+        for (final s in indoreToMumbaiATMs) {
+          final distFromStart = isIndoreToMumbai ? s.$2 : (totalCorridorDistance - s.$2).abs();
+          final formatted = '${s.$1}, ${distFromStart.toStringAsFixed(1)} km from start • ${s.$5}';
+          collected.add(PlaceSearchResult(
+            displayName: formatted,
+            lat: s.$3,
+            lon: s.$4,
+            category: 'atm',
+          ));
+        }
+      }
+    }
+
+    // 4b. Corridor Detection: Indore <-> Rishikesh / Haridwar / Dehradun (NH 52 / NH 46 / NH 44 / NH 334) ~947 km
+    final isDestNearRishikesh = (dest.latitude - 30.0869).abs() < 1.2 && (dest.longitude - 78.2676).abs() < 1.2;
+    final isStartNearRishikesh = (start.latitude - 30.0869).abs() < 1.2 && (start.longitude - 78.2676).abs() < 1.2;
+
+    final isIndoreToRishikesh = (isStartNearIndore && isDestNearRishikesh) ||
+        (fromText.contains('indore') && (toText.contains('rishikesh') || toText.contains('haridwar') || toText.contains('dehradun')));
+    final isRishikeshToIndore = (isStartNearRishikesh && isDestNearIndore) ||
+        (toText.contains('indore') && (fromText.contains('rishikesh') || fromText.contains('haridwar') || fromText.contains('dehradun')));
+
+    if (collected.isEmpty && (isIndoreToRishikesh || isRishikeshToIndore)) {
+      const double totalCorridorDistance = 947.0;
+
+      if (isFuel || (!isCNG && !isEV && !isFood && !isHotel && !isRest && !isEmergency && !isATM && cleanQuery.isEmpty)) {
+        final indoreToRishikeshFuelStations = <(String, double, double, double, String)>[
+          ('Indian Oil COCO - Swagat Hub', 15.0, 22.8250, 75.9180, 'AB Road, Mangliya, Indore'),
+          ('Bharat Petroleum (BPCL) Ghar Highway Outlet', 36.5, 22.9750, 76.0580, 'Dewas Bypass, NH 52'),
+          ('Hindustan Petroleum (HPCL) Highway Oasis', 72.0, 23.4280, 76.2820, 'Shajapur Highway, NH 52'),
+          ('Jio-bp Mobility Station', 104.0, 23.5680, 76.4710, 'Sarangpur Bypass, NH 52'),
+          ('Indian Oil Highway Center', 132.5, 23.9180, 76.9150, 'Biaora Junction, NH 52 / NH 46'),
+          ('Shell Highway Express', 178.0, 24.1850, 77.0120, 'Chachaura, NH 46'),
+          ('Bharat Petroleum (BPCL) Highway Star', 224.0, 24.6480, 77.3120, 'Guna Outer Bypass, NH 46'),
+          ('HPCL Highway Oasis', 268.0, 24.9750, 77.5680, 'Badarwas Toll, NH 46'),
+          ('Nayara Energy Fuel Station', 292.0, 25.2280, 77.6120, 'Kolaras Highway, NH 46'),
+          ('Indian Oil COCO - Swagat Hub', 324.0, 25.4320, 77.6620, 'Shivpuri Bypass, NH 46'),
+          ('BPCL Highway Ghar', 370.0, 25.8820, 77.9450, 'Mohana Section, NH 46'),
+          ('Indian Oil Swagat Highway Hub', 432.0, 26.2180, 78.1750, 'Gwalior Bypass, NH 44'),
+          ('HPCL Auto Care Center', 474.0, 26.5020, 78.0050, 'Morena Toll Plaza, NH 44'),
+          ('Reliance / Jio-bp Mobility Station', 502.0, 26.6950, 77.8980, 'Dholpur Highway, NH 44'),
+          ('Indian Oil COCO Fuel Hub', 556.0, 27.1760, 78.0080, 'Agra Outer Bypass, NH 44'),
+          ('Bharat Petroleum (BPCL) Ghar', 614.0, 27.4920, 77.6730, 'Farah, Mathura Highway, NH 44'),
+          ('HPCL Highway Oasis', 652.0, 27.7950, 77.4320, 'Kosi Kalan Toll, NH 44'),
+          ('Jio-bp Mobility Station', 692.0, 28.1450, 77.3280, 'Hodal-Palwal Highway, NH 44'),
+          ('Indian Oil COCO Station', 736.0, 28.4980, 77.3020, 'Badarpur Border, Faridabad'),
+          ('Shell Express Mobility', 754.0, 28.6180, 77.2790, 'Akshardham Corridor, Delhi'),
+          ('Bharat Petroleum (BPCL) Highway Hub', 788.0, 28.6690, 77.4530, 'Delhi-Meerut Expressway, Ghaziabad'),
+          ('Indian Oil Swagat Highway Hub', 812.0, 28.8350, 77.5820, 'Modinagar Bypass, NH 334'),
+          ('HPCL Auto Care Center', 834.0, 28.9840, 77.7060, 'Meerut Outer Bypass, NH 334'),
+          ('Jio-bp Mobility Station', 858.0, 29.2820, 77.7280, 'Khatauli Toll Plaza, NH 334'),
+          ('BPCL Highway Ghar', 882.0, 29.4720, 77.7080, 'Muzaffarnagar Bypass, NH 334'),
+          ('Indian Oil COCO Station', 906.0, 29.6920, 77.8480, 'Purquazi Toll, NH 334'),
+          ('HPCL Highway Oasis', 920.0, 29.8540, 77.8880, 'Roorkee Highway, NH 334'),
+          ('Indian Oil Swagat Hub', 938.0, 29.9450, 78.1640, 'Haridwar Bypass, NH 334'),
+          ('BPCL Shivananda Fuel Station', 947.0, 30.0869, 78.2676, 'Tapovan / Rishikesh, NH 58'),
+        ];
+
+        for (final s in indoreToRishikeshFuelStations) {
+          final distFromStart = isIndoreToRishikesh ? s.$2 : (totalCorridorDistance - s.$2).abs();
+          final formatted = '${s.$1}, ${distFromStart.toStringAsFixed(1)} km from start • ${s.$5}';
+          collected.add(PlaceSearchResult(
+            displayName: formatted,
+            lat: s.$3,
+            lon: s.$4,
+            category: 'fuel',
+          ));
+        }
+      }
+
+      if (isCNG) {
+        final indoreToRishikeshCNGStations = <(String, double, double, double, String)>[
+          ('Avantika Gas CNG Mother Station', 15.5, 22.8255, 75.9185, 'Mangliya, Indore'),
+          ('Avantika Gas Highway CNG Hub', 37.0, 22.9755, 76.0585, 'Dewas Bypass, NH 52'),
+          ('Torrent Gas CNG Filling Point', 72.5, 23.4285, 76.2825, 'Shajapur, NH 52'),
+          ('Torrent Gas Highway CNG Hub', 133.0, 23.9185, 76.9155, 'Biaora, NH 52'),
+          ('GAIL Gas Highway CNG Station', 224.5, 24.6485, 77.3125, 'Guna Bypass, NH 46'),
+          ('GAIL Gas Shivpuri CNG Station', 324.5, 25.4325, 77.6625, 'Shivpuri Bypass, NH 46'),
+          ('Gwalior City Gas Mother CNG Station', 432.5, 26.2185, 78.1755, 'Gwalior Bypass, NH 44'),
+          ('Green Gas Limited (GGL) Agra CNG Station', 556.5, 27.1765, 78.0085, 'Agra Bypass, NH 44'),
+          ('Sanwariya Gas CNG Station', 614.5, 27.4925, 77.6735, 'Farah, Mathura, NH 44'),
+          ('Haryana City Gas CNG Hub', 692.5, 28.1455, 77.3285, 'Palwal Highway, NH 44'),
+          ('Indraprastha Gas Limited (IGL) Mother CNG', 754.5, 28.6185, 77.2795, 'Akshardham / Delhi NCR'),
+          ('IGL Delhi-Meerut Expressway CNG Hub', 788.5, 28.6695, 77.4535, 'Ghaziabad, DME'),
+          ('Torrent Gas Highway CNG Station', 858.5, 29.2825, 77.7285, 'Khatauli Toll, NH 334'),
+          ('Haridwar Natural Gas (HNG) CNG Station', 938.5, 29.9455, 78.1645, 'Haridwar Bypass, NH 334'),
+        ];
+
+        for (final s in indoreToRishikeshCNGStations) {
+          final distFromStart = isIndoreToRishikesh ? s.$2 : (totalCorridorDistance - s.$2).abs();
+          final formatted = '${s.$1}, ${distFromStart.toStringAsFixed(1)} km from start • ${s.$5}';
+          collected.add(PlaceSearchResult(
+            displayName: formatted,
+            lat: s.$3,
+            lon: s.$4,
+            category: 'cng',
+          ));
+        }
+      }
+
+      if (isEV) {
+        final indoreToRishikeshEVStations = <(String, double, double, double, String)>[
+          ('Tata Power 60kW DC Fast Charger', 15.2, 22.8252, 75.9182, 'Mangliya, AB Road, Indore'),
+          ('Jio-bp pulse EV Charging Station', 37.0, 22.9752, 76.0582, 'Dewas Bypass, NH 52'),
+          ('Statiq 50kW Dual Gun Fast Charger', 72.5, 23.4282, 76.2822, 'Shajapur Highway, NH 52'),
+          ('Tata Power 60kW DC Fast Charger', 133.0, 23.9182, 76.9152, 'Biaora Junction, NH 52'),
+          ('Zeon 120kW Superfast EV Station', 225.0, 24.6482, 77.3122, 'Guna Bypass, NH 46'),
+          ('Tata Power EV Charging Hub', 325.0, 25.4322, 77.6622, 'Shivpuri Bypass, NH 46'),
+          ('Jio-bp pulse 120kW Supercharger', 433.0, 26.2182, 78.1752, 'Gwalior Bypass, NH 44'),
+          ('Statiq Dual Gun Fast Charger', 475.0, 26.5022, 78.0052, 'Morena Toll, NH 44'),
+          ('Tata Power 60kW CCS2 Fast Charger', 557.0, 27.1762, 78.0082, 'Agra Outer Bypass, NH 44'),
+          ('Jio-bp pulse Fast Charging Hub', 615.0, 27.4922, 77.6732, 'Mathura Expressway, NH 44'),
+          ('Statiq 60kW Fast Charger', 693.0, 28.1452, 77.3282, 'Palwal Toll, NH 44'),
+          ('Tata Power Supercharger', 737.0, 28.4982, 77.3022, 'Faridabad Highway'),
+          ('Jio-bp pulse EV Charging Station', 755.0, 28.6182, 77.2792, 'Anand Vihar / Akshardham, Delhi'),
+          ('Zeon 120kW Superfast EV Hub', 789.0, 28.6692, 77.4532, 'Delhi-Meerut Expressway'),
+          ('Tata Power Fast Charger', 835.0, 28.9842, 77.7062, 'Meerut Bypass, NH 334'),
+          ('Statiq Dual Gun Charger', 883.0, 29.4722, 77.7082, 'Muzaffarnagar Bypass, NH 334'),
+          ('Tata Power EV Station', 921.0, 29.8542, 77.8882, 'Roorkee Highway, NH 334'),
+          ('Jio-bp pulse 60kW Fast Charger', 939.0, 29.9452, 78.1642, 'Haridwar Bypass, NH 334'),
+        ];
+
+        for (final s in indoreToRishikeshEVStations) {
+          final distFromStart = isIndoreToRishikesh ? s.$2 : (totalCorridorDistance - s.$2).abs();
+          final formatted = '${s.$1}, ${distFromStart.toStringAsFixed(1)} km from start • ${s.$5}';
+          collected.add(PlaceSearchResult(
+            displayName: formatted,
+            lat: s.$3,
+            lon: s.$4,
+            category: 'ev',
+          ));
+        }
+      }
+
+      if (isFood) {
+        final indoreToRishikeshFood = <(String, double, double, double, String)>[
+          ('Apna Sweets & Highway Treat', 16.0, 22.8250, 75.9180, 'Mangliya, Indore'),
+          ('Sagar Gaire Highway Express', 38.0, 22.9750, 76.0580, 'Dewas Bypass, NH 52'),
+          ('Sharma Punjabi Family Dhaba', 74.0, 23.4280, 76.2820, 'Shajapur, NH 52'),
+          ('MPT Highway Treat & Food Court', 134.0, 23.9180, 76.9150, 'Biaora, NH 52'),
+          ('Kisan Highway Punjabi Dhaba', 226.0, 24.6480, 77.3120, 'Guna Bypass, NH 46'),
+          ('Shivam Family Dhaba & Restaurant', 326.0, 25.4320, 77.6620, 'Shivpuri, NH 46'),
+          ('Sagar Deluxe Highway Family Garden', 434.0, 26.2180, 78.1750, 'Gwalior Bypass, NH 44'),
+          ('Chambal Highway Food Plaza', 504.0, 26.6950, 77.8980, 'Dholpur, NH 44'),
+          ('Haldiram\'s Highway Treat & Food Court', 558.0, 27.1760, 78.0080, 'Agra Bypass, NH 44'),
+          ('Brijwasi Highway Food Plaza', 616.0, 27.4920, 77.6730, 'Mathura, NH 44'),
+          ('Gulshan Dhaba & Family Restaurant', 654.0, 27.7950, 77.4320, 'Kosi Kalan, NH 44'),
+          ('Sagar Ratna Highway Express', 738.0, 28.4980, 77.3020, 'Badarpur / Faridabad'),
+          ('Haldiram\'s Food Court', 756.0, 28.6180, 77.2790, 'Akshardham, Delhi'),
+          ('Highway King Food Plaza & Dhaba', 790.0, 28.6690, 77.4530, 'Delhi-Meerut Expressway'),
+          ('Jain Shudh Shakahari Dhaba', 836.0, 28.9840, 77.7060, 'Meerut Bypass, NH 334'),
+          ('Cheetal Grand Famous Highway Resort & Restaurant', 860.0, 29.2820, 77.7280, 'Khatauli, NH 334'),
+          ('Pandit Ji Ka Dhaba', 884.0, 29.4720, 77.7080, 'Muzaffarnagar Bypass, NH 334'),
+          ('Chotiwala Highway Restaurant', 940.0, 29.9450, 78.1640, 'Haridwar Bypass, NH 334'),
+        ];
+
+        for (final s in indoreToRishikeshFood) {
+          final distFromStart = isIndoreToRishikesh ? s.$2 : (totalCorridorDistance - s.$2).abs();
+          final formatted = '${s.$1}, ${distFromStart.toStringAsFixed(1)} km from start • ${s.$5}';
+          collected.add(PlaceSearchResult(
+            displayName: formatted,
+            lat: s.$3,
+            lon: s.$4,
+            category: 'food',
+          ));
+        }
+      }
+
+      if (isHotel) {
+        final indoreToRishikeshHotels = <(String, double, double, double, String)>[
+          ('Papaya Tree Highway Hotel', 16.5, 22.8250, 75.9180, 'Mangliya, Indore'),
+          ('Hotel Sriraj Executive', 38.5, 22.9750, 76.0580, 'Dewas Bypass, NH 52'),
+          ('MPT Biaora Tourist Motel', 135.0, 23.9180, 76.9150, 'Biaora, NH 52'),
+          ('Hotel Guna Grand & Executive Suites', 227.0, 24.6480, 77.3120, 'Guna Bypass, NH 46'),
+          ('Tourist Village Shivpuri Resort', 327.0, 25.4320, 77.6620, 'Shivpuri, NH 46'),
+          ('Radisson Blu Gwalior & Highway Suites', 435.0, 26.2180, 78.1750, 'Gwalior, NH 44'),
+          ('Courtyard by Marriott Agra Highway', 559.0, 27.1760, 78.0080, 'Agra Bypass, NH 44'),
+          ('Brijwasi Royal Hotel & Suites', 617.0, 27.4920, 77.6730, 'Mathura, NH 44'),
+          ('The Leela Ambience Highway Hotel', 757.0, 28.6180, 77.2790, 'Delhi NCR'),
+          ('Country Inn & Suites', 791.0, 28.6690, 77.4530, 'Delhi-Meerut Expressway'),
+          ('The Cheetal Grand Highway Resort & Spa', 861.0, 29.2820, 77.7280, 'Khatauli, NH 334'),
+          ('Ganga Lahari Heritage Stay & Resort', 941.0, 29.9450, 78.1640, 'Haridwar Bypass, NH 334'),
+        ];
+
+        for (final s in indoreToRishikeshHotels) {
+          final distFromStart = isIndoreToRishikesh ? s.$2 : (totalCorridorDistance - s.$2).abs();
+          final formatted = '${s.$1}, ${distFromStart.toStringAsFixed(1)} km from start • ${s.$5}';
+          collected.add(PlaceSearchResult(
+            displayName: formatted,
+            lat: s.$3,
+            lon: s.$4,
+            category: 'hotel',
+          ));
+        }
+      }
+
+      if (isRest) {
+        final indoreToRishikeshRest = <(String, double, double, double, String)>[
+          ('Mangliya Highway Rest Area & Washrooms', 16.0, 22.8250, 75.9180, 'AB Road, Indore'),
+          ('Dewas Bypass Clean Rest Facility', 38.0, 22.9750, 76.0580, 'Dewas Bypass, NH 52'),
+          ('Biaora Wayside Amenity Plaza', 135.0, 23.9180, 76.9150, 'Biaora, NH 52'),
+          ('Guna NHAI Way-Side Amenity & Rest Stop', 227.0, 24.6480, 77.3120, 'Guna Bypass, NH 46'),
+          ('Shivpuri Way-Side Tourist Center', 327.0, 25.4320, 77.6620, 'Shivpuri, NH 46'),
+          ('Gwalior Bypass Rest Lounge & Public Facilities', 435.0, 26.2180, 78.1750, 'Gwalior Bypass, NH 44'),
+          ('Morena Toll Plaza Travelers Rest Area', 476.0, 26.5020, 78.0050, 'Morena Toll, NH 44'),
+          ('Agra Highway Oasis Rest Plaza & Washrooms', 559.0, 27.1760, 78.0080, 'Agra Bypass, NH 44'),
+          ('Mathura Highway Rest Center', 617.0, 27.4920, 77.6730, 'Mathura, NH 44'),
+          ('Kosi Kalan Toll Plaza Rest Stop', 654.0, 27.7950, 77.4320, 'Kosi Kalan, NH 44'),
+          ('Delhi NCR Highway Travelers Lounge', 757.0, 28.6180, 77.2790, 'Delhi NCR, NH 44'),
+          ('Delhi-Meerut Expressway Wayside Amenities', 791.0, 28.6690, 77.4530, 'Ghaziabad, DME'),
+          ('Khatauli Tourist Rest Center & Washrooms', 861.0, 29.2820, 77.7280, 'Khatauli, NH 334'),
+          ('Haridwar Ghat Rest Stop & Clean Facilities', 941.0, 29.9450, 78.1640, 'Haridwar, NH 334'),
+        ];
+
+        for (final s in indoreToRishikeshRest) {
+          final distFromStart = isIndoreToRishikesh ? s.$2 : (totalCorridorDistance - s.$2).abs();
+          final formatted = '${s.$1}, ${distFromStart.toStringAsFixed(1)} km from start • ${s.$5}';
+          collected.add(PlaceSearchResult(
+            displayName: formatted,
+            lat: s.$3,
+            lon: s.$4,
+            category: 'rest',
+          ));
+        }
+      }
+
+      if (isEmergency) {
+        final indoreToRishikeshEmergency = <(String, double, double, double, String)>[
+          ('CHC Mangliya & Highway First Aid Center', 16.0, 22.8250, 75.9180, 'Mangliya, Indore'),
+          ('Dewas District Hospital 24x7 Trauma Unit', 38.0, 22.9750, 76.0580, 'Dewas Bypass, NH 52'),
+          ('Civil Hospital Biaora & Highway Trauma Center', 135.0, 23.9180, 76.9150, 'Biaora, NH 52'),
+          ('Guna District Hospital & Trauma ICU', 227.0, 24.6480, 77.3120, 'Guna Bypass, NH 46'),
+          ('Shivpuri District Hospital 24x7 Emergency', 327.0, 25.4320, 77.6620, 'Shivpuri, NH 46'),
+          ('J.A. Hospital & GMC Trauma Center', 435.0, 26.2180, 78.1750, 'Gwalior, NH 44'),
+          ('Morena District Civil Hospital Trauma Unit', 476.0, 26.5020, 78.0050, 'Morena, NH 44'),
+          ('S.N. Medical College & Trauma Center', 559.0, 27.1760, 78.0080, 'Agra Bypass, NH 44'),
+          ('Nayati Multi Super Speciality Hospital', 617.0, 27.4920, 77.6730, 'Mathura, NH 44'),
+          ('Kosi Kalan Community Health Centre & First Aid', 654.0, 27.7950, 77.4320, 'Kosi Kalan, NH 44'),
+          ('Max Super Speciality Hospital 24x7 Emergency', 757.0, 28.6180, 77.2790, 'Delhi NCR'),
+          ('Yashoda Super Speciality Hospital Trauma Center', 791.0, 28.6690, 77.4530, 'Ghaziabad, DME'),
+          ('Muzaffarnagar Medical College & Emergency Unit', 884.0, 29.4720, 77.7080, 'Muzaffarnagar, NH 334'),
+          ('AIIMS Rishikesh 24x7 Apex Trauma Center', 941.0, 30.0869, 78.2676, 'Rishikesh, NH 58'),
+        ];
+
+        for (final s in indoreToRishikeshEmergency) {
+          final distFromStart = isIndoreToRishikesh ? s.$2 : (totalCorridorDistance - s.$2).abs();
+          final formatted = '${s.$1}, ${distFromStart.toStringAsFixed(1)} km from start • ${s.$5}';
+          collected.add(PlaceSearchResult(
+            displayName: formatted,
+            lat: s.$3,
+            lon: s.$4,
+            category: 'emergency',
+          ));
+        }
+      }
+
+      if (isATM) {
+        final indoreToRishikeshATMs = <(String, double, double, double, String)>[
+          ('SBI 24x7 Highway ATM', 16.0, 22.8250, 75.9180, 'Mangliya, Indore'),
+          ('HDFC Bank 24x7 ATM', 38.0, 22.9750, 76.0580, 'Dewas Bypass, NH 52'),
+          ('Bank of India 24x7 Highway ATM', 135.0, 23.9180, 76.9150, 'Biaora, NH 52'),
+          ('SBI Toll Plaza Highway ATM', 227.0, 24.6480, 77.3120, 'Guna, NH 46'),
+          ('PNB 24x7 Cash Point & ATM', 327.0, 25.4320, 77.6620, 'Shivpuri, NH 46'),
+          ('ICICI Bank Highway Hub ATM', 435.0, 26.2180, 78.1750, 'Gwalior, NH 44'),
+          ('Axis Bank Morena Toll ATM', 476.0, 26.5020, 78.0050, 'Morena, NH 44'),
+          ('Bank of Baroda Agra Expressway ATM', 559.0, 27.1760, 78.0080, 'Agra, NH 44'),
+          ('SBI Mathura Highway 24x7 ATM', 617.0, 27.4920, 77.6730, 'Mathura, NH 44'),
+          ('HDFC Bank Kosi Kalan Highway ATM', 654.0, 27.7950, 77.4320, 'Kosi Kalan, NH 44'),
+          ('State Bank of India (SBI) Akshardham ATM', 757.0, 28.6180, 77.2790, 'Delhi NCR'),
+          ('ICICI Bank Expressway ATM', 791.0, 28.6690, 77.4530, 'Ghaziabad, DME'),
+          ('Punjab National Bank (PNB) Highway ATM', 884.0, 29.4720, 77.7080, 'Muzaffarnagar, NH 334'),
+          ('SBI Ganga Kinare 24x7 ATM', 941.0, 30.0869, 78.2676, 'Rishikesh, NH 58'),
+        ];
+
+        for (final s in indoreToRishikeshATMs) {
+          final distFromStart = isIndoreToRishikesh ? s.$2 : (totalCorridorDistance - s.$2).abs();
+          final formatted = '${s.$1}, ${distFromStart.toStringAsFixed(1)} km from start • ${s.$5}';
+          collected.add(PlaceSearchResult(
+            displayName: formatted,
+            lat: s.$3,
+            lon: s.$4,
+            category: 'atm',
+          ));
+        }
+      }
     }
 
     // 5. Generic Route Dynamic Generator: for ANY route across India
     if (collected.isEmpty) {
-      final totalDist = _distanceBetweenKm(start.latitude, start.longitude, dest.latitude, dest.longitude);
-      final numStops = (totalDist / 32.0).clamp(6, 25).toInt();
       final hasPolyline = routePoints != null && routePoints.length >= 2;
+      double totalDist = 0.0;
+      final List<double> cumulativeDistances = [];
+      if (hasPolyline) {
+        cumulativeDistances.add(0.0);
+        for (int p = 1; p < routePoints.length; p++) {
+          final seg = _distanceBetweenKm(
+            routePoints[p - 1].latitude,
+            routePoints[p - 1].longitude,
+            routePoints[p].latitude,
+            routePoints[p].longitude,
+          );
+          totalDist += seg;
+          cumulativeDistances.add(totalDist);
+        }
+      }
+      if (totalDist <= 0.0) {
+        totalDist = _distanceBetweenKm(start.latitude, start.longitude, dest.latitude, dest.longitude) * 1.25;
+      }
+
+      final numStops = (totalDist / 35.0).clamp(8, 28).toInt();
 
       final startCity = (fromLocation ?? 'Start City').split(',').first.trim();
       final destCity = (toLocation ?? 'Destination').split(',').first.trim();
@@ -757,10 +1269,16 @@ class TripService {
         double stopLat;
         double stopLon;
 
-        if (hasPolyline) {
-          final targetIndex = ((routePoints.length - 1) * fraction).round().clamp(0, routePoints.length - 1);
-          stopLat = routePoints[targetIndex].latitude;
-          stopLon = routePoints[targetIndex].longitude;
+        if (hasPolyline && cumulativeDistances.isNotEmpty) {
+          int bestIdx = 0;
+          for (int k = 0; k < cumulativeDistances.length; k++) {
+            if (cumulativeDistances[k] >= distFromStart) {
+              bestIdx = k;
+              break;
+            }
+          }
+          stopLat = routePoints[bestIdx].latitude;
+          stopLon = routePoints[bestIdx].longitude;
         } else {
           stopLat = start.latitude + (dest.latitude - start.latitude) * fraction;
           stopLon = start.longitude + (dest.longitude - start.longitude) * fraction;
@@ -769,7 +1287,7 @@ class TripService {
         String stopTitle;
         String stopCategory;
 
-        if (isFuel || isCNG || (!isEV && !isFood && !isHotel)) {
+        if (isFuel) {
           final fuelBrands = [
             'Indian Oil COCO - Swagat Hub',
             'Bharat Petroleum (BPCL) Ghar Highway Outlet',
@@ -780,6 +1298,15 @@ class TripService {
           ];
           stopTitle = fuelBrands[(i - 1) % fuelBrands.length];
           stopCategory = 'fuel';
+        } else if (isCNG) {
+          final cngBrands = [
+            'Indraprastha Gas (IGL) CNG Hub',
+            'Mahanagar Gas (MGL) Highway CNG',
+            'Adani Total Gas CNG Station',
+            'Gujarat Gas Limited (GGL) CNG Filling Point',
+          ];
+          stopTitle = cngBrands[(i - 1) % cngBrands.length];
+          stopCategory = 'cng';
         } else if (isEV) {
           final evBrands = [
             'Tata Power 60kW DC Fast Charger',
@@ -791,25 +1318,64 @@ class TripService {
           stopCategory = 'ev';
         } else if (isFood) {
           final foodBrands = [
-            'Highway King Family Dhaba',
-            'Shiva Tourist Dhaba & Restaurant',
+            'Highway King Family Dhaba & Restaurant',
+            'Shiva Tourist Dhaba & Food Plaza',
             'Sagar Highway Express Food Plaza',
-            'Haldiram\'s Highway Treat',
+            'Haldiram\'s Highway Treat & Food Court',
+            'Haveli Punjabi Dhaba & Garden Restaurant',
           ];
           stopTitle = foodBrands[(i - 1) % foodBrands.length];
           stopCategory = 'food';
-        } else {
+        } else if (isHotel) {
           final hotelBrands = [
             'Highway Residency & Executive Rooms',
-            'Grand Highway Motel',
+            'Grand Highway Motel & Suites',
             'Comfort Inn Highway Hotel',
             'Royal Highway Stay & Suites',
+            'Heritage Highway Resort & Spa',
           ];
           stopTitle = hotelBrands[(i - 1) % hotelBrands.length];
           stopCategory = 'hotel';
+        } else if (isRest) {
+          final restBrands = [
+            'NHAI Way-Side Amenity & Rest Area',
+            'Highway Travelers Rest Stop & Clean Washrooms',
+            'Expressway Wayside Plaza & Restrooms',
+            'Highway Oasis Tourist Rest Center',
+          ];
+          stopTitle = restBrands[(i - 1) % restBrands.length];
+          stopCategory = 'rest';
+        } else if (isEmergency) {
+          final emergencyBrands = [
+            'Highway 24x7 Trauma & Emergency Center',
+            'Civil Hospital Emergency Casualty Unit',
+            'LifeLine Highway Trauma Care & Ambulance Post',
+            'Apex Emergency Medical Center & ICU',
+          ];
+          stopTitle = emergencyBrands[(i - 1) % emergencyBrands.length];
+          stopCategory = 'emergency';
+        } else if (isATM) {
+          final atmBrands = [
+            'State Bank of India (SBI) 24x7 Highway ATM',
+            'HDFC Bank 24x7 Cash Point & ATM',
+            'ICICI Bank Highway Hub ATM',
+            'Bank of Baroda 24x7 ATM',
+            'Axis Bank Highway ATM',
+          ];
+          stopTitle = atmBrands[(i - 1) % atmBrands.length];
+          stopCategory = 'atm';
+        } else {
+          final fuelBrands = [
+            'Indian Oil COCO - Swagat Hub',
+            'Bharat Petroleum (BPCL) Ghar Highway Outlet',
+            'Hindustan Petroleum (HPCL) Highway Oasis',
+            'Jio-bp Mobility Station',
+          ];
+          stopTitle = fuelBrands[(i - 1) % fuelBrands.length];
+          stopCategory = 'fuel';
         }
 
-        final locality = '$startCity to $destCity Highway, NH Corridor';
+        final locality = '$startCity to $destCity Highway • KM ${distFromStart.round()}';
         final formatted = '$stopTitle, ${distFromStart.toStringAsFixed(1)} km from start • $locality';
 
         collected.add(PlaceSearchResult(
@@ -822,18 +1388,20 @@ class TripService {
     }
 
     // 6. User keyword filter (if user typed specific brand like "Shell", "Indian Oil", or city like "Sendhwa")
-    List<PlaceSearchResult> filtered = collected;
-    final isGenericCategoryQuery = cleanQuery.isEmpty ||
-        qLower == 'petrol pump' ||
-        qLower == 'fuel' ||
-        qLower == 'fuel / petrol' ||
-        qLower == 'ev charging' ||
-        qLower == 'restaurants' ||
-        qLower == 'hotels' ||
-        qLower == 'hotel' ||
-        qLower == 'food & dhaba';
+    final categoryPresetQueries = {
+      'petrol pump', 'fuel', 'fuel / petrol', 'diesel', 'diesel pump',
+      'cng', 'cng station',
+      'ev', 'ev charging', 'ev charging station',
+      'restaurants', 'restaurant', 'food & dhaba', 'food', 'restaurant dhaba', 'dhaba',
+      'hotels', 'hotel', 'hotels & stay', 'hotel highway lodge', 'stay', 'lodge',
+      'rest', 'rest stops', 'rest stop', 'rest area', 'rest area washroom', 'washroom',
+      'emergency', 'hospital', 'hospital medical emergency', 'medical', 'trauma',
+      'atm', 'atm / cash', 'atm bank', 'cash', 'bank',
+    };
+    final isPresetQuery = cat.isNotEmpty || cleanQuery.isEmpty || categoryPresetQueries.contains(qLower);
 
-    if (!isGenericCategoryQuery && cleanQuery.length >= 2) {
+    List<PlaceSearchResult> filtered = collected;
+    if (!isPresetQuery && cleanQuery.length >= 2) {
       filtered = collected.where((item) {
         final dLower = item.displayName.toLowerCase();
         final sLower = item.shortTitle.toLowerCase();
@@ -842,11 +1410,12 @@ class TripService {
 
       // If user typed a very specific place name not found in corridor list, fall back to OSM lookup
       if (filtered.isEmpty) {
+        final startLoc = start;
         try {
           final osmResults = await searchPlaces('$cleanQuery $toLoc');
           if (osmResults.isNotEmpty) {
             filtered = osmResults.map((r) {
-              final d = _distanceBetweenKm(start!.latitude, start.longitude, r.lat, r.lon);
+              final d = _distanceBetweenKm(startLoc.latitude, startLoc.longitude, r.lat, r.lon);
               return PlaceSearchResult(
                 displayName: '${r.shortTitle}, ${d.toStringAsFixed(1)} km from start • ${r.subtitle}',
                 lat: r.lat,
@@ -1132,33 +1701,35 @@ class TripService {
       }
     } catch (_) {}
 
-    // Tier 2: Direct Mappls Geocode API
-    try {
-      final directMapplsUrl = Uri.parse(
-        'https://search.mappls.com/search/address/geocode?access_token=$mapplsApiKey&address=${Uri.encodeComponent(cleanTarget)}',
-      );
-      final res = await http.get(
-        directMapplsUrl,
-        headers: {
-          'User-Agent': 'CarQConnect-App/1.0',
-          'Accept': 'application/json',
-        },
-      ).timeout(const Duration(seconds: 4));
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body);
-        final list = data is Map && data.containsKey('copResults')
-            ? data['copResults'] as List<dynamic>?
-            : (data is List ? data : null);
-        if (list != null && list.isNotEmpty) {
-          final first = list[0];
-          final lat = double.tryParse(first['latitude']?.toString() ?? first['lat']?.toString() ?? '');
-          final lon = double.tryParse(first['longitude']?.toString() ?? first['lng']?.toString() ?? first['lon']?.toString() ?? '');
-          if (lat != null && lon != null && lat != 0.0 && lon != 0.0) {
-            return LatLng(lat, lon);
+    // Tier 2: Direct Mappls Geocode API (Native mobile only, avoids Web CORS)
+    if (!kIsWeb) {
+      try {
+        final directMapplsUrl = Uri.parse(
+          'https://search.mappls.com/search/address/geocode?access_token=$mapplsApiKey&address=${Uri.encodeComponent(cleanTarget)}',
+        );
+        final res = await http.get(
+          directMapplsUrl,
+          headers: {
+            'User-Agent': 'CarQConnect-App/1.0',
+            'Accept': 'application/json',
+          },
+        ).timeout(const Duration(seconds: 4));
+        if (res.statusCode == 200) {
+          final data = jsonDecode(res.body);
+          final list = data is Map && data.containsKey('copResults')
+              ? data['copResults'] as List<dynamic>?
+              : (data is List ? data : null);
+          if (list != null && list.isNotEmpty) {
+            final first = list[0];
+            final lat = double.tryParse(first['latitude']?.toString() ?? first['lat']?.toString() ?? '');
+            final lon = double.tryParse(first['longitude']?.toString() ?? first['lng']?.toString() ?? first['lon']?.toString() ?? '');
+            if (lat != null && lon != null && lat != 0.0 && lon != 0.0) {
+              return LatLng(lat, lon);
+            }
           }
         }
-      }
-    } catch (_) {}
+      } catch (_) {}
+    }
 
     // Tier 3: OpenStreetMap Nominatim Geocode API (100% Free, Global, Complete India Coverage)
     try {
@@ -1224,32 +1795,34 @@ class TripService {
       }
     } catch (_) {}
 
-    // Step 2: Direct Mappls Geocode API
-    try {
-      final directUrl = Uri.parse(
-        'https://search.mappls.com/search/address/geocode?access_token=$mapplsApiKey&address=${Uri.encodeComponent(query)}',
-      );
-      final res = await http.get(
-        directUrl,
-        headers: {
-          'User-Agent': 'CarQConnect-App/1.0',
-          'Accept': 'application/json',
-        },
-      ).timeout(const Duration(seconds: 4));
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body);
-        final list = data is Map && data.containsKey('copResults')
-            ? data['copResults'] as List<dynamic>?
-            : (data is List ? data : null);
-        if (list != null && list.isNotEmpty) {
-          return list.map((item) => {
-            'lat': item['latitude'] ?? item['lat'],
-            'lon': item['longitude'] ?? item['lng'] ?? item['lon'],
-            'display_name': item['formattedAddress'] ?? item['placeName'] ?? query,
-          }).toList();
+    // Step 2: Direct Mappls Geocode API (Native Mobile only to prevent Web CORS)
+    if (!kIsWeb) {
+      try {
+        final directUrl = Uri.parse(
+          'https://search.mappls.com/search/address/geocode?access_token=$mapplsApiKey&address=${Uri.encodeComponent(query)}',
+        );
+        final res = await http.get(
+          directUrl,
+          headers: {
+            'User-Agent': 'CarQConnect-App/1.0',
+            'Accept': 'application/json',
+          },
+        ).timeout(const Duration(seconds: 4));
+        if (res.statusCode == 200) {
+          final data = jsonDecode(res.body);
+          final list = data is Map && data.containsKey('copResults')
+              ? data['copResults'] as List<dynamic>?
+              : (data is List ? data : null);
+          if (list != null && list.isNotEmpty) {
+            return list.map((item) => {
+              'lat': item['latitude'] ?? item['lat'],
+              'lon': item['longitude'] ?? item['lng'] ?? item['lon'],
+              'display_name': item['formattedAddress'] ?? item['placeName'] ?? query,
+            }).toList();
+          }
         }
-      }
-    } catch (_) {}
+      } catch (_) {}
+    }
 
     return null;
   }

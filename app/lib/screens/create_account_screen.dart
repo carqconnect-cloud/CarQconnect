@@ -87,7 +87,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
       try {
         final email = _emailController.text.trim().toLowerCase();
-        final phone = _mobileController.text.trim();
+        final rawPhone = _mobileController.text.trim();
+        final cleanPhone = rawPhone.replaceAll(RegExp(r'[^0-9]'), '');
+        final phone = cleanPhone.length > 10 && cleanPhone.startsWith('91')
+            ? cleanPhone.substring(2)
+            : (cleanPhone.length > 10 && cleanPhone.startsWith('0') ? cleanPhone.substring(1) : cleanPhone);
 
         final endpoints = ApiConfig.candidateBaseUrls
             .map((b) => '$b/auth/send-otp')
@@ -100,7 +104,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 .post(
                   Uri.parse(endpoint),
                   headers: {'Content-Type': 'application/json'},
-                  body: jsonEncode({'email': email, 'phone': phone}),
+                  body: jsonEncode({
+                    'phone': phone,
+                    'channel': 'sms',
+                    'purpose': 'register',
+                  }),
                 )
                 .timeout(const Duration(seconds: 15));
             response = res;
@@ -293,8 +301,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Official CarQConnect Logo Badge
-                      AppLogoBadge(isLight: isLight),
+                      // Official CarQConnect Logo (clean, without container box)
+                      AppLogo(
+                        width: 64,
+                        height: 64,
+                        isLight: isLight,
+                      ),
                       const SizedBox(height: 24),
                       Text(
                         'Create Account',

@@ -131,7 +131,36 @@ class _PlaceSearchModalState extends State<PlaceSearchModal> {
   late List<PlaceSearchResult> _selectedStops;
 
   bool get _isMultiMode => widget.onMultiSelected != null;
-  bool get _isStopMode => _isMultiMode || widget.title.toLowerCase().contains('stop');
+  bool get _isStopMode {
+    if (_isMultiMode) return true;
+    if (widget.initialCategory != null && widget.initialCategory!.isNotEmpty) return true;
+    final t = widget.title.toLowerCase().trim();
+    if (t.contains('start') || t.contains('starting point') || t.contains('from')) {
+      return false;
+    }
+    if (t == 'select destination' || t == 'destination' || t == 'choose destination') {
+      return false;
+    }
+    if (t.contains('stop') ||
+        t.contains('find') ||
+        t.contains('fuel') ||
+        t.contains('pump') ||
+        t.contains('ev') ||
+        t.contains('charging') ||
+        t.contains('cng') ||
+        t.contains('restaurant') ||
+        t.contains('dhaba') ||
+        t.contains('food') ||
+        t.contains('hotel') ||
+        t.contains('stay') ||
+        t.contains('emergency') ||
+        t.contains('atm') ||
+        t.contains('along route') ||
+        t.contains('route')) {
+      return true;
+    }
+    return false;
+  }
 
   bool get _hasRoute {
     final toLoc = widget.toLocation?.trim() ?? '';
@@ -265,6 +294,8 @@ class _PlaceSearchModalState extends State<PlaceSearchModal> {
 
     if (initialText.trim().length >= 2) {
       _performSearch(initialText);
+    } else if (_isStopMode && _hasRoute) {
+      _performSearch(_selectedCategory ?? 'fuel');
     }
   }
 
@@ -860,7 +891,10 @@ class _PlaceSearchModalState extends State<PlaceSearchModal> {
                       } else if (cLower == 'atm' || tLower.contains('atm')) {
                         itemIcon = Icons.atm_rounded;
                         itemColor = const Color(0xFF6366F1);
-                      } else if (cLower == 'emergency' || tLower.contains('hospital')) {
+                      } else if (cLower == 'rest' || tLower.contains('rest') || tLower.contains('washroom')) {
+                        itemIcon = Icons.local_cafe_rounded;
+                        itemColor = const Color(0xFF0D9488);
+                      } else if (cLower == 'emergency' || tLower.contains('hospital') || tLower.contains('trauma')) {
                         itemIcon = Icons.emergency_rounded;
                         itemColor = const Color(0xFFEF4444);
                       }

@@ -1,4 +1,5 @@
 import '../../services/vehicle_type_service.dart';
+import '../../services/plan_limits_service.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:async';
@@ -215,6 +216,19 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
 
   
   void _onAddNewVehicle() {
+    if (!PlanLimitsService.canAddVehicle(_vehicles.length)) {
+      final limit = PlanLimitsService.getVehicleLimit();
+      PlanLimitsService.showUpgradeDialog(
+        context: context,
+        title: 'Vehicle Limit Reached',
+        message:
+            'Your ${Globals.currentPlan.isEmpty ? "Free" : Globals.currentPlan} plan allows up to $limit ${limit == 1 ? "vehicle" : "vehicles"}. Upgrade your membership to add more vehicles.',
+        limit: limit,
+        reason: 'vehicle',
+      );
+      return;
+    }
+
     final isLight = AppTheme.isLightNotifier.value;
     showModalBottomSheet(
       context: context,
@@ -229,6 +243,9 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
         String selectedFuel = 'Petrol';
         bool isAdding = false;
         List<String> suggestions = [];
+        String? nameError;
+        String? regError;
+        String? generalError;
 
         return StatefulBuilder(
           builder: (modalCtx, setModalState) {
@@ -253,12 +270,49 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                       ),
                     ),
                     const SizedBox(height: 16),
+                    if (generalError != null) ...[
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        margin: const EdgeInsets.only(bottom: 14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEF4444).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: const Color(0xFFEF4444).withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.error_outline_rounded,
+                              color: Color(0xFFEF4444),
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                generalError!,
+                                style: const TextStyle(
+                                  color: Color(0xFFEF4444),
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     TextField(
                       controller: nameController,
                       style: TextStyle(
                         color: isLight ? const Color(0xFF0F172A) : Colors.white,
                       ),
                       onChanged: (val) {
+                        if (nameError != null) {
+                          setModalState(() => nameError = null);
+                        }
                         final autoFuel = VehicleTypeService.detectFuelType(val);
                         final newSugg = VehicleTypeService.getSuggestions(val);
                         setModalState(() {
@@ -282,6 +336,26 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                           color: isLight
                               ? const Color(0xFF94A3B8)
                               : const Color(0xFF6B7C91),
+                        ),
+                        errorText: nameError,
+                        errorStyle: const TextStyle(
+                          color: Color(0xFFEF4444),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFEF4444),
+                            width: 1.5,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFEF4444),
+                            width: 1.8,
+                          ),
                         ),
                         filled: true,
                         fillColor: isLight
@@ -395,6 +469,9 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                       ),
                       textCapitalization: TextCapitalization.characters,
                       onChanged: (val) {
+                        if (regError != null) {
+                          setModalState(() => regError = null);
+                        }
                         final cleanReg = val.replaceAll(' ', '').toUpperCase();
                         if (cleanReg.length >= 4 && nameController.text.trim().isEmpty) {
                           // Auto fill from known vehicle matching this registration
@@ -423,6 +500,26 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                           color: isLight
                               ? const Color(0xFF94A3B8)
                               : const Color(0xFF6B7C91),
+                        ),
+                        errorText: regError,
+                        errorStyle: const TextStyle(
+                          color: Color(0xFFEF4444),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFEF4444),
+                            width: 1.5,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFEF4444),
+                            width: 1.8,
+                          ),
                         ),
                         filled: true,
                         fillColor: isLight
@@ -551,30 +648,25 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                                     .toUpperCase();
 
                                 final nameErr = AppValidators.validateVehicleName(newName, label: 'Vehicle model/name');
-                                if (nameErr != null) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(nameErr),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
-                                  return;
-                                }
-
                                 final regErr = AppValidators.validateVehicleNumber(newReg);
-                                if (regErr != null) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(regErr),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
+
+                                if (nameErr != null || regErr != null) {
+                                  setModalState(() {
+                                    nameError = nameErr;
+                                    regError = regErr;
+                                    generalError = null;
+                                  });
                                   return;
                                 }
 
                                 final formattedReg = formatRegistrationNumber(newReg);
 
-                                setModalState(() => isAdding = true);
+                                setModalState(() {
+                                  isAdding = true;
+                                  nameError = null;
+                                  regError = null;
+                                  generalError = null;
+                                });
 
                                 try {
                                   if (Globals.accessToken.isNotEmpty) {
@@ -612,20 +704,46 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen>
                                         ),
                                       );
                                       return;
+                                    } else if (res.statusCode == 403) {
+                                      if (ctx.mounted) {
+                                        Navigator.pop(ctx);
+                                      }
+                                      final limit = PlanLimitsService.getVehicleLimit();
+                                      if (mounted) {
+                                        PlanLimitsService.showUpgradeDialog(
+                                          context: context,
+                                          title: 'Vehicle Limit Reached',
+                                          message:
+                                              'Your ${Globals.currentPlan.isEmpty ? "Free" : Globals.currentPlan} plan allows up to $limit ${limit == 1 ? "vehicle" : "vehicles"}. Upgrade your membership to add more vehicles.',
+                                          limit: limit,
+                                          reason: 'vehicle',
+                                        );
+                                      }
+                                      return;
+                                    } else {
+                                      try {
+                                        final errData = jsonDecode(res.body);
+                                        final msg = errData['message'] ?? 'Failed to add vehicle';
+                                        setModalState(() {
+                                          generalError = msg is List ? msg.join(', ') : msg.toString();
+                                        });
+                                      } catch (_) {
+                                        setModalState(() {
+                                          generalError = 'Failed to add vehicle. Please try again.';
+                                        });
+                                      }
                                     }
                                   } else {
-                                    if (mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Please log in to add a vehicle.'),
-                                          duration: Duration(seconds: 2),
-                                        ),
-                                      );
-                                    }
+                                    setModalState(() {
+                                      generalError = 'Please log in to add a vehicle.';
+                                    });
                                     return;
                                   }
                                 } catch (e) {
                                   debugPrint('Error adding vehicle: $e');
+                                  setModalState(() {
+                                    generalError = 'Connection error. Please try again.';
+                                  });
                                 } finally {
                                   if (ctx.mounted) {
                                     setModalState(() => isAdding = false);

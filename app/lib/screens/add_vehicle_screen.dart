@@ -7,8 +7,15 @@ import '../utils/app_validators.dart';
 import '../theme/app_theme.dart';
 import '../widgets/animated_back_arrow.dart';
 
-class AddVehicleScreen extends StatelessWidget {
+class AddVehicleScreen extends StatefulWidget {
   const AddVehicleScreen({super.key});
+
+  @override
+  State<AddVehicleScreen> createState() => _AddVehicleScreenState();
+}
+
+class _AddVehicleScreenState extends State<AddVehicleScreen> {
+  String? _regError;
 
   @override
   Widget build(BuildContext context) {
@@ -82,14 +89,19 @@ class AddVehicleScreen extends StatelessWidget {
                         color: isLight ? Colors.white : const Color(0xFF161B22),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: isLight ? const Color(0xFFCBD5E1) : Colors.transparent,
+                          color: _regError != null
+                              ? const Color(0xFFEF4444)
+                              : (isLight ? const Color(0xFFCBD5E1) : Colors.transparent),
+                          width: _regError != null ? 1.5 : 1.0,
                         ),
                       ),
                       child: Row(
                         children: [
                           AppIcons.svg(
                             AppIcons.car,
-                            color: isLight ? AppTheme.primaryBlue : const Color(0xFF00C2FF),
+                            color: _regError != null
+                                ? const Color(0xFFEF4444)
+                                : (isLight ? AppTheme.primaryBlue : const Color(0xFF00C2FF)),
                             width: 26,
                             height: 26,
                           ),
@@ -101,10 +113,13 @@ class AddVehicleScreen extends StatelessWidget {
                                 Text(
                                   'Vehicle Registration Number',
                                   style: TextStyle(
-                                    color: isLight
-                                        ? const Color(0xFF64748B)
-                                        : Colors.white.withValues(alpha: 0.5),
+                                    color: _regError != null
+                                        ? const Color(0xFFEF4444)
+                                        : (isLight
+                                            ? const Color(0xFF64748B)
+                                            : Colors.white.withValues(alpha: 0.5)),
                                     fontSize: 12,
+                                    fontWeight: _regError != null ? FontWeight.w600 : FontWeight.normal,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -129,7 +144,12 @@ class AddVehicleScreen extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                   ),
                                   textCapitalization: TextCapitalization.characters,
-                                  onChanged: (val) => Globals.vehicleRegistration = val.trim().toUpperCase(),
+                                  onChanged: (val) {
+                                    Globals.vehicleRegistration = val.trim().toUpperCase();
+                                    if (_regError != null) {
+                                      setState(() => _regError = null);
+                                    }
+                                  },
                                 ),
                               ],
                             ),
@@ -137,6 +157,32 @@ class AddVehicleScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+                    if (_regError != null) ...[
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.error_outline_rounded,
+                              color: Color(0xFFEF4444),
+                              size: 15,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                _regError!,
+                                style: const TextStyle(
+                                  color: Color(0xFFEF4444),
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 32),
 
                     // Find My Vehicle Button
@@ -147,12 +193,7 @@ class AddVehicleScreen extends StatelessWidget {
                         onPressed: () {
                           final regErr = AppValidators.validateVehicleNumber(Globals.vehicleRegistration);
                           if (regErr != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(regErr),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
+                            setState(() => _regError = regErr);
                             return;
                           }
 

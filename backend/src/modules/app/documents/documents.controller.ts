@@ -1,6 +1,8 @@
 import type { Request, Response } from 'express';
 import { documentsService } from './documents.service';
 import { uploadToCloudinary } from '../../../common/utils/cloudinary';
+import { getUserPlanLimits } from '../../../common/utils/planLimits';
+import { prisma } from '../../../config/database';
 
 export const documentsController = {
   getAllDocuments: async (req: Request, res: Response) => {
@@ -26,6 +28,18 @@ export const documentsController = {
       return res.status(400).json({ success: false, message: 'No file provided' });
     }
     
+    const userId = req.auth?.userId;
+    if (userId) {
+      const limits = await getUserPlanLimits(userId);
+      const currentCount = await prisma.document.count({ where: { userId } });
+      if (currentCount >= limits.maxDocuments) {
+        return res.status(403).json({
+          success: false,
+          message: `Document limit reached for your ${limits.plan} plan (${limits.maxDocuments} max). Upgrade your membership to upload more documents.`,
+        });
+      }
+    }
+
     try {
       const url = await uploadToCloudinary(req.file.buffer, 'carqconnect/documents');
       res.json({ success: true, url });

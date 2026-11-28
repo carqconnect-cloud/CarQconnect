@@ -89,7 +89,7 @@ class _SubscriptionPlanScreenState extends State<SubscriptionPlanScreen>
       'yearlyPrice': 1188.0,
       'buttonText': 'Get Started',
       'features': [
-        {'title': 'Vehicle Profile (Unlimited)', 'isIncluded': true},
+        {'title': 'Vehicle Profile (5 Cars)', 'isIncluded': true},
         {'title': 'All Reminders', 'isIncluded': true},
         {'title': 'Document Storage (50 files)', 'isIncluded': true},
         {'title': 'Service History & Analytics', 'isIncluded': true},

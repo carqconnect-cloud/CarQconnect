@@ -6,6 +6,7 @@ import { adminGpsRepository } from '../admin/gps/adminGps.repository';
 import { adminQrRepository } from '../admin/qr/adminQr.repository';
 import { vehicleRepository } from './vehicle.repository';
 import { CreateVehicleInput, UpdateVehicleInput } from './vehicle.schema';
+import { getUserPlanLimits } from '../../common/utils/planLimits';
 
 export function computeReminderStatus(expiryDate: Date | null | undefined): {
   status: 'EXPIRED' | 'EXPIRING_SOON' | 'UP_TO_DATE' | 'NO_REMINDER';
@@ -47,6 +48,14 @@ function resolveEffectiveDocExpiry(
 
 export const vehicleService = {
   async createVehicle(userId: string, input: CreateVehicleInput, ipAddress?: string) {
+    const limits = await getUserPlanLimits(userId);
+    const vehicleCount = await prisma.vehicle.count({ where: { userId } });
+    if (vehicleCount >= limits.maxVehicles) {
+      throw ApiError.forbidden(
+        `Vehicle limit reached for your ${limits.plan} plan (${limits.maxVehicles} max). Upgrade your membership to add more vehicles.`
+      );
+    }
+
     const effectiveDocExpiry = resolveEffectiveDocExpiry(input.docExpiry, input.documents);
 
     try {

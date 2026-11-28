@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../globals.dart';
 import '../../utils/api_config.dart';
 import '../../theme/app_theme.dart';
 import '../../loading.dart';
 import '../../services/screen_refresh_service.dart';
+import '../../services/plan_limits_service.dart';
 import '../../utils/app_validators.dart';
 
 import 'package:flutter/material.dart';
@@ -17,7 +19,8 @@ import 'document_added.dart';
 import '../../widgets/animated_back_arrow.dart';
 
 class AddDocumentsScreen extends StatefulWidget {
-  const AddDocumentsScreen({super.key});
+  final int? currentDocCount;
+  const AddDocumentsScreen({super.key, this.currentDocCount});
 
   @override
   State<AddDocumentsScreen> createState() => _AddDocumentsScreenState();
@@ -30,11 +33,27 @@ class _AddDocumentsScreenState extends State<AddDocumentsScreen>
 
   String _vehicleName = 'Loading...';
   String _vehicleReg = '';
+  int _docCount = 0;
 
   @override
   void initState() {
     super.initState();
+    _docCount = widget.currentDocCount ?? 0;
     _fetchVehicle();
+    if (widget.currentDocCount == null) {
+      _loadDocCount();
+    }
+  }
+
+  Future<void> _loadDocCount() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cachedStr = prefs.getString('cached_vehicle_documents');
+      if (cachedStr != null && cachedStr.isNotEmpty) {
+        final List list = jsonDecode(cachedStr);
+        if (mounted) setState(() => _docCount = list.length);
+      }
+    } catch (_) {}
   }
 
   Future<void> _fetchVehicle({bool showFailure = true}) async {
@@ -144,6 +163,18 @@ class _AddDocumentsScreenState extends State<AddDocumentsScreen>
   }
 
   void _navigateToForm(String docName) {
+    if (!PlanLimitsService.canUploadDocument(_docCount)) {
+      final limit = PlanLimitsService.getDocumentLimit();
+      PlanLimitsService.showUpgradeDialog(
+        context: context,
+        title: 'Document Limit Reached',
+        message:
+            'Your ${Globals.currentPlan.isEmpty ? "Free" : Globals.currentPlan} plan allows up to $limit ${limit == 1 ? "document" : "documents"}. Upgrade your membership to upload more documents.',
+        limit: limit,
+        reason: 'document',
+      );
+      return;
+    }
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -152,6 +183,7 @@ class _AddDocumentsScreenState extends State<AddDocumentsScreen>
           title: docName == 'Registration Certificate (RC)'
               ? 'Add RC'
               : 'Add $docName',
+          currentDocCount: _docCount,
         ),
       ),
     );
@@ -465,6 +497,18 @@ class _AddDocumentsScreenState extends State<AddDocumentsScreen>
                     // Dashed Box: Upload from Gallery
                     InkWell(
                       onTap: () async {
+                        if (!PlanLimitsService.canUploadDocument(_docCount)) {
+                          final limit = PlanLimitsService.getDocumentLimit();
+                          PlanLimitsService.showUpgradeDialog(
+                            context: context,
+                            title: 'Document Limit Reached',
+                            message:
+                                'Your ${Globals.currentPlan.isEmpty ? "Free" : Globals.currentPlan} plan allows up to $limit ${limit == 1 ? "document" : "documents"}. Upgrade your membership to upload more documents.',
+                            limit: limit,
+                            reason: 'document',
+                          );
+                          return;
+                        }
                         try {
                           final picked = await ImagePicker().pickImage(
                             source: ImageSource.gallery,
@@ -567,12 +611,14 @@ class AddRCScreen extends StatefulWidget {
   final String title;
 
   final VehicleDocument? documentToEdit;
+  final int? currentDocCount;
 
   const AddRCScreen({
     super.key,
     this.documentType = 'Registration Certificate (RC)',
     this.title = 'Add RC',
     this.documentToEdit,
+    this.currentDocCount,
   });
 
   @override
@@ -584,6 +630,7 @@ class _AddRCScreenState extends State<AddRCScreen> {
   late TextEditingController _ownerNameController;
   late TextEditingController _issueDateController;
   late TextEditingController _expiryDateController;
+  String? _regError;
 
   bool _frontUploaded = false;
   bool _backUploaded = false;
@@ -696,6 +743,22 @@ class _AddRCScreenState extends State<AddRCScreen> {
   }
 
   Future<void> _pickAndUploadImage(bool isFront) async {
+    if (widget.documentToEdit == null &&
+        !PlanLimitsService.canUploadDocument(widget.currentDocCount ?? 0)) {
+      final limit = PlanLimitsService.getDocumentLimit();
+      if (mounted) {
+        PlanLimitsService.showUpgradeDialog(
+          context: context,
+          title: 'Document Limit Reached',
+          message:
+              'Your ${Globals.currentPlan.isEmpty ? "Free" : Globals.currentPlan} plan allows up to $limit ${limit == 1 ? "document" : "documents"}. Upgrade your membership to upload more documents.',
+          limit: limit,
+          reason: 'document',
+        );
+      }
+      return;
+    }
+
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image == null) return;
 
@@ -738,6 +801,30 @@ class _AddRCScreenState extends State<AddRCScreen> {
             const SnackBar(content: Text('Image uploaded successfully')),
           );
         }
+      } else if (response.statusCode == 403) {
+        final limit = PlanLimitsService.getDocumentLimit();
+        if (mounted) {
+          PlanLimitsService.showUpgradeDialog(
+            context: context,
+            title: 'Document Limit Reached',
+            message:
+                'Your ${Globals.currentPlan.isEmpty ? "Free" : Globals.currentPlan} plan allows up to $limit ${limit == 1 ? "document" : "documents"}. Upgrade your membership to upload more documents.',
+            limit: limit,
+            reason: 'document',
+          );
+        }
+      } else if (response.statusCode == 403) {
+        final limit = PlanLimitsService.getDocumentLimit();
+        if (mounted) {
+          PlanLimitsService.showUpgradeDialog(
+            context: context,
+            title: 'Document Limit Reached',
+            message:
+                'Your ${Globals.currentPlan.isEmpty ? "Free" : Globals.currentPlan} plan allows up to $limit ${limit == 1 ? "document" : "documents"}. Upgrade your membership to upload more documents.',
+            limit: limit,
+            reason: 'document',
+          );
+        }
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context)
@@ -761,21 +848,10 @@ class _AddRCScreenState extends State<AddRCScreen> {
   Future<void> _saveDocument() async {
     final regErr = AppValidators.validateVehicleNumber(_regNumberController.text);
     if (regErr != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: const Color(0xFF2D1214),
-          content: Text(
-            regErr,
-            style: const TextStyle(color: Color(0xFFFF5252)),
-          ),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
+      setState(() => _regError = regErr);
       return;
     }
+    setState(() => _regError = null);
 
     setState(() {
       _isLoading = true;
@@ -837,6 +913,18 @@ class _AddRCScreenState extends State<AddRCScreen> {
               ),
             );
           }
+        }
+      } else if (response.statusCode == 403) {
+        final limit = PlanLimitsService.getDocumentLimit();
+        if (mounted) {
+          PlanLimitsService.showUpgradeDialog(
+            context: context,
+            title: 'Document Limit Reached',
+            message:
+                'Your ${Globals.currentPlan.isEmpty ? "Free" : Globals.currentPlan} plan allows up to $limit ${limit == 1 ? "document" : "documents"}. Upgrade your membership to upload more documents.',
+            limit: limit,
+            reason: 'document',
+          );
         }
       } else {
         if (mounted) {
@@ -1101,15 +1189,23 @@ class _AddRCScreenState extends State<AddRCScreen> {
                                   : const Color(0xFF101726),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: isLight
-                                    ? const Color(0xFFE2E8F0)
-                                    : const Color(0xFF1E2B40),
+                                color: _regError != null
+                                    ? const Color(0xFFEF4444)
+                                    : (isLight
+                                        ? const Color(0xFFE2E8F0)
+                                        : const Color(0xFF1E2B40)),
+                                width: _regError != null ? 1.5 : 1.0,
                               ),
                               boxShadow: isLight ? AppTheme.cardShadow : null,
                             ),
                             child: TextField(
                               controller: _regNumberController,
                               inputFormatters: AppValidators.vehicleNumberFormatters,
+                              onChanged: (val) {
+                                if (_regError != null) {
+                                  setState(() => _regError = null);
+                                }
+                              },
                               style: TextStyle(
                                 color: isLight
                                     ? const Color(0xFF0F172A)
@@ -1139,6 +1235,20 @@ class _AddRCScreenState extends State<AddRCScreen> {
                               ),
                             ),
                           ),
+                          if (_regError != null) ...[
+                            const SizedBox(height: 6),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 4),
+                              child: Text(
+                                _regError!,
+                                style: const TextStyle(
+                                  color: Color(0xFFEF4444),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
 
                           const SizedBox(height: 16),
 

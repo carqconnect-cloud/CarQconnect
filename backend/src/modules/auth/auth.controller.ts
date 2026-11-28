@@ -226,7 +226,7 @@ export const authController = {
 
   async sendOtp(req: Request, res: Response) {
     try {
-      const { email, phone, type, purpose } = req.body || {};
+      const { email, phone, type, purpose, channel } = req.body || {};
       const identifiers = getIdentifiers(email, phone);
       if (identifiers.length === 0) {
         throw ApiError.badRequest('Email or mobile number is required');
@@ -237,11 +237,18 @@ export const authController = {
         ? email.trim()
         : identifiers.find((id) => id.includes('@') && !id.endsWith('@mobile.carq'));
 
-      if ((type === 'reset' || purpose === 'reset') && targetEmail) {
-        const candidates = await authRepository.findUserCandidateByEmail(targetEmail);
-        const exists = candidates.crmUser || candidates.user || candidates.superAdmin || candidates.subSuperAdmin;
-        if (!exists) {
-          throw ApiError.notFound('No account found with this email address.');
+      let targetPhone = (phone && typeof phone === 'string' && phone.trim())
+        ? phone.trim()
+        : identifiers.find((id) => !id.includes('@') && /^\+?\d{10,13}$/.test(id));
+
+      if (type === 'reset' || purpose === 'reset') {
+        const lookup = targetEmail || targetPhone;
+        if (lookup) {
+          const candidates = await authRepository.findUserCandidateByEmail(lookup);
+          const exists = candidates.crmUser || candidates.user || candidates.superAdmin || candidates.subSuperAdmin;
+          if (!exists) {
+            throw ApiError.notFound(targetEmail ? 'No account found with this email address.' : 'No account found with this mobile number.');
+          }
         }
       }
 
@@ -254,16 +261,18 @@ export const authController = {
         console.log(`[AuthController] Generated OTP [${code}] for [${identifiers.join(', ')}]`);
       }
 
-      // 1. Trigger SMS OTP dispatch (Primary: MSG91, Fallback: Fast2SMS)
-      const headerVal = req.headers ? req.headers['x-forwarded-for'] : undefined;
-      const rawIp = (Array.isArray(headerVal) ? headerVal[0] : headerVal) || req.ip || '';
-      const clientIp = typeof rawIp === 'string' ? rawIp.split(',')[0]?.trim().replace(/^::ffff:/, '') : undefined;
+      // Determine dispatch channels:
+      // If channel is 'sms' or 'phone', send ONLY SMS (never email).
+      // If channel is 'email', send ONLY Email (never SMS).
+      const allowSms = channel !== 'email';
+      const allowEmail = channel !== 'sms' && channel !== 'phone';
 
-      let targetPhone = (phone && typeof phone === 'string' && phone.trim())
-        ? phone.trim()
-        : identifiers.find((id) => !id.includes('@') && /^\+?\d{10,13}$/.test(id));
+      // 1. Trigger SMS OTP dispatch (Primary: MSG91 Widget, Fallback: Fast2SMS)
+      if (targetPhone && allowSms) {
+        const headerVal = req.headers ? req.headers['x-forwarded-for'] : undefined;
+        const rawIp = (Array.isArray(headerVal) ? headerVal[0] : headerVal) || req.ip || '';
+        const clientIp = typeof rawIp === 'string' ? rawIp.split(',')[0]?.trim().replace(/^::ffff:/, '') : undefined;
 
-      if (targetPhone) {
         msg91Service.sendOtpSms(targetPhone, code, clientIp).then((res) => {
           if (res.success && res.requestId) {
             for (const id of identifiers) {
@@ -281,7 +290,7 @@ export const authController = {
       }
 
       // 2. Trigger OTP Email dispatch if an email is provided (ignore dummy mobile aliases like .carq)
-      if (targetEmail && !targetEmail.endsWith('@mobile.carq')) {
+      if (targetEmail && !targetEmail.endsWith('@mobile.carq') && allowEmail) {
         const emailType = (type === 'reset' || purpose === 'reset') ? 'reset' : 'verification';
         emailService.sendOtpEmail(targetEmail, code, emailType).catch((err) => {
           console.error(`[AuthController] Failed to send OTP email to ${targetEmail}:`, err);

@@ -88,26 +88,6 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
     });
   }
 
-  Future<void> _pasteFromClipboard() async {
-    try {
-      final data = await Clipboard.getData(Clipboard.kTextPlain);
-      final text = data?.text?.trim() ?? '';
-      final digits = text.replaceAll(RegExp(r'\D'), '');
-      if (digits.length >= 4) {
-        setState(() {
-          _otp = digits.substring(0, 4);
-          if (!_isKeypadOpen) _isKeypadOpen = true;
-        });
-      } else if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No 4-digit OTP found in clipboard'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
-    } catch (_) {}
-  }
 
   String _parseApiError(http.Response? response, String fallback) {
     if (response == null || response.body.isEmpty) return fallback;
@@ -138,6 +118,18 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
     try {
       final email = widget.email.trim().toLowerCase();
       final phone = widget.phone.trim();
+      final isReset = widget.isForgotPassword;
+      final bool isEmailReset = isReset && email.isNotEmpty && !email.endsWith('@mobile.carq');
+
+      final Map<String, dynamic> requestBody = isReset
+          ? (isEmailReset
+              ? {'email': email, 'channel': 'email', 'purpose': 'reset'}
+              : {'phone': phone, 'channel': 'sms', 'purpose': 'reset'})
+          : {
+              'phone': phone,
+              'channel': 'sms',
+              'purpose': 'register',
+            };
 
       http.Response? resendRes;
       for (final base in ApiConfig.candidateBaseUrls) {
@@ -146,7 +138,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
               .post(
                 Uri.parse('$base/auth/send-otp'),
                 headers: {'Content-Type': 'application/json'},
-                body: jsonEncode({'email': email, 'phone': phone}),
+                body: jsonEncode(requestBody),
               )
               .timeout(const Duration(seconds: 15));
           resendRes = res;
@@ -161,13 +153,12 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
 
       if (mounted) {
         if (resendRes != null && resendRes.statusCode == 200) {
+          final targetDisplay = isReset
+              ? (isEmailReset ? email : (phone.startsWith('+91') ? phone : '+91 $phone'))
+              : (phone.startsWith('+91') ? phone : '+91 $phone');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                phone.isNotEmpty && (email.isEmpty || email.endsWith('@mobile.carq'))
-                    ? 'New OTP sent to $phone'
-                    : 'New OTP sent to $email',
-              ),
+              content: Text('New OTP sent to $targetDisplay'),
               backgroundColor: const Color(0xFF10B981),
             ),
           );
@@ -415,8 +406,12 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Official CarQConnect Logo Badge
-                            AppLogoBadge(isLight: isLight),
+                            // Official CarQConnect Logo (clean, without container box)
+                            AppLogo(
+                              width: 58,
+                              height: 58,
+                              isLight: isLight,
+                            ),
                             const SizedBox(height: 20),
                             Text(
                               'Enter OTP',
@@ -428,9 +423,11 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              widget.phone.isNotEmpty && (widget.email.isEmpty || widget.email.endsWith('@mobile.carq'))
-                                  ? 'OTP sent to your mobile number\n${widget.phone}. Enter the code to proceed.'
-                                  : 'OTP sent to your email address\n${widget.email}. Enter the code to proceed.',
+                              widget.isForgotPassword
+                                  ? (widget.email.isNotEmpty && !widget.email.endsWith('@mobile.carq')
+                                      ? 'OTP sent to your email address\n${widget.email}. Enter the code to proceed.'
+                                      : 'OTP sent to your mobile number\n${widget.phone.startsWith('+91') ? widget.phone : '+91 ${widget.phone}'}. Enter the code to proceed.')
+                                  : 'OTP sent to your mobile number\n${widget.phone.startsWith('+91') ? widget.phone : '+91 ${widget.phone}'}. Enter the code to proceed.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 14,
@@ -506,70 +503,6 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
                                   );
                                 }),
                               ),
-                            ),
-
-                            const SizedBox(height: 12),
-
-                            // Helper prompt and Paste button
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                if (!_isKeypadOpen) ...[
-                                  GestureDetector(
-                                    onTap: _openKeypad,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.touch_app_rounded,
-                                          color: isLight
-                                              ? AppTheme.primaryBlue
-                                              : const Color(0xFF00C2FF),
-                                          size: 16,
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          'Tap to type',
-                                          style: TextStyle(
-                                            color: isLight
-                                                ? AppTheme.primaryBlue
-                                                : const Color(0xFF00C2FF),
-                                            fontSize: 12.5,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                ],
-                                GestureDetector(
-                                  onTap: _pasteFromClipboard,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.content_paste_rounded,
-                                        color: isLight
-                                            ? AppTheme.primaryBlue
-                                            : const Color(0xFF00C2FF),
-                                        size: 15,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'Paste code',
-                                        style: TextStyle(
-                                          color: isLight
-                                              ? AppTheme.primaryBlue
-                                              : const Color(0xFF00C2FF),
-                                          fontSize: 12.5,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
                             ),
 
                             const SizedBox(height: 32),
